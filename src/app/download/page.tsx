@@ -210,22 +210,31 @@ export default function DownloadPage() {
               </svg>
             </a>
             {/* Instalador automático Mac */}
-            <a
-              href="/instalar-hunter-x.command"
-              download
-              className="group flex items-center gap-3 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 transition hover:border-violet-500/30 hover:bg-violet-500/5"
-            >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-lg border border-violet-500/20">
-                🍎
+            <div className="w-full">
+              <a
+                href="/instalar-hunter-x.command"
+                download
+                className="group flex items-center gap-3 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 transition hover:border-violet-500/30 hover:bg-violet-500/5"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-lg border border-violet-500/20">
+                  🍎
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="font-mono text-xs font-bold text-white">Instalador Mac</p>
+                  <p className="font-mono text-[10px] text-zinc-600">Clique direito → Abrir · instala sozinho</p>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-600 group-hover:text-violet-400 transition">
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+              </a>
+              {/* Aviso Mac */}
+              <div className="mt-2 flex items-start gap-2 rounded-lg bg-amber-500/5 border border-amber-500/20 px-3 py-2">
+                <span className="text-sm shrink-0">⚠️</span>
+                <p className="font-mono text-[9px] text-amber-400/80 leading-relaxed">
+                  No Mac: após baixar, faça <strong className="text-amber-300">clique direito → Abrir</strong> (não duplo-clique). Na primeira vez o Mac pede confirmação — clique <strong className="text-amber-300">&quot;Abrir&quot;</strong> para continuar.
+                </p>
               </div>
-              <div className="flex-1 text-left">
-                <p className="font-mono text-xs font-bold text-white">Instalador Mac</p>
-                <p className="font-mono text-[10px] text-zinc-600">Duplo-clique no .command · instala sozinho</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-600 group-hover:text-violet-400 transition">
-                <path d="M12 5v14M5 12l7 7 7-7" />
-              </svg>
-            </a>
+            </div>
           </div>
         </div>
 
