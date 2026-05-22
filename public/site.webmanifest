@@ -1,0 +1,16 @@
+{
+  "name": "Hunter X",
+  "short_name": "Hunter X",
+  "description": "Encontre produtos low ticket escalando agora no Meta",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a14",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
