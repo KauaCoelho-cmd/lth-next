@@ -113,6 +113,8 @@ function GenerateModal({
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const generate = async () => {
     setLoading(true);
@@ -138,6 +140,18 @@ function GenerateModal({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const sendEmail = async () => {
+    if (!result) return;
+    setSending(true);
+    await fetch('/api/control-8faz/send-extension', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-admin-password': password },
+      body: JSON.stringify({ email: result.email, licenseKey: result.key }),
+    });
+    setSending(false);
+    setSent(true);
   };
 
   return (
@@ -216,19 +230,28 @@ function GenerateModal({
               <div><span className="text-zinc-600">Expira:</span> {result.expiresAt}</div>
               <div><span className="text-zinc-600">Fonte:</span> admin</div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
               <button
-                onClick={copy}
-                className="flex-1 rounded-lg border border-violet-500/40 bg-violet-500/10 py-2.5 font-mono text-xs font-bold text-violet-300 hover:bg-violet-500/20 transition"
+                onClick={sendEmail}
+                disabled={sending || sent}
+                className="w-full rounded-lg bg-cyan-600/80 py-2.5 font-mono text-xs font-bold text-white hover:bg-cyan-500/80 transition disabled:opacity-50"
               >
-                {copied ? '✓ Copiado!' : '📋 Copiar chave'}
+                {sending ? 'Enviando…' : sent ? '✓ Email enviado!' : '📧 Enviar extensão por email'}
               </button>
-              <button
-                onClick={onClose}
-                className="flex-1 rounded-lg border border-white/10 py-2.5 font-mono text-xs font-bold text-zinc-400 hover:border-white/20 hover:text-white transition"
-              >
-                Fechar
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={copy}
+                  className="flex-1 rounded-lg border border-violet-500/40 bg-violet-500/10 py-2.5 font-mono text-xs font-bold text-violet-300 hover:bg-violet-500/20 transition"
+                >
+                  {copied ? '✓ Copiado!' : '📋 Copiar chave'}
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 rounded-lg border border-white/10 py-2.5 font-mono text-xs font-bold text-zinc-400 hover:border-white/20 hover:text-white transition"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -248,6 +271,8 @@ function Dashboard({ password }: { password: string }) {
   const [filter, setFilter] = useState<'all' | 'active' | 'expired' | 'revoked'>('all');
   const [revoking, setRevoking] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [sendingEmail, setSendingEmail] = useState<string | null>(null);
+  const [sentEmail, setSentEmail] = useState<string | null>(null);
 
   const loadKeys = useCallback(async () => {
     setLoading(true);
@@ -274,6 +299,19 @@ function Dashboard({ password }: { password: string }) {
     });
     setRevoking(null);
     loadKeys();
+  };
+
+  const sendExtension = async (record: KeyRecord) => {
+    const id = extractId(record.key);
+    setSendingEmail(id);
+    await fetch('/api/control-8faz/send-extension', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-admin-password': password },
+      body: JSON.stringify({ email: record.email, licenseKey: record.key }),
+    });
+    setSendingEmail(null);
+    setSentEmail(id);
+    setTimeout(() => setSentEmail(null), 3000);
   };
 
   const copyKey = (key: string) => {
@@ -447,16 +485,25 @@ function Dashboard({ password }: { password: string }) {
                           </button>
                         </td>
                         <td className="px-4 py-3">
-                          <button
-                            onClick={() => handleRevoke(record)}
-                            disabled={revoking === id}
-                            className={`rounded px-2 py-1 font-mono text-[9px] font-bold transition ${isRevoked
-                              ? 'bg-green-500/15 text-green-400 hover:bg-green-500/25'
-                              : 'bg-red-500/15 text-red-400 hover:bg-red-500/25'
-                              } disabled:opacity-40`}
-                          >
-                            {revoking === id ? '…' : isRevoked ? 'Reativar' : 'Revogar'}
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => sendExtension(record)}
+                              disabled={sendingEmail === id}
+                              className="rounded px-2 py-1 font-mono text-[9px] font-bold bg-cyan-500/15 text-cyan-400 hover:bg-cyan-500/25 transition disabled:opacity-40"
+                            >
+                              {sendingEmail === id ? '…' : sentEmail === id ? '✓ Enviado!' : '📧 Enviar'}
+                            </button>
+                            <button
+                              onClick={() => handleRevoke(record)}
+                              disabled={revoking === id}
+                              className={`rounded px-2 py-1 font-mono text-[9px] font-bold transition ${isRevoked
+                                ? 'bg-green-500/15 text-green-400 hover:bg-green-500/25'
+                                : 'bg-red-500/15 text-red-400 hover:bg-red-500/25'
+                                } disabled:opacity-40`}
+                            >
+                              {revoking === id ? '…' : isRevoked ? 'Reativar' : 'Revogar'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
