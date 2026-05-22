@@ -58,16 +58,17 @@ if [ ! -f "$CHROME" ]; then
   fi
 fi
 
-# [4/4] Abrir Chrome com extensão
+# [4/4] Abrir Chrome com extensão + Biblioteca de Anúncios
 echo "  [4/4] Abrindo Chrome com Hunter X..."
-"$CHROME" --load-extension="$EXT_DIR" --no-first-run 2>/dev/null &
+"$CHROME" --load-extension="$EXT_DIR" --no-first-run "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&media_type=all" 2>/dev/null &
 
 echo ""
 echo "  ╔══════════════════════════════════╗"
 echo "  ║  Hunter X instalado com sucesso! ║"
 echo "  ║                                  ║"
-echo "  ║  Acesse a Biblioteca de Anuncios ║"
-echo "  ║  do Meta e ative o Hunter X!     ║"
+echo "  ║  Biblioteca de Anuncios aberta!  ║"
+echo "  ║  Clique no icone do Hunter X     ║"
+echo "  ║  na barra do Chrome e comece!    ║"
 echo "  ╚══════════════════════════════════╝"
 echo ""
 sleep 4

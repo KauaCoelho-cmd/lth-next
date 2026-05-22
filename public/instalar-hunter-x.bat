@@ -75,7 +75,7 @@ if "%CHROME%"=="" (
 )
 
 echo  [4/4] Abrindo Chrome com Hunter X...
-start "" "%CHROME%" --load-extension="%EXT_DIR%"
+start "" "%CHROME%" --load-extension="%EXT_DIR%" "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&media_type=all"
 
 echo.
 echo  ================================================================
