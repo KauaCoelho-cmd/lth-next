@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { MetaAdScanner } from '@/components/ui/meta-ad-scanner';
+import { NeonButton } from '@/components/ui/neon-button';
 
 /* ─── HUD corner brackets (cyber frame) ─── */
 const CornerBrackets = () => (
@@ -137,12 +138,14 @@ export const HeroFuturistic = ({
 
           {/* CTA */}
           <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
-            <a
-              href={ctaHref}
-              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl border border-violet-400/30 bg-gradient-to-b from-violet-500 to-violet-700 px-8 py-4 text-base font-bold text-white shadow-[0_0_40px_rgba(139,92,246,.4),inset_0_1px_0_rgba(255,255,255,.15)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_72px_rgba(139,92,246,.65)]"
-            >
-              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-              <span className="relative">{ctaLabel}</span>
+            <a href={ctaHref}>
+              <NeonButton
+                variant="violet"
+                size="lg"
+                className="shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_50px_rgba(139,92,246,0.5)] transition-shadow duration-300"
+              >
+                {ctaLabel}
+              </NeonButton>
             </a>
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-600">
               {priceLabel}
