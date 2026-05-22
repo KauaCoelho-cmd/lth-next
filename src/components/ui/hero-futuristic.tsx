@@ -68,17 +68,17 @@ export const HeroFuturistic = ({
 
   return (
     <div
-      className="relative h-svh w-full overflow-hidden bg-[#0a0a14]"
+      className="relative w-full overflow-hidden bg-[#0a0a14]"
       style={{
         filter: `blur(${blurPx}px)`,
         opacity: fadeOut,
         transform: `scale(${scaleVal}) translateY(${translateY}px)`,
         transformOrigin: 'center top',
         willChange: 'filter, opacity, transform',
+        minHeight: '100svh',
       }}
     >
-
-      {/* Dot grid background */}
+      {/* Dot grid */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.04]"
         style={{
@@ -86,99 +86,97 @@ export const HeroFuturistic = ({
           backgroundSize: '28px 28px',
         }}
       />
+      {/* Glow central */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[60%] bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(139,92,246,0.12),transparent)]" />
 
-      {/* Horizontal accent lines */}
-      <div className="pointer-events-none absolute inset-x-0 top-[32%] z-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-[22%] z-0 h-px bg-gradient-to-r from-transparent via-violet-500/12 to-transparent" />
+      {/* ══ LAYOUT RESPONSIVO ══
+          Mobile : coluna única (texto → scanner)
+          Desktop: duas colunas (texto | scanner)
+      */}
+      <div className="relative z-10 mx-auto flex min-h-svh max-w-7xl flex-col items-center gap-12 px-5 py-24 lg:flex-row lg:items-center lg:gap-0 lg:py-0 xl:px-10">
 
-      {/* ── Meta Ad Scanner — lado direito ── */}
-      <div className="absolute inset-0 z-0 flex items-center justify-end pr-8 lg:pr-16">
-        <div
-          className="pointer-events-none absolute inset-0 z-10"
-          style={{
-            background:
-              'linear-gradient(to right, #0a0a14 30%, rgba(10,10,20,0.6) 48%, rgba(10,10,20,0.05) 68%, transparent 82%)',
-          }}
-        />
-        <MetaAdScanner className="relative z-0 w-full max-w-[340px] lg:max-w-[380px]" />
-        <CornerBrackets />
-      </div>
+        {/* ─ COLUNA ESQUERDA: copy ─ */}
+        <div className="flex w-full flex-col items-center text-center lg:w-1/2 lg:items-start lg:text-left lg:pr-10 xl:pr-16">
 
-      {/* ── LEFT: Copy + CTA ── */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-30 flex w-full flex-col justify-center px-8 md:px-14 lg:max-w-[58%] xl:px-20 2xl:px-28">
+          {/* Badge */}
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-violet-300 backdrop-blur-sm">
+            <span className="relative flex h-1.5 w-1.5 shrink-0">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-300" />
+            </span>
+            ◉ {badge}
+          </div>
 
-        {/* Status badge */}
-        <div className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-violet-300 backdrop-blur-sm">
-          <span className="relative flex h-1.5 w-1.5 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-300" />
-          </span>
-          ◉ {badge}
-        </div>
-
-        {/* Título estático */}
-        <h1 className="font-display font-black uppercase leading-[0.88] tracking-tight text-white"
-          style={{ fontSize: 'clamp(3.2rem,7.5vw,6.5rem)' }}>
-          {titleWords.map((word, i) => (
-            <div
-              key={i}
-              className="block"
-              style={i === Math.floor(titleWords.length / 2) ? {
-                background: 'linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              } : {}}
-            >
-              {word}
-            </div>
-          ))}
-        </h1>
-
-        {/* Accent separator */}
-        <div className="my-6 h-[2px] w-24 bg-gradient-to-r from-violet-500 via-cyan-500 to-transparent" />
-
-        {/* Subtitle */}
-        <p className="max-w-md text-[15px] leading-[1.65] text-zinc-300/75 md:text-base xl:text-lg">
-          {subtitle}
-        </p>
-
-        {/* CTA group */}
-        <div className="pointer-events-auto mt-8 flex flex-col items-start gap-3">
-          <a
-            href={ctaHref}
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl border border-violet-400/30 bg-gradient-to-b from-violet-500 to-violet-700 px-8 py-4 text-base font-bold text-white shadow-[0_0_40px_rgba(139,92,246,.4),inset_0_1px_0_rgba(255,255,255,.15)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_72px_rgba(139,92,246,.7)]"
+          {/* Título */}
+          <h1
+            className="font-display font-black uppercase leading-[0.88] tracking-tight text-white"
+            style={{ fontSize: 'clamp(2.8rem, 7vw, 6rem)' }}
           >
-            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-            <span className="relative">{ctaLabel}</span>
-          </a>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
-            {priceLabel}
-          </span>
+            {titleWords.map((word, i) => (
+              <div
+                key={i}
+                className="block"
+                style={i === Math.floor(titleWords.length / 2) ? {
+                  background: 'linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                } : {}}
+              >
+                {word}
+              </div>
+            ))}
+          </h1>
+
+          {/* Linha separadora */}
+          <div className="my-5 h-[2px] w-20 bg-gradient-to-r from-violet-500 via-cyan-500 to-transparent lg:mx-0" />
+
+          {/* Subtitle */}
+          <p className="max-w-sm text-[15px] leading-relaxed text-zinc-400 md:text-base">
+            {subtitle}
+          </p>
+
+          {/* CTA */}
+          <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
+            <a
+              href={ctaHref}
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl border border-violet-400/30 bg-gradient-to-b from-violet-500 to-violet-700 px-8 py-4 text-base font-bold text-white shadow-[0_0_40px_rgba(139,92,246,.4),inset_0_1px_0_rgba(255,255,255,.15)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_72px_rgba(139,92,246,.65)]"
+            >
+              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+              <span className="relative">{ctaLabel}</span>
+            </a>
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-600">
+              {priceLabel}
+            </span>
+          </div>
+
+          {/* Métricas */}
+          <div className="mt-8 flex items-center gap-6 border-t border-white/[0.06] pt-6">
+            <Metric value="23K+" label="Anúncios/dia" />
+            <div className="h-5 w-px bg-white/10" />
+            <Metric value="15" label="Plataformas" />
+            <div className="h-5 w-px bg-white/10" />
+            <Metric value="0–100" label="Score viral" />
+          </div>
         </div>
 
-        {/* HUD metrics */}
-        <div className="mt-8 flex items-center gap-7 border-t border-white/[0.06] pt-6">
-          <Metric value="23K+" label="Anúncios/dia" />
-          <div className="h-5 w-px bg-white/10" />
-          <Metric value="15" label="Plataformas" />
-          <div className="h-5 w-px bg-white/10" />
-          <Metric value="0–100" label="Score viral" />
+        {/* ─ COLUNA DIREITA: scanner ─ */}
+        <div className="flex w-full items-center justify-center lg:w-1/2 lg:justify-end">
+          {/* Glow atrás do card no desktop */}
+          <div className="pointer-events-none absolute right-0 hidden h-[500px] w-[500px] rounded-full bg-violet-600/8 blur-[80px] lg:block" />
+          <MetaAdScanner className="w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[400px]" />
         </div>
       </div>
 
-      {/* ── Scroll CTA ── */}
+      {/* ── Scroll hint ── */}
       <button
-        className="hero-explore-btn"
-        style={{ animationDelay: '2.4s' }}
+        className="absolute bottom-8 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-600 transition hover:text-violet-400 lg:flex"
         onClick={() => document.querySelector('#problema')?.scrollIntoView({ behavior: 'smooth' })}
       >
-        Como funciona
-        <span className="hero-explore-arrow">
-          <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="hero-arrow-svg">
-            <path d="M11 5V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <path d="M6 12L11 17L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </span>
+        <span>Como funciona</span>
+        <svg width="16" height="16" viewBox="0 0 22 22" fill="none" className="animate-bounce">
+          <path d="M11 5V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M6 12L11 17L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
       </button>
 
     </div>
