@@ -50,27 +50,7 @@ export const HeroFuturistic = ({
   priceLabel = 'Mensal · R$29,90 · Cancele quando quiser',
   badge = 'EXTENSÃO CHROME · v1.3.0',
 }: HeroFuturisticProps) => {
-  const [visibleWords, setVisibleWords] = useState(0);
-  const [subtitleVisible, setSubtitleVisible] = useState(false);
-  const [ctaVisible, setCtaVisible] = useState(false);
-  const [delays, setDelays] = useState<number[]>([]);
-  const [subtitleDelay, setSubtitleDelay] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    setDelays(titleWords.map(() => Math.random() * 0.07));
-    setSubtitleDelay(Math.random() * 0.1);
-  }, [titleWords.length]);
-
-  useEffect(() => {
-    if (visibleWords < titleWords.length) {
-      const t = setTimeout(() => setVisibleWords(v => v + 1), 400);
-      return () => clearTimeout(t);
-    }
-    const s = setTimeout(() => setSubtitleVisible(true), 500);
-    const c = setTimeout(() => setCtaVisible(true), 1200);
-    return () => { clearTimeout(s); clearTimeout(c); };
-  }, [visibleWords, titleWords.length]);
 
   /* ── scroll blur progressivo — hero sticky, blur ao longo de TODA a rolagem ── */
   useEffect(() => {
@@ -134,37 +114,26 @@ export const HeroFuturistic = ({
       <div className="pointer-events-none absolute inset-y-0 left-0 z-30 flex w-full flex-col justify-center px-8 md:px-14 lg:max-w-[58%] xl:px-20 2xl:px-28">
 
         {/* Status badge */}
-        <div
-          className={`mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-violet-300 backdrop-blur-sm transition-all duration-700 ${
-            subtitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
-          }`}
-        >
+        <div className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-violet-300 backdrop-blur-sm">
           <span className="relative flex h-1.5 w-1.5 shrink-0">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-300" />
           </span>
           ◉ {badge}
-          <Cursor />
         </div>
 
-        {/* Stacked title — one word per line for impact */}
+        {/* Título estático */}
         <h1 className="font-display font-black uppercase leading-[0.88] tracking-tight text-white"
           style={{ fontSize: 'clamp(3.2rem,7.5vw,6.5rem)' }}>
           {titleWords.map((word, i) => (
             <div
               key={i}
-              className={`block ${i < visibleWords ? 'hero-fade-in' : ''}`}
-              style={{
-                animationDelay: `${i * 0.12 + (delays[i] || 0)}s`,
-                opacity: i < visibleWords ? undefined : 0,
-                ...(i === Math.floor(titleWords.length / 2)
-                  ? {
-                      background: 'linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    }
-                  : {}),
-              }}
+              className="block"
+              style={i === Math.floor(titleWords.length / 2) ? {
+                background: 'linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              } : {}}
             >
               {word}
             </div>
@@ -172,32 +141,15 @@ export const HeroFuturistic = ({
         </h1>
 
         {/* Accent separator */}
-        <div
-          className={`my-6 h-[2px] bg-gradient-to-r from-violet-500 via-cyan-500 to-transparent transition-all duration-1000 ${
-            subtitleVisible ? 'opacity-100 w-24' : 'opacity-0 w-4'
-          }`}
-          style={{ transitionDelay: '150ms' }}
-        />
+        <div className="my-6 h-[2px] w-24 bg-gradient-to-r from-violet-500 via-cyan-500 to-transparent" />
 
         {/* Subtitle */}
-        <p
-          className={`max-w-md text-[15px] leading-[1.65] text-zinc-300/75 md:text-base xl:text-lg ${
-            subtitleVisible ? 'hero-fade-in-subtitle' : ''
-          }`}
-          style={{
-            animationDelay: `${titleWords.length * 0.12 + 0.1 + subtitleDelay}s`,
-            opacity: subtitleVisible ? undefined : 0,
-          }}
-        >
+        <p className="max-w-md text-[15px] leading-[1.65] text-zinc-300/75 md:text-base xl:text-lg">
           {subtitle}
         </p>
 
         {/* CTA group */}
-        <div
-          className={`pointer-events-auto mt-8 flex flex-col items-start gap-3 transition-all duration-700 ${
-            ctaVisible ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
-          }`}
-        >
+        <div className="pointer-events-auto mt-8 flex flex-col items-start gap-3">
           <a
             href={ctaHref}
             className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl border border-violet-400/30 bg-gradient-to-b from-violet-500 to-violet-700 px-8 py-4 text-base font-bold text-white shadow-[0_0_40px_rgba(139,92,246,.4),inset_0_1px_0_rgba(255,255,255,.15)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_72px_rgba(139,92,246,.7)]"
@@ -211,12 +163,7 @@ export const HeroFuturistic = ({
         </div>
 
         {/* HUD metrics */}
-        <div
-          className={`mt-8 flex items-center gap-7 border-t border-white/[0.06] pt-6 transition-all duration-700 ${
-            ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
-          }`}
-          style={{ transitionDelay: '250ms' }}
-        >
+        <div className="mt-8 flex items-center gap-7 border-t border-white/[0.06] pt-6">
           <Metric value="23K+" label="Anúncios/dia" />
           <div className="h-5 w-px bg-white/10" />
           <Metric value="15" label="Plataformas" />
