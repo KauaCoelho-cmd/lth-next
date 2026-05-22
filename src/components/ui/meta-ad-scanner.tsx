@@ -109,7 +109,7 @@ function AdCard({ ad, visible, scanProgress }: {
       }}
     >
       {/* imagem produto */}
-      <div className={cn('relative h-24 w-full bg-gradient-to-br overflow-hidden', ad.gradient)}>
+      <div className={cn('relative h-16 w-full bg-gradient-to-br overflow-hidden', ad.gradient)}>
         {/* overlay escuro no bottom */}
         <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#0d0d1a] to-transparent" />
 
@@ -137,13 +137,13 @@ function AdCard({ ad, visible, scanProgress }: {
       </div>
 
       {/* corpo */}
-      <div className="p-3">
-        <p className="mb-1.5 truncate text-xs font-semibold text-slate-200">{ad.product}</p>
+      <div className="p-2.5">
+        <p className="mb-1 truncate text-[11px] font-semibold text-slate-200">{ad.product}</p>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-1">
           {/* preço */}
           <span className={cn(
-            'font-mono text-sm font-black transition-colors duration-500',
+            'font-mono text-xs font-black transition-colors duration-500',
             isScanned && ad.isLowTicket ? 'text-green-400' : 'text-slate-300',
           )}>
             {isScanned ? <TypewriterPrice price={ad.price} active={isScanned} /> : '···'}
@@ -151,7 +151,7 @@ function AdCard({ ad, visible, scanProgress }: {
 
           {/* score */}
           <div className={cn(
-            'flex items-center gap-1 rounded-lg px-2 py-0.5 font-mono text-[11px] font-black transition-all duration-500',
+            'flex items-center gap-0.5 rounded px-1.5 py-0.5 font-mono text-[10px] font-black transition-all duration-500',
             isScanned
               ? ad.score >= 80
                 ? 'bg-green-500/20 text-green-400'
@@ -160,16 +160,16 @@ function AdCard({ ad, visible, scanProgress }: {
                 : 'bg-zinc-500/20 text-zinc-400'
               : 'bg-white/5 text-zinc-600',
           )}>
-            <span className="text-[8px] font-normal opacity-70">SCORE</span>
+            <span className="text-[7px] font-normal opacity-70">▲</span>
             <AnimatedScore target={isScanned ? ad.score : 0} active={isScanned} />
           </div>
         </div>
 
         {/* LOW TICKET badge */}
         {isScanned && ad.isLowTicket && (
-          <div className="mt-2 flex items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 rounded-md bg-green-500/15 px-2 py-0.5 font-mono text-[9px] font-bold text-green-400 ring-1 ring-green-500/30">
-              ✓ LOW TICKET
+          <div className="mt-1.5">
+            <span className="inline-flex items-center gap-1 rounded bg-green-500/15 px-1.5 py-0.5 font-mono text-[8px] font-bold text-green-400 ring-1 ring-green-500/30">
+              ✓ LT
             </span>
           </div>
         )}
@@ -228,26 +228,25 @@ export function MetaAdScanner({ className }: { className?: string }) {
       {/* moldura browser chrome */}
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d1a] shadow-[0_0_60px_rgba(139,92,246,0.15)]">
 
-        {/* barra de URL falsa */}
-        <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
-          <div className="flex gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
+        {/* barra de URL */}
+        <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-3 py-2">
+          <div className="flex gap-1">
+            <span className="h-2 w-2 rounded-full bg-red-500/70" />
+            <span className="h-2 w-2 rounded-full bg-yellow-500/70" />
+            <span className="h-2 w-2 rounded-full bg-green-500/70" />
           </div>
-          <div className="flex flex-1 items-center gap-1.5 rounded-md bg-white/5 px-3 py-1">
-            <span className="font-mono text-[10px] text-zinc-500">🔒</span>
-            <span className="font-mono text-[10px] text-zinc-500">facebook.com/ads/library</span>
+          <div className="flex flex-1 items-center gap-1 rounded bg-white/5 px-2 py-0.5 min-w-0">
+            <span className="font-mono text-[9px] text-zinc-500 shrink-0">🔒</span>
+            <span className="font-mono text-[9px] text-zinc-500 truncate">facebook.com/ads/library</span>
           </div>
-          {/* badge hunter x ativo */}
-          <div className="flex items-center gap-1 rounded-md bg-violet-600/80 px-2 py-1">
-            <span className="font-mono text-[9px] font-bold text-white">HX</span>
+          <div className="flex shrink-0 items-center gap-1 rounded bg-violet-600/80 px-1.5 py-0.5">
+            <span className="font-mono text-[8px] font-bold text-white">HX</span>
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
           </div>
         </div>
 
         {/* área dos anúncios */}
-        <div className="relative p-3">
+        <div className="relative p-2.5">
 
           {/* linha de scan ciano */}
           <div
@@ -255,21 +254,21 @@ export function MetaAdScanner({ className }: { className?: string }) {
             style={{ top: scanY }}
           >
             <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-90 shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
-            <div className="h-8 w-full bg-gradient-to-b from-cyan-400/10 to-transparent" />
+            <div className="h-6 w-full bg-gradient-to-b from-cyan-400/10 to-transparent" />
           </div>
 
-          {/* header da biblioteca */}
-          <div className="mb-3 flex items-center justify-between">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+          {/* header */}
+          <div className="mb-2 flex items-center justify-between">
+            <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-zinc-500">
               Biblioteca de Anúncios
             </span>
-            <span className="font-mono text-[9px] text-violet-400">
-              {visible ? '2.847 anúncios' : '···'}
+            <span className="font-mono text-[8px] text-violet-400">
+              {visible ? '2.847' : '···'}
             </span>
           </div>
 
-          {/* grid 2×2 */}
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* grid — 2 colunas em qualquer tamanho */}
+          <div className="grid grid-cols-2 gap-2">
             {ADS.map((ad) => (
               <AdCard
                 key={ad.id}
@@ -280,13 +279,13 @@ export function MetaAdScanner({ className }: { className?: string }) {
             ))}
           </div>
 
-          {/* rodapé de status */}
-          <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3">
+          {/* rodapé */}
+          <div className="mt-2 flex items-center justify-between border-t border-white/5 pt-2">
             <div className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
-              <span className="font-mono text-[9px] text-green-400">Hunter X ativo</span>
+              <span className="font-mono text-[8px] text-green-400">Hunter X ativo</span>
             </div>
-            <span className="font-mono text-[9px] text-zinc-600">
+            <span className="font-mono text-[8px] text-zinc-600">
               {Math.round(scanProgress * 100)}% escaneado
             </span>
           </div>
