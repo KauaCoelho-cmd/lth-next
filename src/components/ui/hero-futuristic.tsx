@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { InteractiveRobotSpline } from '@/components/ui/interactive-3d-robot';
-
-const ROBOT_SCENE = "https://prod.spline.design/PyzDhpQ9E5f1E3MT/scene.splinecode";
+import { MetaAdScanner } from '@/components/ui/meta-ad-scanner';
 
 /* ─── HUD corner brackets (cyber frame) ─── */
 const CornerBrackets = () => (
@@ -93,20 +91,16 @@ export const HeroFuturistic = ({
       <div className="pointer-events-none absolute inset-x-0 top-[32%] z-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-[22%] z-0 h-px bg-gradient-to-r from-transparent via-violet-500/12 to-transparent" />
 
-      {/* ── Spline Robot — right side, fades left ── */}
-      <div className="absolute inset-0 z-0">
-        {/* Left-to-right fade so text area stays legible */}
+      {/* ── Meta Ad Scanner — lado direito ── */}
+      <div className="absolute inset-0 z-0 flex items-center justify-end pr-8 lg:pr-16">
         <div
           className="pointer-events-none absolute inset-0 z-10"
           style={{
             background:
-              'linear-gradient(to right, #0a0a14 28%, rgba(10,10,20,0.7) 44%, rgba(10,10,20,0.1) 62%, transparent 78%)',
+              'linear-gradient(to right, #0a0a14 30%, rgba(10,10,20,0.6) 48%, rgba(10,10,20,0.05) 68%, transparent 82%)',
           }}
         />
-        <InteractiveRobotSpline
-          scene={ROBOT_SCENE}
-          className="absolute inset-0 w-full h-full"
-        />
+        <MetaAdScanner className="relative z-0 w-full max-w-[340px] lg:max-w-[380px]" />
         <CornerBrackets />
       </div>
 
