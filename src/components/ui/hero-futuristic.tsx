@@ -1,157 +1,9 @@
 'use client';
 
-import { Canvas, extend, useFrame, useThree } from '@react-three/fiber';
-import { useAspect, useTexture } from '@react-three/drei';
-import { useMemo, useRef, useState, useEffect } from 'react';
-import * as THREE from 'three/webgpu';
-import { bloom } from 'three/examples/jsm/tsl/display/BloomNode.js';
-import { Mesh } from 'three';
+import { useState, useEffect } from 'react';
+import { InteractiveRobotSpline } from '@/components/ui/interactive-3d-robot';
 
-import {
-  abs,
-  blendScreen,
-  float,
-  mod,
-  mx_cell_noise_float,
-  oneMinus,
-  smoothstep,
-  texture,
-  uniform,
-  uv,
-  vec2,
-  vec3,
-  pass,
-  mix,
-  add,
-} from 'three/tsl';
-
-const DEFAULT_TEXTURE = 'https://i.postimg.cc/XYwvXN8D/img-4.png';
-const DEFAULT_DEPTH = 'https://i.postimg.cc/2SHKQh2q/raw-4.webp';
-
-extend(THREE as any);
-
-/* ─── Post-processing: bloom + violet scan-line ─── */
-const PostProcessing = ({
-  strength = 1,
-  threshold = 1,
-  fullScreenEffect = true,
-}: {
-  strength?: number;
-  threshold?: number;
-  fullScreenEffect?: boolean;
-}) => {
-  const { gl, scene, camera } = useThree();
-  const progressRef = useRef({ value: 0 });
-
-  const render = useMemo(() => {
-    const postProcessing = new THREE.PostProcessing(gl as any);
-    const scenePass = pass(scene, camera);
-    const scenePassColor = scenePass.getTextureNode('output');
-    const bloomPass = bloom(scenePassColor, strength, 0.5, threshold);
-
-    const uScanProgress = uniform(0);
-    progressRef.current = uScanProgress;
-
-    const scanPos = float(uScanProgress.value);
-    const uvY = uv().y;
-    const scanWidth = float(0.05);
-    const scanLine = smoothstep(0, scanWidth, abs(uvY.sub(scanPos)));
-    const violetOverlay = vec3(0.6, 0, 1.0).mul(oneMinus(scanLine)).mul(0.5);
-
-    const withScanEffect = mix(
-      scenePassColor,
-      add(scenePassColor, violetOverlay),
-      fullScreenEffect ? smoothstep(0.9, 1.0, oneMinus(scanLine)) : 1.0
-    );
-
-    const final = withScanEffect.add(bloomPass);
-    postProcessing.outputNode = final;
-    return postProcessing;
-  }, [camera, gl, scene, strength, threshold, fullScreenEffect]);
-
-  useFrame(({ clock }) => {
-    progressRef.current.value = Math.sin(clock.getElapsedTime() * 0.5) * 0.5 + 0.5;
-    render.renderAsync();
-  }, 1);
-
-  return null;
-};
-
-/* ─── Scene: depth-map parallax mesh ─── */
-const WIDTH = 300;
-const HEIGHT = 300;
-
-const Scene = ({ textureSrc, depthSrc }: { textureSrc: string; depthSrc: string }) => {
-  const [rawMap, depthMap] = useTexture([textureSrc, depthSrc]);
-  const meshRef = useRef<Mesh>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (rawMap && depthMap) setVisible(true);
-  }, [rawMap, depthMap]);
-
-  const { material, uniforms } = useMemo(() => {
-    const uPointer = uniform(new THREE.Vector2(0));
-    const uProgress = uniform(0);
-
-    const strength = 0.015;
-    const tDepthMap = texture(depthMap);
-
-    // Mouse parallax: depth map drives UV distortion
-    const tMap = texture(rawMap, uv().add(tDepthMap.r.mul(uPointer).mul(strength)));
-
-    const aspect = float(WIDTH).div(HEIGHT);
-    const tUv = vec2(uv().x.mul(aspect), uv().y);
-
-    const tiling = vec2(120.0);
-    const tiledUv = mod(tUv.mul(tiling), 2.0).sub(1.0);
-
-    const brightness = mx_cell_noise_float(tUv.mul(tiling).div(2));
-
-    const dist = float(tiledUv.length());
-    const dot = float(smoothstep(0.5, 0.49, dist)).mul(brightness);
-
-    const depth = tDepthMap.r;
-    const flow = oneMinus(smoothstep(0, 0.02, abs(depth.sub(uProgress))));
-    const mask = dot.mul(flow).mul(vec3(10, 0, 14));
-
-    const final = blendScreen(tMap, mask);
-
-    const material = new THREE.MeshBasicNodeMaterial({
-      colorNode: final,
-      transparent: true,
-      opacity: 0,
-    });
-
-    return { material, uniforms: { uPointer, uProgress } };
-  }, [rawMap, depthMap]);
-
-  const [w, h] = useAspect(WIDTH, HEIGHT);
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    uniforms.uProgress.value = Math.sin(t * 0.5) * 0.5 + 0.5;
-
-    if (meshRef.current) {
-      // Rotação 3D suave — oscila em Y e X sem virar de costas
-      meshRef.current.rotation.y = Math.sin(t * 0.25) * 0.35;
-      meshRef.current.rotation.x = Math.sin(t * 0.18) * 0.12;
-      // Leve flutuação vertical
-      meshRef.current.position.y = Math.sin(t * 0.4) * 0.05;
-
-      const mat = meshRef.current.material as any;
-      if ('opacity' in mat) mat.opacity = THREE.MathUtils.lerp(mat.opacity, visible ? 1 : 0, 0.05);
-    }
-  });
-
-  useFrame(({ pointer }) => { uniforms.uPointer.value = pointer; });
-
-  return (
-    <mesh ref={meshRef} scale={[w * 0.55, h * 0.55, 1]} material={material}>
-      <planeGeometry />
-    </mesh>
-  );
-};
+const ROBOT_SCENE = "https://prod.spline.design/PyzDhpQ9E5f1E3MT/scene.splinecode";
 
 /* ─── HUD corner brackets (cyber frame) ─── */
 const CornerBrackets = () => (
@@ -188,25 +40,22 @@ export interface HeroFuturisticProps {
   ctaHref?: string;
   priceLabel?: string;
   badge?: string;
-  textureSrc?: string;
-  depthSrc?: string;
 }
 
 export const HeroFuturistic = ({
   titleWords = ['VEJA', 'ANALISE', 'LUCRE'],
   subtitle = 'A primeira extensão Chrome que escaneia a Biblioteca do Meta em tempo real e revela os produtos low ticket que já estão escalando.',
-  ctaLabel = '🎯 Garantir acesso por R$29,90',
-  ctaHref = '#cta-final',
-  priceLabel = 'Pagamento único · Acesso vitalício · Sem mensalidade',
+  ctaLabel = '🎯 Ver planos',
+  ctaHref = '#planos',
+  priceLabel = 'Mensal · R$29,90 · Cancele quando quiser',
   badge = 'EXTENSÃO CHROME · v1.3.0',
-  textureSrc = DEFAULT_TEXTURE,
-  depthSrc = DEFAULT_DEPTH,
 }: HeroFuturisticProps) => {
   const [visibleWords, setVisibleWords] = useState(0);
   const [subtitleVisible, setSubtitleVisible] = useState(false);
   const [ctaVisible, setCtaVisible] = useState(false);
   const [delays, setDelays] = useState<number[]>([]);
   const [subtitleDelay, setSubtitleDelay] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     setDelays(titleWords.map(() => Math.random() * 0.07));
@@ -223,8 +72,33 @@ export const HeroFuturistic = ({
     return () => { clearTimeout(s); clearTimeout(c); };
   }, [visibleWords, titleWords.length]);
 
+  /* ── scroll blur progressivo — hero sticky, blur ao longo de TODA a rolagem ── */
+  useEffect(() => {
+    const onScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+      setScrollProgress(progress);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const blurPx     = scrollProgress * 28;        // até 28px de blur no final da página
+  const fadeOut    = 1 - scrollProgress * 0.88;  // opacidade mínima 12%
+  const scaleVal   = 1 - scrollProgress * 0.07;  // zoom-out suave até 93%
+  const translateY = scrollProgress * -50;        // sobe levemente
+
   return (
-    <div className="relative h-svh w-full overflow-hidden bg-[#0a0a14]">
+    <div
+      className="relative h-svh w-full overflow-hidden bg-[#0a0a14]"
+      style={{
+        filter: `blur(${blurPx}px)`,
+        opacity: fadeOut,
+        transform: `scale(${scaleVal}) translateY(${translateY}px)`,
+        transformOrigin: 'center top',
+        willChange: 'filter, opacity, transform',
+      }}
+    >
 
       {/* Dot grid background */}
       <div
@@ -239,27 +113,20 @@ export const HeroFuturistic = ({
       <div className="pointer-events-none absolute inset-x-0 top-[32%] z-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-[22%] z-0 h-px bg-gradient-to-r from-transparent via-violet-500/12 to-transparent" />
 
-      {/* ── WebGPU Canvas — right side, fades left ── */}
+      {/* ── Spline Robot — right side, fades left ── */}
       <div className="absolute inset-0 z-0">
         {/* Left-to-right fade so text area stays legible */}
         <div
           className="pointer-events-none absolute inset-0 z-10"
           style={{
             background:
-              'linear-gradient(to right, #0a0a14 25%, rgba(10,10,20,0.65) 42%, rgba(10,10,20,0.05) 62%, transparent 78%)',
+              'linear-gradient(to right, #0a0a14 28%, rgba(10,10,20,0.7) 44%, rgba(10,10,20,0.1) 62%, transparent 78%)',
           }}
         />
-        <Canvas
-          flat
-          gl={async (props) => {
-            const renderer = new THREE.WebGPURenderer(props as any);
-            await renderer.init();
-            return renderer;
-          }}
-        >
-          <PostProcessing fullScreenEffect />
-          <Scene textureSrc={textureSrc} depthSrc={depthSrc} />
-        </Canvas>
+        <InteractiveRobotSpline
+          scene={ROBOT_SCENE}
+          className="absolute inset-0 w-full h-full"
+        />
         <CornerBrackets />
       </div>
 

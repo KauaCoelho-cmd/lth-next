@@ -28,6 +28,7 @@ import {
   Download,
 } from "lucide-react";
 import { HeroFuturisticWrapper as HeroFuturistic } from "@/components/demo/hero-futuristic-wrapper";
+import { PricingWithChart } from "@/components/ui/pricing-with-chart";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -49,8 +50,8 @@ const nichos = [
 const trust = [
   { icon: Shield,   title: "100% local",       desc: "Nada vai para servidor externo. Seus dados ficam só no seu PC." },
   { icon: UserX,    title: "Sem cadastro",      desc: "Não precisa criar conta, fazer login ou fornecer e-mail." },
-  { icon: CreditCard, title: "Sem renovação",  desc: "Pagamento único. Nunca terá cobrança surpresa na sua fatura." },
-  { icon: Infinity, title: "Acesso vitalício", desc: "Atualizações inclusas. Pague uma vez, use para sempre." },
+  { icon: CreditCard, title: "Chave por email",  desc: "Receba sua chave de acesso imediatamente após o pagamento." },
+  { icon: Infinity, title: "Cancele quando quiser", desc: "Sem fidelidade. Cancele a qualquer momento sem burocracia." },
 ];
 
 const platforms = [
@@ -90,25 +91,28 @@ export default function Home() {
             <span className="rounded bg-violet-600 px-1.5 py-0.5 text-[10px] text-white">v1.3.0</span>
           </a>
           <a
-            href="#cta-final"
+            href="#planos"
             className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] transition hover:bg-violet-700"
           >
-            Garantir acesso · R$29,90
+            Ver planos
           </a>
         </div>
       </nav>
 
-      {/* ─── HERO ─── */}
-      <section id="hero" className="relative">
+      {/* ─── HERO sticky — fica no fundo enquanto o conteúdo rola por cima ─── */}
+      <section id="hero" className="sticky top-0 z-0 h-svh">
         <HeroFuturistic
           titleWords={["VEJA", "ANALISE", "LUCRE"]}
           subtitle="A primeira extensão Chrome que escaneia a Biblioteca de Anúncios do Meta em tempo real e revela os produtos low ticket que já estão escalando."
-          ctaLabel="Garantir acesso por R$29,90"
-          ctaHref="#cta-final"
-          priceLabel="Pagamento único · Acesso vitalício · Sem mensalidade"
+          ctaLabel="🎯 Ver planos e preços"
+          ctaHref="#planos"
+          priceLabel="Mensal · R$29,90 · Cancele quando quiser"
           badge="EXTENSÃO CHROME · v1.3.0"
         />
       </section>
+
+      {/* ─── CONTEÚDO — rola por cima do hero fixo ─── */}
+      <div className="relative z-10 bg-[#0a0a14]">
 
       {/* ─── BEFORE / AFTER ─── */}
       <section id="problema" className="mx-auto max-w-6xl px-5 py-24">
@@ -230,7 +234,7 @@ export default function Home() {
                   "3h/semana × 4 semanas = 12h/mês desperdiçadas",
                   <>Com a extensão, você faz isso em <strong className="text-violet-400">minutos</strong></>,
                   <>R$29,90 ÷ 30 dias = <strong className="text-violet-400">menos de R$1 por dia no 1º mês</strong></>,
-                  <>Depois? <strong className="text-violet-400">Seu para sempre. Sem mais cobranças.</strong></>,
+                  <>Anual? <strong className="text-violet-400">R$197 e economize R$161 no ano.</strong></>,
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-2">
                     <ArrowRight className="h-3 w-3 shrink-0 text-cyan-400" />
@@ -239,14 +243,27 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-violet-500/30 bg-[#0a0a14] p-8 text-center shadow-[0_0_40px_rgba(139,92,246,.15)]">
-              <div className="mb-1 font-mono text-xs text-zinc-500">De</div>
-              <div className="font-mono text-lg text-zinc-500 line-through">R$97,00</div>
-              <div className="font-mono text-5xl font-black text-violet-400">R$29,90</div>
-              <div className="mt-1 font-mono text-xs text-zinc-500">Pagamento único · Vitalício</div>
-              <a href="#cta-final" className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-3 text-sm font-bold text-white shadow-[0_0_24px_rgba(139,92,246,.3)] transition hover:opacity-90 hover:-translate-y-0.5">
-                <Target className="h-4 w-4" /> Quero agora
-              </a>
+            <div className="flex flex-col gap-4">
+              {/* Mensal */}
+              <div className="rounded-2xl border border-violet-500/30 bg-[#0a0a14] p-6 text-center shadow-[0_0_40px_rgba(139,92,246,.15)]">
+                <div className="mb-1 font-mono text-xs text-zinc-500">Mensal</div>
+                <div className="font-mono text-4xl font-black text-violet-400">R$29,90</div>
+                <div className="mt-1 font-mono text-xs text-zinc-500">por mês · cancele quando quiser</div>
+                <a href="https://pay.hotmart.com/T105952095U?off=cin50me1" target="_blank" rel="noopener" className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-violet-600/80 px-6 py-2.5 text-sm font-bold text-white transition hover:opacity-90 hover:-translate-y-0.5">
+                  <Target className="h-4 w-4" /> Assinar mensal
+                </a>
+              </div>
+              {/* Anual */}
+              <div className="rounded-2xl border border-violet-400/50 bg-[#0a0a14] p-6 text-center shadow-[0_0_50px_rgba(139,92,246,.25)] relative overflow-hidden">
+                <div className="absolute inset-x-[20%] top-0 h-px bg-gradient-to-r from-transparent via-violet-400/80 to-transparent" />
+                <span className="mb-2 inline-block rounded bg-violet-600 px-2 py-0.5 font-mono text-[10px] font-bold text-white uppercase tracking-widest">Melhor valor</span>
+                <div className="mb-1 font-mono text-xs text-zinc-500">Anual</div>
+                <div className="font-mono text-4xl font-black text-violet-300">R$197</div>
+                <div className="mt-1 font-mono text-xs text-green-400 font-bold">Economize R$161 no ano</div>
+                <a href="https://pay.hotmart.com/T105952095U?off=ypv6j9yv" target="_blank" rel="noopener" className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-2.5 text-sm font-bold text-white shadow-[0_0_24px_rgba(139,92,246,.4)] transition hover:opacity-90 hover:-translate-y-0.5">
+                  <Target className="h-4 w-4" /> Assinar anual
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -310,6 +327,13 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ─── PRICING ─── */}
+      <section id="planos" className="border-t border-white/5 bg-[#0a0a14] py-24">
+        <div className="mx-auto max-w-6xl px-5">
+          <PricingWithChart />
+        </div>
+      </section>
+
       {/* ─── CTA FINAL ─── */}
       <section
         id="cta-final"
@@ -326,18 +350,34 @@ export default function Home() {
               Chega de garimpar no{" "}
               <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">escuro.</span>
             </h2>
-            <p className="mb-8 text-zinc-400">Por R$29,90 você tem acesso vitalício à ferramenta que mostra o que está escalando agora — direto na Biblioteca do Meta.</p>
-            <div className="mb-8 flex items-center justify-center gap-4 font-mono">
-              <span className="text-lg text-zinc-500 line-through">R$97,00</span>
-              <span className="text-5xl font-black text-violet-400">R$29,90</span>
-              <span className="rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-400">Único</span>
+            <p className="mb-8 text-zinc-400">Escolha o plano ideal e receba sua chave de acesso imediatamente por email — direto na Biblioteca do Meta.</p>
+
+            {/* Planos */}
+            <div className="mb-8 flex flex-col sm:flex-row items-stretch justify-center gap-4">
+              {/* Mensal */}
+              <div className="flex flex-col items-center rounded-2xl border border-violet-500/25 bg-violet-500/[.05] px-8 py-6 min-w-[200px]">
+                <span className="font-mono text-xs text-zinc-500 mb-1">Mensal</span>
+                <span className="font-mono text-4xl font-black text-violet-400">R$29,90</span>
+                <span className="font-mono text-xs text-zinc-500 mt-1 mb-4">/mês</span>
+                <a href="https://pay.hotmart.com/T105952095U?off=cin50me1" target="_blank" rel="noopener" className="inline-flex items-center gap-2 rounded-xl bg-violet-600/80 px-7 py-3 text-sm font-black text-white transition hover:opacity-90 hover:-translate-y-0.5">
+                  <Target className="h-4 w-4" /> Assinar mensal
+                </a>
+              </div>
+              {/* Anual */}
+              <div className="relative flex flex-col items-center rounded-2xl border border-violet-400/50 bg-violet-500/[.08] px-8 py-6 min-w-[200px] shadow-[0_0_50px_rgba(139,92,246,.2)] overflow-hidden">
+                <div className="absolute inset-x-[15%] top-0 h-px bg-gradient-to-r from-transparent via-violet-400/80 to-transparent" />
+                <span className="mb-1 rounded bg-violet-600 px-2.5 py-0.5 font-mono text-[10px] font-bold text-white uppercase tracking-widest">Melhor valor</span>
+                <span className="font-mono text-xs text-zinc-500 mb-1">Anual</span>
+                <span className="font-mono text-4xl font-black text-violet-300">R$197</span>
+                <span className="font-mono text-xs text-green-400 font-bold mt-1 mb-4">Economize R$161/ano</span>
+                <a href="https://pay.hotmart.com/T105952095U?off=ypv6j9yv" target="_blank" rel="noopener" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-7 py-3 text-sm font-black text-white shadow-[0_0_30px_rgba(139,92,246,.4)] transition hover:opacity-90 hover:-translate-y-0.5 hover:shadow-[0_0_50px_rgba(139,92,246,.65)]">
+                  <Target className="h-4 w-4" /> Assinar anual
+                </a>
+              </div>
             </div>
-            <a href="#" className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-10 py-5 text-lg font-black text-white shadow-[0_0_50px_rgba(139,92,246,.45)] transition hover:opacity-90 hover:-translate-y-1 hover:shadow-[0_0_72px_rgba(139,92,246,.65)]">
-              <Target className="h-5 w-5" />
-              Garantir meu acesso agora
-            </a>
-            <div className="mt-5 flex flex-wrap justify-center gap-4 font-mono text-xs text-zinc-500">
-              {["Pagamento único","Acesso vitalício","Sem mensalidade","100% local"].map((g) => (
+
+            <div className="flex flex-wrap justify-center gap-4 font-mono text-xs text-zinc-500">
+              {["Chave por email","Cancele quando quiser","100% local","Sem cadastro"].map((g) => (
                 <span key={g} className="flex items-center gap-1.5">
                   <CheckCircle className="h-3 w-3 text-violet-500" /> {g}
                 </span>
@@ -355,6 +395,8 @@ export default function Home() {
         </p>
         <p className="mt-2 font-mono text-xs text-zinc-700">Este produto não é afiliado, endossado ou patrocinado pelo Meta Platforms, Inc.</p>
       </footer>
+
+      </div>{/* fim do wrapper z-10 */}
     </main>
   );
 }
