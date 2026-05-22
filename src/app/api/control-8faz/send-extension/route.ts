@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { error } = await resend.emails.send({
-    from: 'Hunter X <noreply@hunterx.site>',
+    from: process.env.EMAIL_FROM ?? 'Hunter X <onboarding@resend.dev>',
     to: email,
     subject: '🎯 Sua extensão Hunter X está pronta!',
     html: `
