@@ -99,8 +99,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* ─── HERO sticky — fica no fundo enquanto o conteúdo rola por cima ─── */}
-      <section id="hero" className="sticky top-0 z-0 h-svh">
+      {/* ─── HERO ─── */}
+      <section id="hero">
         <HeroFuturistic
           titleWords={["VEJA", "ANALISE", "LUCRE"]}
           subtitle="A primeira extensão Chrome que escaneia a Biblioteca de Anúncios do Meta em tempo real e revela os produtos low ticket que já estão escalando."
@@ -111,8 +111,7 @@ export default function Home() {
         />
       </section>
 
-      {/* ─── CONTEÚDO — rola por cima do hero fixo ─── */}
-      <div className="relative z-10 bg-[#0a0a14]">
+      <div>
 
       {/* ─── BEFORE / AFTER ─── */}
       <section id="problema" className="mx-auto max-w-6xl px-5 py-24">

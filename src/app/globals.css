@@ -130,6 +130,12 @@
   }
 }
 
+/* ───────── Scanner — cards subindo em loop (mobile) ───────── */
+@keyframes scroll-up {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
 /* ───────── Hero Futuristic — animations & explore button ───────── */
 @keyframes hero-fade-in {
   0% {

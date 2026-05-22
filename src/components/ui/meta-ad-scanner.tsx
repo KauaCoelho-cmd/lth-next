@@ -269,25 +269,20 @@ export function MetaAdScanner({ className }: { className?: string }) {
             </span>
           </div>
 
-          {/* mobile: 2 cards / desktop: 4 cards */}
-          <div className="grid grid-cols-2 gap-2">
-            {ADS.slice(0, 2).map((ad) => (
-              <AdCard
-                key={ad.id}
-                ad={ad}
-                visible={visible}
-                scanProgress={scanProgress}
-              />
+          {/* desktop: grid 2x2 */}
+          <div className="hidden sm:grid grid-cols-2 gap-2">
+            {ADS.map((ad) => (
+              <AdCard key={ad.id} ad={ad} visible={visible} scanProgress={scanProgress} />
             ))}
-            {ADS.slice(2).map((ad) => (
-              <AdCard
-                key={ad.id}
-                ad={ad}
-                visible={visible}
-                scanProgress={scanProgress}
-                className="hidden sm:block"
-              />
-            ))}
+          </div>
+
+          {/* mobile: coluna única subindo em loop */}
+          <div className="sm:hidden overflow-hidden" style={{ height: '260px' }}>
+            <div className="flex flex-col gap-2 animate-[scroll-up_6s_linear_infinite]">
+              {[...ADS, ...ADS].map((ad, i) => (
+                <AdCard key={i} ad={ad} visible={visible} scanProgress={scanProgress} />
+              ))}
+            </div>
           </div>
 
           {/* rodapé */}

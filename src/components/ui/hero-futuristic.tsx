@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { MetaAdScanner } from '@/components/ui/meta-ad-scanner';
 import { NeonButton } from '@/components/ui/neon-button';
 
@@ -49,36 +49,9 @@ export const HeroFuturistic = ({
   priceLabel = 'Mensal · R$29,90 · Cancele quando quiser',
   badge = 'EXTENSÃO CHROME · v1.3.0',
 }: HeroFuturisticProps) => {
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  /* ── scroll blur progressivo — hero sticky, blur ao longo de TODA a rolagem ── */
-  useEffect(() => {
-    const onScroll = () => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
-      setScrollProgress(progress);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const blurPx     = scrollProgress * 28;        // até 28px de blur no final da página
-  const fadeOut    = 1 - scrollProgress * 0.88;  // opacidade mínima 12%
-  const scaleVal   = 1 - scrollProgress * 0.07;  // zoom-out suave até 93%
-  const translateY = scrollProgress * -50;        // sobe levemente
 
   return (
-    <div
-      className="relative w-full overflow-hidden bg-[#0a0a14]"
-      style={{
-        filter: `blur(${blurPx}px)`,
-        opacity: fadeOut,
-        transform: `scale(${scaleVal}) translateY(${translateY}px)`,
-        transformOrigin: 'center top',
-        willChange: 'filter, opacity, transform',
-        minHeight: '100svh',
-      }}
-    >
+    <div className="relative w-full overflow-hidden bg-[#0a0a14]" style={{ minHeight: '100svh' }}>
       {/* Dot grid */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.04]"
