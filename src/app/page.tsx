@@ -104,7 +104,7 @@ export default function Home() {
         <HeroFuturistic
           titleWords={["VEJA", "ANALISE", "LUCRE"]}
           subtitle="A primeira extensão Chrome que escaneia a Biblioteca de Anúncios do Meta em tempo real e revela os produtos low ticket que já estão escalando."
-          ctaLabel="🎯 Ver planos e preços"
+          ctaLabel="Ver planos"
           ctaHref="#planos"
           priceLabel="Mensal · R$29,90 · Cancele quando quiser"
           badge="EXTENSÃO CHROME · v1.3.0"
