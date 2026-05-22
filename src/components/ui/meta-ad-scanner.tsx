@@ -85,10 +85,11 @@ function TypewriterPrice({ price, active }: { price: string; active: boolean }) 
 }
 
 /* ── card individual ── */
-function AdCard({ ad, visible, scanProgress }: {
+function AdCard({ ad, visible, scanProgress, className }: {
   ad: typeof ADS[0];
   visible: boolean;
   scanProgress: number;
+  className?: string;
 }) {
   const cardTop = ad.id <= 2 ? 0 : 0.5;
   const isScanned = scanProgress > cardTop + 0.05;
@@ -101,6 +102,7 @@ function AdCard({ ad, visible, scanProgress }: {
         ad.isLowTicket && isScanned
           ? 'border-green-400/70 shadow-[0_0_20px_rgba(74,222,128,0.25)]'
           : 'border-white/10',
+        className,
       )}
       style={{
         transitionDelay: `${(ad.id - 1) * 180}ms`,
@@ -267,14 +269,23 @@ export function MetaAdScanner({ className }: { className?: string }) {
             </span>
           </div>
 
-          {/* grid — 2 colunas em qualquer tamanho */}
+          {/* mobile: 2 cards / desktop: 4 cards */}
           <div className="grid grid-cols-2 gap-2">
-            {ADS.map((ad) => (
+            {ADS.slice(0, 2).map((ad) => (
               <AdCard
                 key={ad.id}
                 ad={ad}
                 visible={visible}
                 scanProgress={scanProgress}
+              />
+            ))}
+            {ADS.slice(2).map((ad) => (
+              <AdCard
+                key={ad.id}
+                ad={ad}
+                visible={visible}
+                scanProgress={scanProgress}
+                className="hidden sm:block"
               />
             ))}
           </div>
