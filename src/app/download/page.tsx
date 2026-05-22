@@ -181,9 +181,34 @@ export default function DownloadPage() {
               </span>
             </button>
 
-            <p className="text-center font-mono text-[10px] text-zinc-600">
+            <p className="text-center font-mono text-[10px] text-zinc-600 mb-4">
               Compatível com Chrome, Brave e Edge · Grátis
             </p>
+
+            {/* Divisor */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-1 h-px bg-white/[0.06]" />
+              <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-700">ou</span>
+              <div className="flex-1 h-px bg-white/[0.06]" />
+            </div>
+
+            {/* Instalador automático Windows */}
+            <a
+              href="/instalar-hunter-x.bat"
+              download
+              className="group flex items-center gap-3 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 transition hover:border-cyan-500/30 hover:bg-cyan-500/5"
+            >
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-lg border border-cyan-500/20">
+                🖥️
+              </div>
+              <div className="flex-1 text-left">
+                <p className="font-mono text-xs font-bold text-white">Instalador automático</p>
+                <p className="font-mono text-[10px] text-zinc-600">Windows · 1 duplo-clique · instala sozinho</p>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-600 group-hover:text-cyan-400 transition">
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </a>
           </div>
         </div>
 
