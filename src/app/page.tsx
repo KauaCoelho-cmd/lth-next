@@ -1,0 +1,360 @@
+import {
+  Target,
+  Layers,
+  Flame,
+  BarChart2,
+  Calendar,
+  Tag,
+  Keyboard,
+  TrendingUp,
+  Heart,
+  Sparkles,
+  Shield,
+  UserX,
+  CreditCard,
+  Infinity,
+  Zap,
+  Wrench,
+  Lightbulb,
+  FolderOpen,
+  Lock,
+  Rocket,
+  Clock,
+  Eye,
+  XCircle,
+  CheckCircle,
+  ArrowRight,
+  Globe,
+  Download,
+} from "lucide-react";
+import { HeroFuturisticWrapper as HeroFuturistic } from "@/components/demo/hero-futuristic-wrapper";
+
+/* ─── Feature card data ─── */
+const features = [
+  { icon: Layers,     title: "Bordas coloridas por faixa",  desc: "Verde para low ticket (R$1–R$100) e laranja para mid ticket. Identificação visual instantânea.", tag: "Visual" },
+  { icon: Flame,      title: "Badge de validação",          desc: "1 chama após 7 dias no ar. 2 chamas após 30 dias. Quanto mais tempo, mais validado o produto.", tag: "Validação" },
+  { icon: BarChart2,  title: "Score viral 0–100",           desc: "Cada anúncio recebe uma pontuação baseada em tempo no ar, gatilhos de copy e sinais de escala.", tag: "Análise" },
+  { icon: Calendar,   title: "Dias rodando visíveis",       desc: "Veja exatamente há quantos dias cada anúncio está ativo. Use o slider para filtrar por tempo.", tag: "Filtro" },
+  { icon: Tag,        title: "Detecção de plataforma",      desc: "Hotmart, Kiwify, Eduzz, Monetizze, Shopee, Amazon, Shopify e mais 7 plataformas detectadas.", tag: "Inteligente" },
+  { icon: Keyboard,   title: "Atalhos de teclado",          desc: "L (só low) · S (escanear) · A (auto-scroll). HUD flutuante com contadores em tempo real.", tag: "Produtividade" },
+];
+
+const nichos = [
+  { icon: TrendingUp, name: "Renda Extra",      desc: "Métodos, renda online, afiliado, dropshipping." },
+  { icon: Zap,        name: "Saúde / Fitness",  desc: "Emagrecimento, dieta, treino e bem-estar." },
+  { icon: Heart,      name: "Relacionamento",   desc: "Reconquista, sedução, casamento." },
+  { icon: Sparkles,   name: "Espiritualidade",  desc: "Lei da atração, tarô, meditação." },
+];
+
+const trust = [
+  { icon: Shield,   title: "100% local",       desc: "Nada vai para servidor externo. Seus dados ficam só no seu PC." },
+  { icon: UserX,    title: "Sem cadastro",      desc: "Não precisa criar conta, fazer login ou fornecer e-mail." },
+  { icon: CreditCard, title: "Sem renovação",  desc: "Pagamento único. Nunca terá cobrança surpresa na sua fatura." },
+  { icon: Infinity, title: "Acesso vitalício", desc: "Atualizações inclusas. Pague uma vez, use para sempre." },
+];
+
+const platforms = [
+  "Hotmart","Kiwify","Eduzz","Monetizze","PerfectPay",
+  "Cakto","Pepper","Shopee","Mercado Livre","Amazon",
+  "Shopify","Yampi","Nuvemshop","Ticto","Lastlink",
+];
+
+const beforeItems = [
+  { icon: Clock,      text: "Horas garimpando manualmente cada anúncio" },
+  { icon: Eye,        text: "Sem saber o preço real do produto" },
+  { icon: Calendar,   text: "Sem saber há quantos dias o anúncio está rodando" },
+  { icon: Target,     text: "Chutando nicho e plataforma de venda" },
+  { icon: Layers,     text: "Lendo dezenas de anúncios sem padrão" },
+  { icon: TrendingUp, text: "Perdendo oportunidades enquanto outros escalam" },
+];
+
+const afterItems = [
+  { icon: Layers,    text: "Produtos low ticket destacados em verde automaticamente" },
+  { icon: Tag,       text: "Faixa de preço identificada em cada anúncio" },
+  { icon: Flame,     text: "Dias rodando com badge de validação após 7 dias" },
+  { icon: Target,    text: "Nicho e plataforma detectados automaticamente" },
+  { icon: BarChart2, text: "Score viral de 0 a 100 em cada anúncio" },
+  { icon: Download,  text: "Exporta em CSV/JSON com 1 clique" },
+];
+
+export default function Home() {
+  return (
+    <main className="relative overflow-x-hidden">
+
+      {/* ─── NAV ─── */}
+      <nav className="sticky top-0 z-50 border-b border-white/5 bg-[#0a0a14]/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+          <a href="#" className="flex items-center gap-2 font-mono text-sm font-bold">
+            <Target className="h-4 w-4 text-violet-400" />
+            <span className="text-slate-100">Low Ticket Hunter</span>
+            <span className="rounded bg-violet-600 px-1.5 py-0.5 text-[10px] text-white">v1.3.0</span>
+          </a>
+          <a
+            href="#cta-final"
+            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] transition hover:bg-violet-700"
+          >
+            Garantir acesso · R$29,90
+          </a>
+        </div>
+      </nav>
+
+      {/* ─── HERO ─── */}
+      <section id="hero" className="relative">
+        <HeroFuturistic
+          titleWords={["VEJA", "ANALISE", "LUCRE"]}
+          subtitle="A primeira extensão Chrome que escaneia a Biblioteca de Anúncios do Meta em tempo real e revela os produtos low ticket que já estão escalando."
+          ctaLabel="Garantir acesso por R$29,90"
+          ctaHref="#cta-final"
+          priceLabel="Pagamento único · Acesso vitalício · Sem mensalidade"
+          badge="EXTENSÃO CHROME · v1.3.0"
+        />
+      </section>
+
+      {/* ─── BEFORE / AFTER ─── */}
+      <section id="problema" className="mx-auto max-w-6xl px-5 py-24">
+        <div className="mb-4 text-center">
+          <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+            <Zap className="h-3 w-3" /> O problema real
+          </span>
+        </div>
+        <h2 className="mb-12 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+          Você passa horas na biblioteca{" "}
+          <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+            sem saber o que olhar.
+          </span>
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Sem a extensão */}
+          <div className="rounded-2xl border border-red-900/40 bg-red-950/20 p-8">
+            <span className="mb-5 inline-flex items-center gap-2 rounded border border-red-800/40 bg-red-900/20 px-3 py-1 font-mono text-[10px] font-bold tracking-widest text-red-400 uppercase">
+              <XCircle className="h-3 w-3" /> Sem a extensão
+            </span>
+            <ul className="space-y-3">
+              {beforeItems.map((item) => (
+                <li key={item.text} className="flex items-start gap-3 text-sm text-zinc-400">
+                  <item.icon className="mt-0.5 h-4 w-4 shrink-0 text-red-500/70" />
+                  <span>{item.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Com a extensão */}
+          <div className="rounded-2xl border border-violet-500/25 bg-violet-950/20 p-8">
+            <span className="mb-5 inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[10px] font-bold tracking-widest text-violet-400 uppercase">
+              <CheckCircle className="h-3 w-3" /> Com a extensão
+            </span>
+            <ul className="space-y-3">
+              {afterItems.map((item) => (
+                <li key={item.text} className="flex items-start gap-3 text-sm text-slate-200">
+                  <item.icon className="mt-0.5 h-4 w-4 shrink-0 text-violet-400" />
+                  <span>{item.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── HOW IT WORKS ─── */}
+      <section className="border-y border-white/5 bg-[#11111c] py-24">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="mb-4 text-center">
+            <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+              <Rocket className="h-3 w-3" /> Como funciona
+            </span>
+          </div>
+          <h2 className="mb-14 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+            3 passos. 2 minutos. Resultados imediatos.
+          </h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              { n: "1", Icon: Globe,   title: "Compre e instale no Chrome",       desc: "Processo simples em menos de 2 minutos. Sem cadastro obrigatório." },
+              { n: "2", Icon: Eye,      title: "Acesse a Biblioteca do Meta",       desc: "Abra facebook.com/ads/library normalmente. A extensão ativa automaticamente." },
+              { n: "3", Icon: BarChart2, title: "Veja os produtos em tempo real",  desc: "Low tickets em verde, mid tickets em laranja. Score, dias rodando e plataforma — tudo visível." },
+            ].map((s) => (
+              <div key={s.n} className="rounded-xl border border-white/5 bg-violet-500/[.04] p-8 text-center transition hover:border-violet-500/30">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-400">
+                  <s.Icon className="h-5 w-5" />
+                </div>
+                <div className="mb-3 font-mono text-xs font-bold tracking-widest text-violet-500/60 uppercase">Passo {s.n}</div>
+                <h3 className="mb-2 font-bold">{s.title}</h3>
+                <p className="text-sm text-zinc-400">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FEATURES ─── */}
+      <section className="mx-auto max-w-6xl px-5 py-24">
+        <div className="mb-4 text-center">
+          <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+            <Wrench className="h-3 w-3" /> Funcionalidades
+          </span>
+        </div>
+        <h2 className="mb-14 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+          Tudo que você precisa para{" "}
+          <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">garimpar como profissional.</span>
+        </h2>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f) => (
+            <div key={f.title} className="group relative overflow-hidden rounded-xl border border-white/5 bg-[#17172a]/60 p-7 transition hover:-translate-y-1 hover:border-violet-500/35 hover:shadow-[0_8px_32px_rgba(139,92,246,.12)]">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent opacity-0 transition group-hover:opacity-100" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-violet-500/20 bg-violet-500/10">
+                <f.icon className="h-5 w-5 text-violet-400" />
+              </div>
+              <h3 className="mb-2 font-bold">{f.title}</h3>
+              <p className="mb-4 text-sm leading-relaxed text-zinc-400">{f.desc}</p>
+              <span className="inline-block rounded border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold tracking-widest text-violet-400 uppercase">{f.tag}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── PRICE ANCHOR ─── */}
+      <section className="border-y border-white/5 bg-[#11111c] py-24">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="mb-4 text-center">
+            <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+              <Lightbulb className="h-3 w-3" /> Ancoragem de valor
+            </span>
+          </div>
+          <h2 className="mb-12 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">Quanto você cobra por hora do seu tempo?</h2>
+          <div className="grid items-center gap-10 md:grid-cols-[1fr_auto]">
+            <div>
+              <p className="mb-6 text-xl font-bold leading-relaxed md:text-2xl">
+                Se você gasta <span className="text-violet-400">3 horas por semana</span> garimpando produto, em um mês são <span className="text-violet-400">12 horas perdidas</span>. A extensão recupera esse tempo no primeiro dia de uso.
+              </p>
+              <ul className="space-y-3 font-mono text-sm text-zinc-400">
+                {[
+                  "3h/semana × 4 semanas = 12h/mês desperdiçadas",
+                  <>Com a extensão, você faz isso em <strong className="text-violet-400">minutos</strong></>,
+                  <>R$29,90 ÷ 30 dias = <strong className="text-violet-400">menos de R$1 por dia no 1º mês</strong></>,
+                  <>Depois? <strong className="text-violet-400">Seu para sempre. Sem mais cobranças.</strong></>,
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <ArrowRight className="h-3 w-3 shrink-0 text-cyan-400" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-violet-500/30 bg-[#0a0a14] p-8 text-center shadow-[0_0_40px_rgba(139,92,246,.15)]">
+              <div className="mb-1 font-mono text-xs text-zinc-500">De</div>
+              <div className="font-mono text-lg text-zinc-500 line-through">R$97,00</div>
+              <div className="font-mono text-5xl font-black text-violet-400">R$29,90</div>
+              <div className="mt-1 font-mono text-xs text-zinc-500">Pagamento único · Vitalício</div>
+              <a href="#cta-final" className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-3 text-sm font-bold text-white shadow-[0_0_24px_rgba(139,92,246,.3)] transition hover:opacity-90 hover:-translate-y-0.5">
+                <Target className="h-4 w-4" /> Quero agora
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PLATFORMS ─── */}
+      <section className="py-16">
+        <div className="mx-auto max-w-6xl px-5">
+          <p className="mb-6 text-center font-mono text-[11px] tracking-widest text-zinc-600 uppercase">Plataformas detectadas automaticamente</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {platforms.map((p) => (
+              <span key={p} className="rounded-md border border-white/5 bg-violet-500/[.06] px-4 py-1.5 font-mono text-xs font-semibold text-zinc-400 transition hover:border-violet-500/30 hover:text-violet-400">{p}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── NICHOS ─── */}
+      <section className="border-t border-white/5 bg-[#11111c] py-24">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="mb-4 text-center">
+            <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+              <FolderOpen className="h-3 w-3" /> Nichos detectados
+            </span>
+          </div>
+          <h2 className="mb-12 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">Os 4 nichos mais lucrativos do mercado digital.</h2>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {nichos.map((n) => (
+              <div key={n.name} className="rounded-xl border border-white/5 bg-violet-500/[.04] p-8 text-center transition hover:-translate-y-1 hover:border-violet-500/30 hover:shadow-[0_12px_40px_rgba(139,92,246,.12)]">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10">
+                  <n.icon className="h-6 w-6 text-violet-400" />
+                </div>
+                <h3 className="mb-2 font-bold">{n.name}</h3>
+                <p className="text-sm text-zinc-400">{n.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── TRUST ─── */}
+      <section className="py-24">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="mb-4 text-center">
+            <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+              <Lock className="h-3 w-3" /> Privacidade & segurança
+            </span>
+          </div>
+          <h2 className="mb-12 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">100% local. Seus dados ficam só com você.</h2>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {trust.map((t) => (
+              <div key={t.title} className="rounded-xl border border-white/5 bg-violet-500/[.04] p-7 text-center transition hover:border-violet-500/25">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10">
+                  <t.icon className="h-6 w-6 text-violet-400" />
+                </div>
+                <h3 className="mb-2 font-bold">{t.title}</h3>
+                <p className="text-sm text-zinc-400">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CTA FINAL ─── */}
+      <section
+        id="cta-final"
+        className="py-28"
+        style={{ background: "radial-gradient(ellipse 70% 70% at 50% 110%, rgba(139,92,246,.13) 0%, transparent 65%)" }}
+      >
+        <div className="mx-auto max-w-3xl px-5">
+          <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-violet-500/[.05] p-14 text-center shadow-[0_0_100px_rgba(139,92,246,.08)]">
+            <div className="absolute inset-x-[15%] top-0 h-px bg-gradient-to-r from-transparent via-violet-500/60 to-transparent" />
+            <span className="mb-6 inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
+              <Flame className="h-3 w-3" /> Oferta de lançamento
+            </span>
+            <h2 className="mb-4 font-display text-4xl font-bold tracking-tight md:text-6xl">
+              Chega de garimpar no{" "}
+              <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">escuro.</span>
+            </h2>
+            <p className="mb-8 text-zinc-400">Por R$29,90 você tem acesso vitalício à ferramenta que mostra o que está escalando agora — direto na Biblioteca do Meta.</p>
+            <div className="mb-8 flex items-center justify-center gap-4 font-mono">
+              <span className="text-lg text-zinc-500 line-through">R$97,00</span>
+              <span className="text-5xl font-black text-violet-400">R$29,90</span>
+              <span className="rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-400">Único</span>
+            </div>
+            <a href="#" className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-10 py-5 text-lg font-black text-white shadow-[0_0_50px_rgba(139,92,246,.45)] transition hover:opacity-90 hover:-translate-y-1 hover:shadow-[0_0_72px_rgba(139,92,246,.65)]">
+              <Target className="h-5 w-5" />
+              Garantir meu acesso agora
+            </a>
+            <div className="mt-5 flex flex-wrap justify-center gap-4 font-mono text-xs text-zinc-500">
+              {["Pagamento único","Acesso vitalício","Sem mensalidade","100% local"].map((g) => (
+                <span key={g} className="flex items-center gap-1.5">
+                  <CheckCircle className="h-3 w-3 text-violet-500" /> {g}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ─── */}
+      <footer className="border-t border-white/5 py-8 text-center">
+        <p className="flex items-center justify-center gap-2 font-mono text-xs text-zinc-600">
+          <Target className="h-3 w-3 text-violet-600" />
+          Low Ticket Hunter · v1.3.0 · Extensão para Google Chrome
+        </p>
+        <p className="mt-2 font-mono text-xs text-zinc-700">Este produto não é afiliado, endossado ou patrocinado pelo Meta Platforms, Inc.</p>
+      </footer>
+    </main>
+  );
+}
