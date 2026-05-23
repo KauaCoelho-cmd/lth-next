@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Target, Menu, X, Download } from "lucide-react";
 
 const links = [
@@ -20,7 +21,10 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
           ? "border-b border-white/[0.07] bg-[#0a0a14]/95 shadow-[0_4px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl"
@@ -137,6 +141,6 @@ export function Navbar() {
           </li>
         </ul>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
