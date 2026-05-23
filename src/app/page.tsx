@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { HeroFuturisticWrapper as HeroFuturistic } from "@/components/demo/hero-futuristic-wrapper";
 import { PricingWithChart } from "@/components/ui/pricing-with-chart";
+import { TestimonialsColumn } from "@/components/ui/testimonials-columns";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -385,6 +386,114 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ─── DEPOIMENTOS ─── */}
+      {(() => {
+        const testimonials = [
+          {
+            text: "Cara, eu perdia horas garimpando anúncio manualmente. Com o Hunter X eu abro a biblioteca, já aparece tudo destacado. Em 10 minutos tenho 5 produtos pra testar.",
+            name: "Rafael Mendonça",
+            role: "Afiliado Hotmart · SP",
+            avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+          },
+          {
+            text: "Achei que era mais um curso ou ferramenta furada. Não é. Instalei em 2 minutos e no mesmo dia já encontrei um produto com 45 dias rodando que eu não ia achar nunca.",
+            name: "Camila Freitas",
+            role: "Dropshipping · MG",
+            avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+          },
+          {
+            text: "O filtro de dias rodando é o que faz a diferença pra mim. Só mostro anúncios com mais de 14 dias, aí sei que o produto tá convertendo de verdade.",
+            name: "Diego Alves",
+            role: "Media buyer · RJ",
+            avatar: "https://randomuser.me/api/portraits/men/15.jpg",
+          },
+          {
+            text: "Uso todo dia antes de criar campanha nova. O painel aparece do lado, já mostra nicho, tempo rodando, se tem vídeo... economizo pelo menos 2h por dia fácil.",
+            name: "Juliana Rocha",
+            role: "Gestora de tráfego · RS",
+            avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+          },
+          {
+            text: "Testei uns 3 produtos que encontrei com o Hunter X esse mês. Dois deram lucro na primeira semana. Antes eu ficava no escuro sem saber o que tava rodando.",
+            name: "Thiago Barbosa",
+            role: "Infoprodutor · CE",
+            avatar: "https://randomuser.me/api/portraits/men/77.jpg",
+          },
+          {
+            text: "Trabalho com e-commerce e o destaque verde nos produtos low ticket me ajuda demais. Não preciso mais ler card por card, já vejo na hora o que vale a pena copiar.",
+            name: "Fernanda Lima",
+            role: "E-commerce · BA",
+            avatar: "https://randomuser.me/api/portraits/women/22.jpg",
+          },
+          {
+            text: "Ontem encontrei um anúncio de 60 dias rodando num nicho que ninguém tava olhando. Produto de R$47, baixa concorrência. Esse tipo de info não tem preço.",
+            name: "Bruno Carvalho",
+            role: "Afiliado Kiwify · GO",
+            avatar: "https://randomuser.me/api/portraits/men/55.jpg",
+          },
+          {
+            text: "Minha equipe inteira usa. Quando alguém encontra um produto bom exporta o CSV e compartilha no grupo. Virou parte do processo de pesquisa aqui.",
+            name: "Larissa Nunes",
+            role: "Agência de tráfego · PR",
+            avatar: "https://randomuser.me/api/portraits/women/10.jpg",
+          },
+          {
+            text: "Simples e direto. Abre a biblioteca, aparece o painel, filtro por dias, exporto. Sem enrolação. Exatamente o que eu precisava sem ter que aprender nada novo.",
+            name: "Marcos Vieira",
+            role: "Copywriter · SC",
+            avatar: "https://randomuser.me/api/portraits/men/41.jpg",
+          },
+        ];
+        const col1 = testimonials.slice(0, 3);
+        const col2 = testimonials.slice(3, 6);
+        const col3 = testimonials.slice(6, 9);
+
+        return (
+          <section className="relative border-t border-white/5 bg-[#0a0a14] py-24 overflow-hidden">
+            {/* Glow de fundo */}
+            <div className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/10 blur-[120px]" />
+
+            <div className="relative z-10 mx-auto max-w-6xl px-5">
+              {/* Header */}
+              <div className="mb-14 flex flex-col items-center text-center">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-violet-300">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-300" />
+                  </span>
+                  Quem já usa o Hunter X
+                </div>
+                <h2
+                  className="font-black uppercase leading-none tracking-tight text-white"
+                  style={{ fontSize: "clamp(1.8rem, 5vw, 3.2rem)" }}
+                >
+                  Resultados de quem{" "}
+                  <span
+                    style={{
+                      background: "linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    parou de adivinhar
+                  </span>
+                </h2>
+                <p className="mt-4 max-w-md font-mono text-sm text-zinc-500">
+                  Afiliados, gestores de tráfego e donos de e-commerce usando dados reais para escolher produtos.
+                </p>
+              </div>
+
+              {/* Colunas com máscara fade top/bottom */}
+              <div className="flex justify-center gap-4 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[620px] overflow-hidden">
+                <TestimonialsColumn testimonials={col1} duration={22} />
+                <TestimonialsColumn testimonials={col2} duration={28} className="hidden md:block" />
+                <TestimonialsColumn testimonials={col3} duration={25} className="hidden lg:block" />
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ─── FOOTER ─── */}
       <footer className="border-t border-white/5 py-8 text-center">
