@@ -46,17 +46,69 @@ const features = [
 ];
 
 const nichos = [
-  { icon: TrendingUp, name: "Renda Extra",      desc: "Métodos, renda online, afiliado, dropshipping." },
-  { icon: Zap,        name: "Saúde / Fitness",  desc: "Emagrecimento, dieta, treino e bem-estar." },
-  { icon: Heart,      name: "Relacionamento",   desc: "Reconquista, sedução, casamento." },
-  { icon: Sparkles,   name: "Espiritualidade",  desc: "Lei da atração, tarô, meditação." },
+  {
+    icon: TrendingUp,
+    name: "Renda Extra",
+    tag: "Alta demanda",
+    tagColor: "text-cyan-400 border-cyan-500/30 bg-cyan-500/[.08]",
+    accent: "from-cyan-500/20 via-cyan-500/5 to-transparent",
+    glow: "hover:shadow-[0_8px_32px_rgba(34,211,238,.12)] hover:border-cyan-500/30",
+    desc: "O nicho mais competitivo do digital. Quem entra primeiro no produto certo domina. O Hunter X mostra quais anúncios de renda online já estão há semanas rodando.",
+  },
+  {
+    icon: Zap,
+    name: "Saúde & Fitness",
+    tag: "Perene o ano todo",
+    tagColor: "text-green-400 border-green-500/30 bg-green-500/[.08]",
+    accent: "from-green-500/20 via-green-500/5 to-transparent",
+    glow: "hover:shadow-[0_8px_32px_rgba(34,197,94,.12)] hover:border-green-500/30",
+    desc: "Emagrecimento e bem-estar nunca saem de moda. Produtos low ticket nesse nicho escalam o ano inteiro — e o Hunter X revela quais já estão convertendo.",
+  },
+  {
+    icon: Heart,
+    name: "Relacionamento",
+    tag: "Alto engajamento",
+    tagColor: "text-rose-400 border-rose-500/30 bg-rose-500/[.08]",
+    accent: "from-rose-500/20 via-rose-500/5 to-transparent",
+    glow: "hover:shadow-[0_8px_32px_rgba(244,63,94,.12)] hover:border-rose-500/30",
+    desc: "Reconquista e sedução têm dos menores CPLs do digital. Alta emoção, baixo ticket — a fórmula perfeita para escalar rápido com pouco investimento.",
+  },
+  {
+    icon: Sparkles,
+    name: "Espiritualidade",
+    tag: "Público fiel",
+    tagColor: "text-amber-400 border-amber-500/30 bg-amber-500/[.08]",
+    accent: "from-amber-500/20 via-amber-500/5 to-transparent",
+    glow: "hover:shadow-[0_8px_32px_rgba(251,191,36,.12)] hover:border-amber-500/30",
+    desc: "Tarô, meditação e lei da atração. Público ultra-fidelizado que compra repetidamente. Veja quais produtos desse nicho já estão rodando há meses.",
+  },
 ];
 
 const trust = [
-  { icon: Shield,   title: "100% local",       desc: "Nada vai para servidor externo. Seus dados ficam só no seu PC." },
-  { icon: UserX,    title: "Sem cadastro",      desc: "Não precisa criar conta, fazer login ou fornecer e-mail." },
-  { icon: CreditCard, title: "Chave por email",  desc: "Receba sua chave de acesso imediatamente após o pagamento." },
-  { icon: Infinity, title: "Cancele quando quiser", desc: "Sem fidelidade. Cancele a qualquer momento sem burocracia." },
+  {
+    icon: Shield,
+    title: "Nenhum dado sai do seu PC",
+    desc: "O Hunter X roda 100% no seu navegador. Nenhum anúncio que você visualiza é enviado para fora. Arquitetura local por design, não por promessa.",
+    highlight: true,
+  },
+  {
+    icon: UserX,
+    title: "Zero cadastro, zero login",
+    desc: "Instale e use. Sem criar conta, sem e-mail confirmado, sem formulário. Sua chave de licença é tudo que você precisa.",
+    highlight: false,
+  },
+  {
+    icon: CreditCard,
+    title: "Chave no e-mail em minutos",
+    desc: "Após o pagamento, sua chave de acesso chega no e-mail automaticamente. Ative na extensão e comece a garimpar na hora.",
+    highlight: false,
+  },
+  {
+    icon: Infinity,
+    title: "Cancele quando quiser",
+    desc: "Sem fidelidade, sem contrato, sem taxa escondida. Um clique cancela tudo. Nenhuma pergunta, nenhuma burocracia.",
+    highlight: false,
+  },
 ];
 
 const platforms = [
@@ -250,45 +302,107 @@ export default function Home() {
       {/* ─── NICHOS ─── */}
       <section className="border-t border-white/5 bg-[#11111c] py-24">
         <div className="mx-auto max-w-6xl px-5">
+          {/* Header */}
           <div className="mb-4 text-center">
             <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
-              <FolderOpen className="h-3 w-3" /> Nichos detectados
+              <FolderOpen className="h-3 w-3" /> Nichos detectados automaticamente
             </span>
           </div>
-          <h2 className="mb-12 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">Os 4 nichos mais lucrativos do mercado digital.</h2>
+          <h2 className="mb-3 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+            Onde os produtos low ticket{' '}
+            <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              mais escalam no digital.
+            </span>
+          </h2>
+          <p className="mb-14 mx-auto max-w-lg text-center font-mono text-sm text-zinc-500">
+            O Hunter X identifica o nicho de cada anúncio em tempo real. Foque nos mercados onde o dinheiro já está circulando.
+          </p>
+
+          {/* Cards */}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {nichos.map((n) => (
-              <div key={n.name} className="rounded-xl border border-white/5 bg-violet-500/[.04] p-8 text-center transition hover:-translate-y-1 hover:border-violet-500/30 hover:shadow-[0_12px_40px_rgba(139,92,246,.12)]">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10">
-                  <n.icon className="h-6 w-6 text-violet-400" />
+              <div
+                key={n.name}
+                className={`group relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#0a0a14] p-7 transition-all duration-300 hover:-translate-y-1 ${n.glow}`}
+              >
+                {/* Gradient top accent */}
+                <div className={`absolute inset-x-0 top-0 h-20 bg-gradient-to-b ${n.accent} opacity-60`} />
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent transition-opacity duration-300 group-hover:via-white/20" />
+
+                <div className="relative">
+                  {/* Icon */}
+                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04]">
+                    <n.icon className="h-5 w-5 text-white/70" />
+                  </div>
+
+                  {/* Tag */}
+                  <span className={`mb-3 inline-block rounded border px-2 py-0.5 font-mono text-[9px] font-bold tracking-widest uppercase ${n.tagColor}`}>
+                    {n.tag}
+                  </span>
+
+                  {/* Name + desc */}
+                  <h3 className="mb-2 font-bold text-white">{n.name}</h3>
+                  <p className="text-[12px] leading-relaxed text-zinc-500">{n.desc}</p>
                 </div>
-                <h3 className="mb-2 font-bold">{n.name}</h3>
-                <p className="text-sm text-zinc-400">{n.desc}</p>
               </div>
             ))}
           </div>
+
+          {/* Bottom micro-copy */}
+          <p className="mt-10 text-center font-mono text-[11px] text-zinc-700">
+            Hunter X detecta nicho, plataforma e dias rodando de cada anúncio — automaticamente.
+          </p>
         </div>
       </section>
 
       {/* ─── TRUST ─── */}
       <section className="py-24">
         <div className="mx-auto max-w-6xl px-5">
+          {/* Header */}
           <div className="mb-4 text-center">
             <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
-              <Lock className="h-3 w-3" /> Privacidade & segurança
+              <Lock className="h-3 w-3" /> Privacidade por arquitetura
             </span>
           </div>
-          <h2 className="mb-12 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">100% local. Seus dados ficam só com você.</h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <h2 className="mb-3 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+            Nenhum dado seu sai{' '}
+            <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              do seu computador.
+            </span>
+          </h2>
+          <p className="mb-14 mx-auto max-w-lg text-center font-mono text-sm text-zinc-500">
+            Diferente de outras ferramentas, o Hunter X roda 100% no seu navegador. Nenhum servidor nosso processa seus dados.
+          </p>
+
+          {/* Grid trust */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {trust.map((t) => (
-              <div key={t.title} className="rounded-xl border border-white/5 bg-violet-500/[.04] p-7 text-center transition hover:border-violet-500/25">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10">
-                  <t.icon className="h-6 w-6 text-violet-400" />
+              <div
+                key={t.title}
+                className={`group relative overflow-hidden rounded-xl border p-7 transition-all duration-300 hover:-translate-y-0.5 ${
+                  t.highlight
+                    ? 'border-violet-500/30 bg-violet-500/[.06] shadow-[0_0_40px_rgba(139,92,246,.08)]'
+                    : 'border-white/[0.05] bg-white/[0.02] hover:border-violet-500/20'
+                }`}
+              >
+                {t.highlight && (
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
+                )}
+                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-lg border ${t.highlight ? 'border-violet-500/30 bg-violet-500/15' : 'border-white/[0.06] bg-white/[0.04]'}`}>
+                  <t.icon className={`h-5 w-5 ${t.highlight ? 'text-violet-400' : 'text-zinc-500'}`} />
                 </div>
-                <h3 className="mb-2 font-bold">{t.title}</h3>
-                <p className="text-sm text-zinc-400">{t.desc}</p>
+                <h3 className={`mb-2 font-bold text-[14px] leading-snug ${t.highlight ? 'text-white' : 'text-zinc-200'}`}>{t.title}</h3>
+                <p className="text-[12px] leading-relaxed text-zinc-500">{t.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Bottom badge */}
+          <div className="mt-10 flex justify-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-1.5 font-mono text-[10px] text-zinc-600">
+              <Shield className="h-3 w-3 text-violet-600" />
+              Extensão auditável · código processado localmente · sem rastreamento de comportamento
+            </span>
           </div>
         </div>
       </section>
