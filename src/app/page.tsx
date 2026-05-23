@@ -31,6 +31,7 @@ import { HeroFuturisticWrapper as HeroFuturistic } from "@/components/demo/hero-
 import { PricingWithChart } from "@/components/ui/pricing-with-chart";
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns";
 import { WaitlistForm } from "@/components/ui/waitlist-form";
+import { Navbar } from "@/components/ui/navbar";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -85,21 +86,7 @@ export default function Home() {
     <main className="relative overflow-x-hidden">
 
       {/* ─── NAV ─── */}
-      <nav className="sticky top-0 z-50 border-b border-white/5 bg-[#0a0a14]/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <a href="#" className="flex items-center gap-2 font-mono text-sm font-bold">
-            <Target className="h-4 w-4 text-violet-400" />
-            <span className="text-slate-100">Low Ticket Hunter</span>
-            <span className="rounded bg-violet-600 px-1.5 py-0.5 text-[10px] text-white">v1.3.0</span>
-          </a>
-          <a
-            href="#planos"
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] transition hover:bg-violet-700"
-          >
-            Ver planos
-          </a>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ─── HERO ─── */}
       <section id="hero">
@@ -109,7 +96,7 @@ export default function Home() {
           ctaLabel="Ver planos"
           ctaHref="#planos"
           priceLabel="Mensal · R$29,90 · Cancele quando quiser"
-          badge="EXTENSÃO CHROME · v1.3.0"
+          badge="EXTENSÃO CHROME · v2.1.0"
         />
       </section>
 

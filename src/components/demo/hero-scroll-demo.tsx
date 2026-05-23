@@ -15,7 +15,7 @@ export function HeroScrollDemo() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
               </span>
-              Extensão Chrome · v1.3.0
+              Extensão Chrome · v2.1.0
             </div>
 
             <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight">
@@ -54,7 +54,7 @@ export function HeroScrollDemo() {
         {/* Mock browser screenshot of the extension in action */}
         <Image
           src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80&auto=format&fit=crop"
-          alt="Low Ticket Hunter — extensão em ação na Biblioteca do Meta"
+          alt="Hunter X — extensão em ação na Biblioteca do Meta"
           height={720}
           width={1400}
           className="mx-auto rounded-2xl object-cover h-full object-top"
