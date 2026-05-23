@@ -488,11 +488,72 @@ export default function Home() {
         );
       })()}
 
+      {/* ─── CAPTURA DE LEAD ─── */}
+      <section id="lista" className="border-t border-white/5 bg-[#070710] py-20">
+        <div className="mx-auto max-w-xl px-5 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-cyan-300">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan-300" />
+            </span>
+            Avisa quando abrir nova vaga
+          </div>
+          <h2 className="mb-3 text-2xl font-black uppercase tracking-tight text-white">
+            Lista VIP de{" "}
+            <span style={{ background: "linear-gradient(135deg,#a78bfa,#38bdf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              acesso antecipado
+            </span>
+          </h2>
+          <p className="mb-8 font-mono text-sm text-zinc-500">
+            Receba desconto exclusivo e acesso antes de todo mundo quando abrirmos novas vagas.
+          </p>
+          <form
+            action="https://hunterx.site/api/waitlist"
+            method="POST"
+            className="flex flex-col gap-3 sm:flex-row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const email = (form.elements.namedItem("email") as HTMLInputElement)?.value;
+              if (email) {
+                const btn = form.querySelector("button") as HTMLButtonElement;
+                btn.textContent = "✓ Na lista!";
+                btn.disabled = true;
+                btn.style.background = "linear-gradient(135deg,#16a34a,#15803d)";
+              }
+            }}
+          >
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="seu@email.com"
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-mono text-sm text-white placeholder-zinc-600 outline-none transition focus:border-violet-500/50 focus:bg-white/8 focus:ring-1 focus:ring-violet-500/30"
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-3 font-mono text-sm font-bold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition hover:opacity-90 hover:-translate-y-0.5"
+            >
+              Entrar na lista
+            </button>
+          </form>
+          <p className="mt-4 font-mono text-[11px] text-zinc-700">Zero spam. Cancele quando quiser.</p>
+        </div>
+      </section>
+
       {/* ─── FOOTER ─── */}
-      <footer className="border-t border-white/5 py-8 text-center">
+      <footer className="border-t border-white/5 py-10 text-center">
+        <nav className="mb-6 flex flex-wrap justify-center gap-6 font-mono text-xs text-zinc-600">
+          <a href="#hero" className="transition hover:text-violet-400">Início</a>
+          <a href="#problema" className="transition hover:text-violet-400">Por que usar</a>
+          <a href="#planos" className="transition hover:text-violet-400">Planos</a>
+          <a href="/download" className="transition hover:text-violet-400">Download</a>
+          <a href="#lista" className="transition hover:text-violet-400">Lista VIP</a>
+          <a href="mailto:suporte@hunterx.site" className="transition hover:text-violet-400">Suporte</a>
+        </nav>
         <p className="flex items-center justify-center gap-2 font-mono text-xs text-zinc-600">
           <Target className="h-3 w-3 text-violet-600" />
-          Low Ticket Hunter · v1.3.0 · Extensão para Google Chrome
+          Hunter X · v2.1.0 · Extensão para Google Chrome
         </p>
         <p className="mt-2 font-mono text-xs text-zinc-700">Este produto não é afiliado, endossado ou patrocinado pelo Meta Platforms, Inc.</p>
       </footer>

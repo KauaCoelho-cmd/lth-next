@@ -25,14 +25,17 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hunterx.site"),
+  alternates: {
+    canonical: "https://hunterx.site",
+  },
   title: {
-    default: "Hunter X — Encontre produtos low ticket escalando agora no Meta",
+    default: "Hunter X — Produtos low ticket com dias rodando no Meta",
     template: "%s | Hunter X",
   },
   description:
-    "Extensão Chrome que escaneia a Biblioteca de Anúncios do Meta em tempo real e revela os produtos low ticket que já estão escalando. Instale, ative e garimpie em minutos.",
+    "Extensão Chrome que mostra produtos low ticket com dias rodando na Biblioteca do Meta. Instale e garimpie em minutos.",
   keywords: [
-    "low ticket", "biblioteca de anúncios", "meta ads", "produto validado",
+    "low ticket", "dias rodando", "biblioteca de anúncios", "meta ads", "produto validado",
     "extensão chrome", "dropshipping", "produto escalando", "hunter x",
     "garimpar produto", "anúncio meta", "facebook ads", "produto low ticket",
   ],
@@ -43,9 +46,9 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: "https://hunterx.site",
     siteName: "Hunter X",
-    title: "Hunter X — Encontre produtos low ticket escalando agora no Meta",
+    title: "Hunter X — Produtos low ticket com dias rodando no Meta",
     description:
-      "Extensão Chrome que revela os produtos low ticket validados na Biblioteca de Anúncios do Meta. Plano mensal a partir de R$29,90.",
+      "Extensão Chrome que mostra produtos low ticket com dias rodando na Biblioteca do Meta. Instale e garimpie em minutos.",
     images: [
       {
         url: "/og",
@@ -57,9 +60,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hunter X — Encontre produtos low ticket escalando agora no Meta",
+    title: "Hunter X — Produtos low ticket com dias rodando no Meta",
     description:
-      "Extensão Chrome que revela os produtos low ticket validados na Biblioteca de Anúncios do Meta. A partir de R$29,90/mês.",
+      "Extensão Chrome que mostra produtos low ticket com dias rodando na Biblioteca do Meta. Instale e garimpie em minutos.",
     images: ["/og"],
   },
   robots: {
