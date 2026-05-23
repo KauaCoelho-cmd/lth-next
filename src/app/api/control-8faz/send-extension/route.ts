@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
+// Lazy-initialized to avoid build-time errors when env vars are missing
+let _resend: Resend | null = null;
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
+}
 
 const EXTENSION_URL = 'https://hunterx.site/hunter-x.zip';
 
 export async function POST(req: NextRequest) {
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
   const auth = req.headers.get('x-admin-password');
   if (!auth || auth !== ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -18,7 +23,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'email é obrigatório' }, { status: 400 });
   }
 
-  const { error } = await resend.emails.send({
+  const { error } = await getResend().emails.send({
     from: process.env.EMAIL_FROM ?? 'Hunter X <onboarding@resend.dev>',
     to: email,
     subject: '🎯 Sua extensão Hunter X está pronta!',

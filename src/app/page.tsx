@@ -30,6 +30,7 @@ import {
 import { HeroFuturisticWrapper as HeroFuturistic } from "@/components/demo/hero-futuristic-wrapper";
 import { PricingWithChart } from "@/components/ui/pricing-with-chart";
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns";
+import { WaitlistForm } from "@/components/ui/waitlist-form";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -507,36 +508,7 @@ export default function Home() {
           <p className="mb-8 font-mono text-sm text-zinc-500">
             Receba desconto exclusivo e acesso antes de todo mundo quando abrirmos novas vagas.
           </p>
-          <form
-            action="https://hunterx.site/api/waitlist"
-            method="POST"
-            className="flex flex-col gap-3 sm:flex-row"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const form = e.currentTarget;
-              const email = (form.elements.namedItem("email") as HTMLInputElement)?.value;
-              if (email) {
-                const btn = form.querySelector("button") as HTMLButtonElement;
-                btn.textContent = "✓ Na lista!";
-                btn.disabled = true;
-                btn.style.background = "linear-gradient(135deg,#16a34a,#15803d)";
-              }
-            }}
-          >
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="seu@email.com"
-              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-mono text-sm text-white placeholder-zinc-600 outline-none transition focus:border-violet-500/50 focus:bg-white/8 focus:ring-1 focus:ring-violet-500/30"
-            />
-            <button
-              type="submit"
-              className="rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-3 font-mono text-sm font-bold text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] transition hover:opacity-90 hover:-translate-y-0.5"
-            >
-              Entrar na lista
-            </button>
-          </form>
+          <WaitlistForm />
           <p className="mt-4 font-mono text-[11px] text-zinc-700">Zero spam. Cancele quando quiser.</p>
         </div>
       </section>
