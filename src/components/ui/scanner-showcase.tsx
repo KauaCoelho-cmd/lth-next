@@ -105,7 +105,7 @@ function AdCard({ ad, visible, scanned }: { ad: typeof ADS[0]; visible: boolean;
 /* ═══════════════════════════════════════════════════════════════════════════
    SCANNER SHOWCASE
 ═══════════════════════════════════════════════════════════════════════════ */
-export function ScannerShowcase() {
+export function ScannerShowcase({ compact = false }: { compact?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [totalScanned, setTotalScanned] = useState(0);
@@ -142,28 +142,30 @@ export function ScannerShowcase() {
   const scanY = `${scanProgress * 100}%`;
 
   return (
-    <section ref={sectionRef} className="border-t border-white/[0.05] bg-[#070710] py-24">
-      <div className="mx-auto max-w-6xl px-5">
+    <section ref={sectionRef} className={compact ? '' : 'border-t border-white/[0.05] bg-[#070710] py-24'}>
+      <div className={compact ? 'w-full max-w-[420px]' : 'mx-auto max-w-6xl px-5'}>
 
-        {/* ── Título ── */}
-        <div className={`mb-14 text-center transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-violet-300">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
-            </span>
-            Ao vivo · Biblioteca de Anúncios do Meta
+        {/* ── Título (só no modo full) ── */}
+        {!compact && (
+          <div className={`mb-14 text-center transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-violet-300">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
+              </span>
+              Ao vivo · Biblioteca de Anúncios do Meta
+            </div>
+            <h2 className="font-display text-3xl font-black uppercase leading-none tracking-tight text-white md:text-5xl">
+              Veja produtos low ticket{' '}
+              <span style={{ background: 'linear-gradient(135deg,#a78bfa 0%,#38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                escalando agora
+              </span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg font-mono text-sm text-zinc-500">
+              O Hunter X escaneia cada anúncio da Biblioteca do Facebook Ads e mostra score, dias rodando e plataforma — em tempo real.
+            </p>
           </div>
-          <h2 className="font-display text-3xl font-black uppercase leading-none tracking-tight text-white md:text-5xl">
-            Veja produtos low ticket{' '}
-            <span style={{ background: 'linear-gradient(135deg,#a78bfa 0%,#38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              escalando agora
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg font-mono text-sm text-zinc-500">
-            O Hunter X escaneia cada anúncio da Biblioteca do Facebook Ads e mostra score, dias rodando e plataforma — em tempo real.
-          </p>
-        </div>
+        )}
 
         {/* ── Dashboard ── */}
         <div className={`transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -215,7 +217,7 @@ export function ScannerShowcase() {
               </div>
 
               {/* Grid 3 colunas */}
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className={cn('grid gap-3', compact ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3')}>
                 {ADS.map((ad) => {
                   const threshold = ad.id <= 3 ? 0.22 : 0.62;
                   return <AdCard key={ad.id} ad={ad} visible={visible} scanned={scanProgress > threshold} />;
@@ -242,8 +244,8 @@ export function ScannerShowcase() {
           </div>
         </div>
 
-        {/* ── CTA ── */}
-        <div className={`mt-12 flex flex-col items-center gap-4 transition-all duration-700 delay-400 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        {/* ── CTA (só modo full) ── */}
+        {!compact && <div className={`mt-12 flex flex-col items-center gap-4 transition-all duration-700 delay-400 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <p className="font-mono text-[11px] text-zinc-600">
             Score viral · dias rodando · plataforma detectada · exportação CSV · filtros em tempo real
           </p>
@@ -256,7 +258,7 @@ export function ScannerShowcase() {
             </a>
             <span className="font-mono text-[10px] text-zinc-600">Mensal R$29,90 · Anual R$197 · Cancele quando quiser</span>
           </div>
-        </div>
+        </div>}
 
       </div>
     </section>

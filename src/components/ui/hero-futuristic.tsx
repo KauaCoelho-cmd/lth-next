@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MetaAdScanner } from '@/components/ui/meta-ad-scanner';
+import { ScannerShowcase } from '@/components/ui/scanner-showcase';
 import { NeonButton } from '@/components/ui/neon-button';
 
 /* ─── HUD corner brackets (cyber frame) ─── */
@@ -137,9 +137,8 @@ export const HeroFuturistic = ({
 
         {/* ─ COLUNA DIREITA: scanner ─ */}
         <div className="flex w-full items-center justify-center lg:w-1/2 lg:justify-end">
-          {/* Glow atrás do card no desktop */}
           <div className="pointer-events-none absolute right-0 hidden h-[500px] w-[500px] rounded-full bg-violet-600/8 blur-[80px] lg:block" />
-          <MetaAdScanner className="w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[400px]" />
+          <ScannerShowcase compact />
         </div>
       </div>
 
