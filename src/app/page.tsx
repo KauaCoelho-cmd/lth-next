@@ -376,13 +376,6 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4 font-mono text-xs text-zinc-500">
-              {["Chave por email","Cancele quando quiser","100% local"].map((g) => (
-                <span key={g} className="flex items-center gap-1.5">
-                  <CheckCircle className="h-3 w-3 text-violet-500" /> {g}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </section>
