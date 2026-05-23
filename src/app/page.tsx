@@ -32,6 +32,7 @@ import { PricingWithChart } from "@/components/ui/pricing-with-chart";
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns";
 import { WaitlistForm } from "@/components/ui/waitlist-form";
 import { Navbar } from "@/components/ui/navbar";
+import { ProTools } from "@/components/ui/pro-tools";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -202,6 +203,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ─── PRO TOOLS ─── */}
+      <ProTools />
 
       {/* ─── PRICE ANCHOR ─── */}
       <section className="border-y border-white/5 bg-[#11111c] py-24">
