@@ -34,6 +34,7 @@ import { WaitlistForm } from "@/components/ui/waitlist-form";
 import { Navbar } from "@/components/ui/navbar";
 import { ProTools } from "@/components/ui/pro-tools";
 import { HowItWorks } from "@/components/ui/how-it-works";
+import { ScannerShowcase } from "@/components/ui/scanner-showcase";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -101,6 +102,9 @@ export default function Home() {
           badge="EXTENSÃO CHROME · v2.1.0"
         />
       </section>
+
+      {/* ─── SCANNER SHOWCASE ─── */}
+      <ScannerShowcase />
 
       <div>
 
