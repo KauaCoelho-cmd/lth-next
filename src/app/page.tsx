@@ -33,6 +33,7 @@ import { TestimonialsColumn } from "@/components/ui/testimonials-columns";
 import { WaitlistForm } from "@/components/ui/waitlist-form";
 import { Navbar } from "@/components/ui/navbar";
 import { ProTools } from "@/components/ui/pro-tools";
+import { HowItWorks } from "@/components/ui/how-it-works";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -149,34 +150,7 @@ export default function Home() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="border-y border-white/5 bg-[#11111c] py-24">
-        <div className="mx-auto max-w-6xl px-5">
-          <div className="mb-4 text-center">
-            <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
-              <Rocket className="h-3 w-3" /> Como funciona
-            </span>
-          </div>
-          <h2 className="mb-14 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
-            3 passos. 2 minutos. Resultados imediatos.
-          </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { n: "1", Icon: Globe,   title: "Compre e instale no Chrome",       desc: "Processo simples em menos de 2 minutos. Sem cadastro obrigatório." },
-              { n: "2", Icon: Eye,      title: "Acesse a Biblioteca do Meta",       desc: "Abra facebook.com/ads/library normalmente. A extensão ativa automaticamente." },
-              { n: "3", Icon: BarChart2, title: "Veja os produtos em tempo real",  desc: "Low tickets em verde, mid tickets em laranja. Score, dias rodando e plataforma — tudo visível." },
-            ].map((s) => (
-              <div key={s.n} className="rounded-xl border border-white/5 bg-violet-500/[.04] p-8 text-center transition hover:border-violet-500/30">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-400">
-                  <s.Icon className="h-5 w-5" />
-                </div>
-                <div className="mb-3 font-mono text-xs font-bold tracking-widest text-violet-500/60 uppercase">Passo {s.n}</div>
-                <h3 className="mb-2 font-bold">{s.title}</h3>
-                <p className="text-sm text-zinc-400">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HowItWorks />
 
       {/* ─── FEATURES ─── */}
       <section className="mx-auto max-w-6xl px-5 py-24">
