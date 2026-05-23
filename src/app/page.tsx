@@ -34,6 +34,7 @@ import { WaitlistForm } from "@/components/ui/waitlist-form";
 import { Navbar } from "@/components/ui/navbar";
 import { ProTools } from "@/components/ui/pro-tools";
 import { HowItWorks } from "@/components/ui/how-it-works";
+import { CosmicParallaxBg } from "@/components/ui/parallax-cosmic-background";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -144,13 +145,11 @@ export default function Home() {
 
       {/* ─── HERO ─── */}
       <section id="hero">
-        <HeroFuturistic
-          titleWords={["VEJA", "ANALISE", "LUCRE"]}
-          subtitle="A primeira extensão Chrome que escaneia a Biblioteca de Anúncios do Meta em tempo real e revela os produtos low ticket que já estão escalando."
-          ctaLabel="Ver planos"
-          ctaHref="#planos"
-          priceLabel="Mensal · R$29,90 · Cancele quando quiser"
-          badge="EXTENSÃO CHROME · v2.1.0"
+        <CosmicParallaxBg
+          head="Hunter X"
+          text="Escaneia, Analisa, Lucra"
+          loop={true}
+          scrollTargetId="problema"
         />
       </section>
 
