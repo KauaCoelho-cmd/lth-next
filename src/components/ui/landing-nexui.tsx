@@ -590,7 +590,7 @@ export function LandingNexUI() {
                 </div>
               ))}
             </div>
-            <a href="https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6" style={{ padding: 12, borderRadius: 12, fontWeight: 700, fontSize: ".9rem", background: `linear-gradient(135deg,${C.accent},#a855f7)`, border: "none", color: "#fff", textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 0 24px rgba(124,106,255,.4)", transition: "all .25s" }}>
+            <a href="https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6&bid=1779507329094" style={{ padding: 12, borderRadius: 12, fontWeight: 700, fontSize: ".9rem", background: `linear-gradient(135deg,${C.accent},#a855f7)`, border: "none", color: "#fff", textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 0 24px rgba(124,106,255,.4)", transition: "all .25s" }}>
               Assinar anual
             </a>
           </div>

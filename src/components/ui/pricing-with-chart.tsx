@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 const MONTHLY_LINK = 'https://pay.hotmart.com/T105952095U?off=cin50me1';
-const ANNUAL_LINK  = 'https://pay.hotmart.com/T105952095U?off=ypv6j9yv';
+const ANNUAL_LINK  = 'https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6&bid=1779507329094';
 
 export function PricingWithChart() {
   return (

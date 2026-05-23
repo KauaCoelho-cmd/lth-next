@@ -710,7 +710,7 @@ export function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Btn href="https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6" size="lg" className="w-full justify-center">
+                <Btn href="https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6&bid=1779507329094" size="lg" className="w-full justify-center">
                   <Target className="mr-2 h-4 w-4" /> Assinar anual
                 </Btn>
               </motion.div>
