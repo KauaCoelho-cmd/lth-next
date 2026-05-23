@@ -259,7 +259,7 @@ export default function Home() {
                 <div className="mb-1 font-mono text-xs text-zinc-500">Anual</div>
                 <div className="font-mono text-4xl font-black text-violet-300">R$197</div>
                 <div className="mt-1 font-mono text-xs text-green-400 font-bold">Economize R$161 no ano</div>
-                <a href="https://pay.hotmart.com/T105952095U?off=ypv6j9yv" target="_blank" rel="noopener" className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-2.5 text-sm font-bold text-white shadow-[0_0_24px_rgba(139,92,246,.4)] transition hover:opacity-90 hover:-translate-y-0.5">
+                <a href="https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6" target="_blank" rel="noopener" className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-800 px-6 py-2.5 text-sm font-bold text-white shadow-[0_0_24px_rgba(139,92,246,.4)] transition hover:opacity-90 hover:-translate-y-0.5">
                   <Target className="h-4 w-4" /> Assinar anual
                 </a>
               </div>
@@ -369,7 +369,7 @@ export default function Home() {
                 <span className="font-mono text-xs text-zinc-500 mb-1">Anual</span>
                 <span className="font-mono text-4xl font-black text-violet-300">R$197</span>
                 <span className="font-mono text-xs text-green-400 font-bold mt-1 mb-4">Economize R$161/ano</span>
-                <a href="https://pay.hotmart.com/T105952095U?off=ypv6j9yv" target="_blank" rel="noopener" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-7 py-3 text-sm font-black text-white shadow-[0_0_30px_rgba(139,92,246,.4)] transition hover:opacity-90 hover:-translate-y-0.5 hover:shadow-[0_0_50px_rgba(139,92,246,.65)]">
+                <a href="https://pay.hotmart.com/T105952095U?off=8yp00f2l&checkoutMode=6" target="_blank" rel="noopener" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-800 px-7 py-3 text-sm font-black text-white shadow-[0_0_30px_rgba(139,92,246,.4)] transition hover:opacity-90 hover:-translate-y-0.5 hover:shadow-[0_0_50px_rgba(139,92,246,.65)]">
                   <Target className="h-4 w-4" /> Assinar anual
                 </a>
               </div>
