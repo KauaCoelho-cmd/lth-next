@@ -212,27 +212,27 @@ const TOOLS = [
   {
     id: 'video',
     icon: Download,
-    title: 'Baixe o vídeo do anúncio',
-    desc: 'Um clique e o vídeo do anúncio é salvo direto no seu computador. Sem extensões extras, sem copiar links.',
-    tag: 'Download direto',
+    title: 'Baixe vídeos de anúncios do Meta',
+    desc: 'Salve o vídeo de qualquer anúncio da Biblioteca do Facebook Ads em um clique. Estude criativos que estão dias rodando sem precisar copiar link.',
+    tag: 'Download · 1 clique',
     tagColor: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/8',
     Preview: VideoDownloadPreview,
   },
   {
     id: 'html',
     icon: Code2,
-    title: 'Copie o HTML do anúncio',
-    desc: 'Acesse a estrutura HTML completa de qualquer anúncio para entender como a copy foi montada.',
-    tag: 'Copy estrutural',
+    title: 'Copie o HTML de anúncios do Facebook',
+    desc: 'Acesse a estrutura HTML completa de anúncios da Biblioteca do Meta para decifrar a copy e os gatilhos de produtos que estão escalando.',
+    tag: 'HTML · Facebook Ads',
     tagColor: 'text-violet-400 border-violet-500/30 bg-violet-500/8',
     Preview: CopyHtmlPreview,
   },
   {
     id: 'offer',
     icon: Sparkles,
-    title: 'Modele sua oferta',
-    desc: 'O Hunter X decompõe o anúncio em Hook, Prova, Oferta e CTA — pronto pra você usar como base.',
-    tag: 'Oferta modelada',
+    title: 'Modele ofertas de produtos low ticket',
+    desc: 'O Hunter X decompõe qualquer anúncio validado em Hook, Prova, Oferta e CTA — use como base para criar produtos low ticket que já têm mercado.',
+    tag: 'Low ticket · Oferta',
     tagColor: 'text-indigo-400 border-indigo-500/30 bg-indigo-500/8',
     Preview: OfferModelPreview,
   },
@@ -259,17 +259,17 @@ export function ProTools() {
         {/* Header */}
         <div className="mb-4 text-center">
           <span className="inline-flex items-center gap-2 rounded border border-violet-500/30 bg-violet-500/10 px-3 py-1 font-mono text-[11px] font-bold tracking-widest text-violet-400 uppercase">
-            <Sparkles className="h-3 w-3" /> Ferramentas pro
+            <Sparkles className="h-3 w-3" /> Extensão Chrome · Ferramentas pro
           </span>
         </div>
         <h2 className="mb-4 text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
-          Não só analise.{' '}
+          Baixe, copie e modele{' '}
           <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-            Aja em segundos.
+            anúncios da Biblioteca do Meta.
           </span>
         </h2>
         <p className="mb-16 text-center font-mono text-sm text-zinc-500 max-w-lg mx-auto">
-          Baixe o vídeo, copie a estrutura, modele a oferta — tudo sem sair da Biblioteca do Meta.
+          Do vídeo do anúncio ao HTML completo — extraia dados de anúncios do Facebook Ads sem sair da Biblioteca de Anúncios.
         </p>
 
         {/* Cards */}
