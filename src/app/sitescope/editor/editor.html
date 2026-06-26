@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor Visual</title>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#0c0c10; --surface:#13131a; --surface2:#1c1c28;
+  --border:#252535; --accent:#6d5cf6; --accent2:#8b7cf8;
+  --text:#f0f0f8; --text2:#7878a0; --text3:#4a4a6a;
+  --green:#22c55e; --red:#ef4444; --r:8px;
+}
+body { font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; font-size:14px; }
+
+.topbar { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; gap:12px; }
+.brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
+.brand-icon { width:28px; height:28px; background:linear-gradient(135deg,var(--accent),#a78bfa); border-radius:7px; display:flex; align-items:center; justify-content:center; }
+.topbar-center { display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:3px; }
+.dev-btn { display:flex; align-items:center; gap:6px; padding:5px 12px; border:none; background:transparent; color:var(--text2); border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; }
+.dev-btn.active { background:var(--surface2); color:var(--text); }
+.topbar-right { display:flex; gap:8px; }
+button { cursor:pointer; font-family:inherit; border:none; }
+.btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; transition:all .15s; }
+.btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--surface2); color:var(--text); }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent2); }
+
+.workspace { flex:1; display:flex; overflow:hidden; }
+
+/* IMPORT */
+#import { flex:1; display:flex; align-items:center; justify-content:center; padding:32px; }
+.import-box { width:100%; max-width:500px; display:flex; flex-direction:column; gap:14px; }
+.import-box h2 { font-size:26px; font-weight:800; letter-spacing:-.5px; line-height:1.2; }
+.import-box h2 span { background:linear-gradient(135deg,var(--accent),#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.import-box p { color:var(--text2); font-size:13px; }
+
+.code-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.code-box:focus-within { border-color:var(--accent); }
+.code-head { padding:8px 12px; border-bottom:1px solid var(--border); font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+.code-box textarea { width:100%; height:160px; background:transparent; border:none; color:var(--text); font-family:monospace; font-size:12px; padding:12px; resize:none; outline:none; line-height:1.5; }
+
+.load-btn { background:linear-gradient(135deg,var(--accent),#8b5cf6); color:#fff; padding:12px; border-radius:var(--r); font-size:14px; font-weight:700; width:100%; transition:all .2s; }
+.load-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(109,92,246,.3); }
+
+.or-row { display:flex; align-items:center; gap:10px; color:var(--text3); font-size:12px; margin:4px 0; }
+.or-row::before, .or-row::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.dz { border:1.5px dashed var(--border); border-radius:var(--r); padding:18px; text-align:center; cursor:pointer; transition:all .2s; }
+.dz:hover, .dz.over { border-color:var(--accent); background:rgba(109,92,246,.04); }
+.dz strong { font-size:13px; color:var(--text); display:block; margin-top:6px; }
+.dz span { font-size:11px; color:var(--text3); }
+
+/* EDITOR */
+#editor { display:none; flex:1; overflow:hidden; }
+.editor-wrap { display:flex; height:100%; }
+
+.canvas-wrap { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#111118; }
+.canvas-bar { height:36px; display:flex; align-items:center; padding:0 14px; gap:10px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+.hint-pill { display:flex; align-items:center; gap:5px; background:rgba(109,92,246,.12); border:1px solid rgba(109,92,246,.2); padding:3px 10px; border-radius:20px; font-size:11px; color:var(--accent2); }
+.hint-dot { width:5px; height:5px; border-radius:50%; background:var(--accent2); animation:blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+#crumb { font-size:11px; color:var(--text3); font-family:monospace; }
+
+.stage { flex:1; display:flex; align-items:flex-start; justify-content:center; overflow:auto; padding:20px; transition:background .2s; }
+.stage.mobile { padding:24px; background:#111118; }
+
+/* UM único iframe — muda só o tamanho do wrapper via CSS pra simular mobile */
+.frame-wrap { display:flex; flex-direction:column; width:100%; height:100%; flex-shrink:0; transition:width .2s; }
+.phone-notch { display:none; }
+.frame-inner { width:100%; height:100%; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,.4); }
+.frame-inner iframe { width:100%; height:100%; border:none; display:block; }
+
+.stage.mobile .frame-wrap { width:390px; height:auto; background:#1a1a1a; border-radius:44px; padding:12px; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 40px 80px rgba(0,0,0,.7); }
+.stage.mobile .phone-notch { display:block; height:32px; background:#111; border-radius:16px; width:120px; margin:0 auto 8px; }
+.stage.mobile .frame-inner { width:366px; height:720px; border-radius:36px; }
+.stage.mobile .frame-inner iframe { width:366px; height:720px; }
+
+.sidebar { width:300px; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
+.sb-top { padding:14px 16px 0; flex-shrink:0; }
+.sb-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--text3); margin-bottom:12px; }
+
+.tabs { display:flex; gap:2px; background:var(--bg); border-radius:6px; padding:3px; border:1px solid var(--border); margin-bottom:12px; }
+.tab { flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:6px 4px; border-radius:5px; font-size:12px; font-weight:600; color:var(--text3); cursor:pointer; background:transparent; font-family:inherit; }
+.tab.active { background:var(--surface2); color:var(--text); }
+
+.empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:32px 20px; text-align:center; color:var(--text3); }
+.empty-icon { width:46px; height:46px; background:var(--surface2); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); }
+.empty p { font-size:13px; line-height:1.6; }
+
+#panel { flex:1; overflow-y:auto; padding:0 16px 16px; }
+#panel::-webkit-scrollbar { width:4px; }
+#panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.ps { margin-bottom:18px; }
+.ps-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text3); margin-bottom:8px; }
+
+.tag-chip { display:inline-flex; align-items:center; background:rgba(109,92,246,.12); border:1px solid rgba(109,92,246,.25); color:var(--accent2); padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; font-family:monospace; }
+
+.field { margin-bottom:10px; }
+.field label { display:block; font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
+.field textarea, .field input[type="text"] { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:13px; padding:8px 10px; font-family:inherit; outline:none; resize:none; }
+.field textarea:focus, .field input:focus { border-color:var(--accent); }
+.field textarea { height:80px; }
+
+.slider-row { display:flex; align-items:center; gap:8px; }
+.slider-row input[type="range"] { flex:1; height:4px; background:var(--border); border-radius:2px; outline:none; cursor:pointer; accent-color:var(--accent); }
+.sv { min-width:36px; text-align:right; font-size:12px; color:var(--text2); }
+
+.color-row { display:flex; gap:8px; align-items:center; }
+.swatch { width:32px; height:32px; border-radius:6px; border:1px solid var(--border); overflow:hidden; cursor:pointer; flex-shrink:0; position:relative; }
+.swatch input[type="color"] { position:absolute; inset:-4px; width:calc(100% + 8px); height:calc(100% + 8px); opacity:0; cursor:pointer; }
+.sw-prev { width:100%; height:100%; }
+
+.pill-group { display:flex; gap:4px; flex-wrap:wrap; }
+.pill { padding:4px 10px; background:var(--bg); border:1px solid var(--border); border-radius:20px; font-size:12px; color:var(--text2); cursor:pointer; font-family:inherit; }
+.pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+.img-prev { width:100%; height:110px; background:var(--bg); border:1px solid var(--border); border-radius:6px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+.img-prev img { max-width:100%; max-height:100%; object-fit:contain; }
+.img-no { color:var(--text3); font-size:12px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; padding:8px; }
+
+.upload-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px; background:var(--accent); color:#fff; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s; }
+.upload-btn:hover { background:var(--accent2); transform:translateY(-1px); }
+
+.desel-btn { width:100%; padding:7px; background:transparent; color:var(--text3); border:1px solid var(--border); border-radius:6px; font-size:12px; cursor:pointer; font-family:inherit; margin-top:8px; }
+.desel-btn:hover { color:var(--text2); }
+
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 18px; border-radius:20px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(0,0,0,.4); transition:transform .35s cubic-bezier(.34,1.56,.64,1); z-index:9999; pointer-events:none; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast-dot { width:7px; height:7px; border-radius:50%; background:var(--green); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h4"/></svg></div>
+    Editor Visual
+  </div>
+  <div class="topbar-center" id="dev-sw" style="display:none">
+    <button class="dev-btn active" id="btn-desk" onclick="setDev('desktop')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Desktop
+    </button>
+    <button class="dev-btn" id="btn-mob" onclick="setDev('mobile')">
+      <svg width="11" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>Celular
+    </button>
+  </div>
+  <div class="topbar-right" id="tr"></div>
+</div>
+
+<div class="workspace">
+
+<div id="import">
+  <div class="import-box">
+    <div>
+      <h2>Edite seu HTML<br><span>visualmente</span></h2>
+      <p style="margin-top:8px">Cole o código, clique em qualquer texto ou imagem, edite e baixe.</p>
+    </div>
+
+    <div class="code-box">
+      <div class="code-head">CÓDIGO HTML <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(Ctrl+U → Ctrl+A → Ctrl+C → cole aqui)</span></div>
+      <textarea id="html-in" placeholder="Cole o código HTML aqui..."></textarea>
+    </div>
+
+    <div class="code-box" style="margin-top:-6px">
+      <div class="code-head" style="border:0;padding:8px 12px">
+        URL ORIGINAL DO SITE <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(opcional — corrige caminhos das imagens/CSS)</span>
+      </div>
+      <input type="text" id="src-url" placeholder="https://seusite.com.br/pagina" style="width:100%;background:transparent;border:none;color:var(--text);font-size:13px;padding:0 12px 12px;font-family:monospace;outline:none">
+    </div>
+
+    <button class="load-btn" onclick="loadPaste()">Abrir editor com correções →</button>
+    <div id="fix-info" style="font-size:11px;color:var(--text2);text-align:center;margin-top:-8px;display:none"></div>
+
+    <div class="or-row">ou carregue um arquivo</div>
+
+    <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <strong>Arrastar arquivo .html</strong>
+      <span>ou clique para selecionar</span>
+    </div>
+    <input type="file" id="fi" accept=".html,.htm" style="display:none" onchange="loadFile(event)">
+  </div>
+</div>
+
+<div id="editor">
+  <div class="editor-wrap">
+    <div class="canvas-wrap">
+      <div class="canvas-bar">
+        <div class="hint-pill"><div class="hint-dot"></div>Clique em um elemento</div>
+        <span id="crumb"></span>
+      </div>
+      <div class="stage" id="stage">
+        <div class="frame-wrap">
+          <div class="phone-notch"></div>
+          <div class="frame-inner"><iframe id="fr"></iframe></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sb-top">
+        <div class="sb-label">Painel de Edição</div>
+        <div class="tabs">
+          <button class="tab active" id="t-text" onclick="switchTab('text')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Texto
+          </button>
+          <button class="tab" id="t-img" onclick="switchTab('img')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Imagem
+          </button>
+          <button class="tab" id="t-style" onclick="switchTab('style')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>Estilo
+          </button>
+        </div>
+      </div>
+
+      <div class="empty" id="empty">
+        <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <p>Clique em qualquer<br>elemento para editar</p>
+      </div>
+
+      <div id="panel" style="display:none">
+        <div class="ps" style="padding-top:14px">
+          <div class="ps-label">Selecionado</div>
+          <span class="tag-chip" id="el-tag">&lt;div&gt;</span>
+        </div>
+
+        <div id="c-text">
+          <div class="ps">
+            <div class="ps-label">Conteúdo</div>
+            <div class="field"><label>Texto</label><textarea id="el-text" oninput="liveText()"></textarea></div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Tipografia</div>
+            <div class="field"><label>Tamanho</label>
+              <div class="slider-row">
+                <input type="range" id="el-fs" min="8" max="120" value="16" oninput="sv('fs-v',this.value+'px');liveStyle('fontSize',this.value+'px')">
+                <span class="sv" id="fs-v">16px</span>
+              </div>
+            </div>
+            <div class="field"><label>Peso</label>
+              <div class="pill-group">
+                <button class="pill" data-fw="400" onclick="setFW(this)">Normal</button>
+                <button class="pill" data-fw="600" onclick="setFW(this)">Semi</button>
+                <button class="pill active" data-fw="700" onclick="setFW(this)">Negrito</button>
+                <button class="pill" data-fw="900" onclick="setFW(this)">Black</button>
+              </div>
+            </div>
+            <div class="field"><label>Cor do texto</label>
+              <div class="color-row">
+                <div class="swatch"><div class="sw-prev" id="cp-text" style="background:#000"></div><input type="color" id="el-color" value="#000000" oninput="syncColor('cp-text','el-color','el-chex');liveStyle('color',this.value)"></div>
+                <input type="text" id="el-chex" placeholder="#000000" oninput="syncHex('el-chex','el-color','cp-text','color')">
+              </div>
+            </div>
+          </div>
+          <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
+        </div>
+
+        <div id="c-img" style="display:none">
+          <div class="ps" style="padding-top:14px">
+            <div class="ps-label">Imagem</div>
+            <div class="img-prev" id="img-prev"><div class="img-no"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><span>Nenhuma imagem</span></div></div>
+            <button class="upload-btn" onclick="document.getElementById('img-fi').click()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Substituir imagem
+            </button>
+            <input type="file" id="img-fi" accept="image/*" style="display:none" onchange="replImg(event)">
+            <div class="field" style="margin-top:10px"><label>Alt text</label><input type="text" id="el-alt" oninput="liveAlt()" placeholder="Descrição..."></div>
+          </div>
+          <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
+        </div>
+
+        <div id="c-style" style="display:none">
+          <div class="ps" style="padding-top:14px">
+            <div class="ps-label">Fundo</div>
+            <div class="field"><label>Cor de fundo</label>
+              <div class="color-row">
+                <div class="swatch"><div class="sw-prev" id="cp-bg"></div><input type="color" id="el-bg" value="#ffffff" oninput="syncColor('cp-bg','el-bg','el-bghex');liveStyle('backgroundColor',this.value)"></div>
+                <input type="text" id="el-bghex" placeholder="#ffffff" oninput="syncHex('el-bghex','el-bg','cp-bg','backgroundColor')">
+                <button class="pill" onclick="clearBG()">✕</button>
+              </div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Espaçamento</div>
+            <div class="field"><label>Padding</label>
+              <div class="slider-row">
+                <input type="range" id="el-pad" min="0" max="80" value="0" oninput="sv('pad-v',this.value+'px');liveStyle('padding',this.value+'px')">
+                <span class="sv" id="pad-v">0px</span>
+              </div>
+            </div>
+            <div class="field"><label>Borda arredondada</label>
+              <div class="slider-row">
+                <input type="range" id="el-rad" min="0" max="50" value="0" oninput="sv('rad-v',this.value+'px');liveStyle('borderRadius',this.value+'px')">
+                <span class="sv" id="rad-v">0px</span>
+              </div>
+            </div>
+          </div>
+          <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"><div class="toast-dot" id="tdot"></div><span id="tmsg">Salvo!</span></div>
+
+<script>
+'use strict';
+
+// ─── ESTADO ─────────────────────────────────────────────────────────────
+// CHAVE: a fonte da verdade é o iframe (`fr.contentDocument`).
+// Não usamos parentDoc duplicado. Toda alteração é direta no iframe.
+// Para o download, lemos `fr.contentDocument.documentElement.outerHTML`.
+
+let sel = null;        // Elemento clicado (no iframe)
+let selImg = null;     // Imagem dentro do elemento selecionado
+let dev = 'desktop';   // 'desktop' ou 'mobile'
+let fw = '700';
+const SKIP_TAGS = new Set(['html','head','script','style','meta','link','title','noscript','iframe','base']);
+const TXT_TAGS = new Set(['p','h1','h2','h3','h4','h5','h6','span','a','button','li','td','th','label','strong','em','b','i','small','div','section','header','footer','article','aside','nav','main','figcaption','caption']);
+
+// ─── CARREGAR HTML ──────────────────────────────────────────────────────
+function loadPaste() {
+  const h = document.getElementById('html-in').value.trim();
+  if (!h) { toast('Cole um HTML primeiro', true); return; }
+  const userUrl = document.getElementById('src-url').value.trim();
+  const fixed = fixHTML(h, userUrl);
+  if (fixed.info) {
+    const el = document.getElementById('fix-info');
+    el.textContent = fixed.info;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+  openEditor(fixed.html);
+}
+
+// ─── AUTO-CORREÇÃO DE HTML COPIADO ──────────────────────────────────────
+// Detecta a URL original e corrige caminhos relativos (imagens, CSS, fontes)
+// para que tudo carregue corretamente no editor.
+function fixHTML(html, userUrl) {
+  let info = [];
+  let baseUrl = userUrl;
+
+  // 1. Se usuário não digitou URL, tenta detectar do próprio HTML
+  if (!baseUrl) {
+    const candidates = [
+      /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i,
+      /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i,
+      /<meta[^>]+property=["']og:url["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:url["']/i,
+      /<meta[^>]+name=["']twitter:url["'][^>]+content=["']([^"']+)["']/i,
+    ];
+    for (const re of candidates) {
+      const m = html.match(re);
+      if (m && m[1] && /^https?:\/\//i.test(m[1])) { baseUrl = m[1]; info.push('URL detectada: ' + new URL(m[1]).hostname); break; }
+    }
+  } else if (!/^https?:\/\//i.test(baseUrl)) {
+    baseUrl = 'https://' + baseUrl;
+  }
+
+  // 2. Injeta <base href> se temos URL e o HTML ainda não tem base
+  if (baseUrl && !/<base\s+href=/i.test(html)) {
+    const origin = baseUrl.replace(/#.*$/, '').replace(/\?.*$/, '');
+    // Usa o caminho completo (sem o arquivo) para resolver paths relativos certinho
+    let basePath;
+    try {
+      const u = new URL(origin);
+      const pathParts = u.pathname.split('/');
+      pathParts.pop(); // remove o arquivo final
+      basePath = u.origin + pathParts.join('/') + '/';
+    } catch(e) { basePath = origin + '/'; }
+
+    const tag = '<base href="' + basePath + '">';
+    if (/<head[\s>]/i.test(html)) {
+      html = html.replace(/<head([^>]*)>/i, '<head$1>' + tag);
+      info.unshift('Base href aplicado');
+    } else {
+      html = tag + html;
+    }
+  }
+
+  // 3. Converte URLs protocolo-relativas (//cdn.com) para https://
+  const before = html.length;
+  html = html.replace(/(src|href)=("|')\/\//gi, '$1=$2https://');
+  if (html.length !== before) info.push('Links sem protocolo corrigidos');
+
+  // 4. Converte data-src → src (lazy loading desfeito)
+  const lazyMatches = (html.match(/\sdata-src=/gi) || []).length;
+  if (lazyMatches > 0) {
+    html = html.replace(/<img([^>]*?)\s+data-src=("|')([^"']+)\2/gi, '<img$1 src=$2$3$2');
+    info.push(lazyMatches + ' imagens lazy convertidas');
+  }
+
+  // 5. Remove scripts que podem quebrar a página dentro do editor
+  const scriptCount = (html.match(/<script[\s>]/gi) || []).length;
+  if (scriptCount > 0) {
+    html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+    info.push(scriptCount + ' scripts removidos');
+  }
+
+  // 6. Remove handlers inline (onclick, onload, etc.) que podem causar erros
+  html = html.replace(/\s+on[a-z]+=("[^"]*"|'[^']*')/gi, '');
+
+  return { html, info: info.length ? '✓ ' + info.join(' • ') : '' };
+}
+
+function loadFile(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    document.getElementById('html-in').value = ev.target.result;
+    const userUrl = document.getElementById('src-url').value.trim();
+    const fixed = fixHTML(ev.target.result, userUrl);
+    if (fixed.info) {
+      const el = document.getElementById('fix-info');
+      el.textContent = fixed.info;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 4000);
+    }
+    openEditor(fixed.html);
+  };
+  r.readAsText(f);
+}
+
+const dz = document.getElementById('dz');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) { const r = new FileReader(); r.onload = ev => { document.getElementById('html-in').value = ev.target.result; openEditor(ev.target.result); }; r.readAsText(f); }
+});
+
+function openEditor(html) {
+  document.getElementById('import').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
+  document.getElementById('dev-sw').style.display = 'flex';
+  document.getElementById('tr').innerHTML =
+    '<button class="btn btn-ghost" onclick="goBack()">← Voltar</button>' +
+    '<button class="btn btn-ghost" onclick="undoAll()">Desfazer</button>' +
+    '<button class="btn btn-primary" onclick="dlHTML()">⬇ Baixar HTML</button>';
+
+  renderIframes(html);
+}
+
+// ─── INJETAR EDITOR DENTRO DO IFRAME ────────────────────────────────────
+// Injeta CSS de highlight + script que captura cliques e envia pro pai.
+const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}</style>';
+
+const VE_CODE = '(function(){'
+  + 'var SK={html:1,head:1,script:1,style:1,meta:1,link:1,title:1,noscript:1,iframe:1,base:1};'
+  + 'var n=0;'
+  // Pega o maior data-ve-id existente pra continuar a partir dele
+  + 'document.querySelectorAll("[data-ve-id]").forEach(function(e){var v=+e.getAttribute("data-ve-id");if(v>n)n=v;});'
+  + 'function tag(){document.querySelectorAll("*").forEach(function(e){if(SK[e.tagName.toLowerCase()])return;if(!e.getAttribute("data-ve-id"))e.setAttribute("data-ve-id",++n)})}'
+  + 'document.addEventListener("mouseover",function(e){var t=e.target;if(!t||!t.tagName||SK[t.tagName.toLowerCase()])return;var p=document.querySelector("[data-ve-hov]");if(p)p.removeAttribute("data-ve-hov");if(!t.hasAttribute("data-ve-sel"))t.setAttribute("data-ve-hov","")},true);'
+  + 'document.addEventListener("mouseout",function(e){if(e.target&&e.target.removeAttribute)e.target.removeAttribute("data-ve-hov")},true);'
+  + 'document.addEventListener("click",function(e){var t=e.target;if(!t||!t.tagName||SK[t.tagName.toLowerCase()])return;e.preventDefault();e.stopImmediatePropagation();var p=document.querySelector("[data-ve-sel]");if(p)p.removeAttribute("data-ve-sel");t.setAttribute("data-ve-sel","");if(!t.getAttribute("data-ve-id"))t.setAttribute("data-ve-id",++n);window.parent.postMessage({veId:t.getAttribute("data-ve-id")},"*")},true);'
+  + 'tag();new MutationObserver(tag).observe(document.documentElement,{childList:true,subtree:true});'
+  + '})();';
+
+function mkScript(c) { return '<' + 'script>' + c + '<' + '/script>'; }
+
+function inject(html) {
+  const inj = VE_STYLE + mkScript(VE_CODE);
+  if (/<\/head>/i.test(html)) return html.replace(/<\/head>/i, inj + '</head>');
+  if (/<body[\s>]/i.test(html)) return html.replace(/<body([^>]*)>/i, '<body$1>' + inj);
+  return inj + html;
+}
+
+function renderIframes(html) {
+  document.getElementById('fr').srcdoc = inject(html);
+}
+
+// ─── RECEBE CLICK DO IFRAME ─────────────────────────────────────────────
+window.addEventListener('message', function(e) {
+  if (!e.data || !e.data.veId) return;
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { toast('Erro: iframe inacessível', true); return; }
+  const el = doc.querySelector('[data-ve-id="' + e.data.veId + '"]');
+  if (el) selectEl(el);
+});
+
+// ─── SELECIONAR ELEMENTO ────────────────────────────────────────────────
+function selectEl(el) {
+  if (sel) sel.removeAttribute('data-ve-sel');
+  sel = el;
+  el.setAttribute('data-ve-sel', '');
+  el.removeAttribute('data-ve-hov');
+
+  const tag = el.tagName.toLowerCase();
+  document.getElementById('el-tag').textContent = '<' + tag + '>';
+  document.getElementById('crumb').textContent = '<' + tag + '>';
+  document.getElementById('empty').style.display = 'none';
+  document.getElementById('panel').style.display = 'block';
+
+  const cs = el.ownerDocument.defaultView.getComputedStyle(el);
+
+  // TEXTO
+  const isT = TXT_TAGS.has(tag);
+  document.getElementById('el-text').value = isT ? (el.innerText || '') : '';
+  document.getElementById('el-text').disabled = !isT;
+  document.getElementById('el-text').style.opacity = isT ? '1' : '.4';
+
+  const fs = parseInt(cs.fontSize) || 16;
+  document.getElementById('el-fs').value = fs;
+  document.getElementById('fs-v').textContent = fs + 'px';
+
+  fw = cs.fontWeight || '400';
+  document.querySelectorAll('[data-fw]').forEach(p => p.classList.toggle('active', p.dataset.fw === fw));
+
+  const col = rgbHex(cs.color) || '#000000';
+  setVal('el-color', col); setVal('el-chex', col);
+  document.getElementById('cp-text').style.background = col;
+
+  // IMAGEM
+  selImg = (tag === 'img') ? el : (el.querySelector('img') || null);
+  const wrap = document.getElementById('img-prev');
+  if (selImg) {
+    showImgPreview(selImg.src);
+    setVal('el-alt', selImg.alt || '');
+  } else {
+    wrap.innerHTML = '<div class="img-no"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><span>Nenhuma imagem<br>neste elemento</span></div>';
+  }
+
+  // ESTILO
+  const bg = cs.backgroundColor;
+  if (bg && bg !== 'rgba(0, 0, 0, 0)') {
+    const bh = rgbHex(bg) || '#ffffff';
+    setVal('el-bg', bh); setVal('el-bghex', bh);
+    document.getElementById('cp-bg').style.cssText = 'background:' + bh;
+  } else {
+    setVal('el-bghex', '');
+    document.getElementById('cp-bg').style.cssText = 'background:repeating-conic-gradient(#ccc 0% 25%, transparent 0% 50%) 0 0 / 8px 8px';
+  }
+
+  const pad = parseInt(cs.paddingTop) || 0;
+  setVal('el-pad', pad); sv('pad-v', pad + 'px');
+  const rad = parseInt(cs.borderRadius) || 0;
+  setVal('el-rad', rad); sv('rad-v', rad + 'px');
+
+  if (selImg) switchTab('img');
+  else if (isT) switchTab('text');
+}
+
+function desel() {
+  if (sel) sel.removeAttribute('data-ve-sel');
+  sel = null; selImg = null;
+  document.getElementById('empty').style.display = 'flex';
+  document.getElementById('panel').style.display = 'none';
+  document.getElementById('crumb').textContent = '';
+}
+
+// ─── UPDATES AO VIVO ────────────────────────────────────────────────────
+// Tudo aplica DIRETO no elemento do iframe. Como o iframe é nossa fonte
+// da verdade, o download (que lê o iframe) automaticamente tem as alterações.
+
+function liveText() {
+  if (!sel) return;
+  sel.innerText = document.getElementById('el-text').value;
+}
+
+function liveStyle(prop, val) {
+  if (!sel) return;
+  sel.style[prop] = val;
+}
+
+function liveAlt() {
+  if (!selImg) return;
+  selImg.alt = document.getElementById('el-alt').value;
+}
+
+function setFW(btn) {
+  document.querySelectorAll('[data-fw]').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  fw = btn.dataset.fw;
+  liveStyle('fontWeight', fw);
+}
+
+function clearBG() {
+  if (sel) { sel.style.backgroundColor = ''; sel.style.background = ''; }
+  setVal('el-bghex', '');
+  document.getElementById('cp-bg').style.cssText = 'background:repeating-conic-gradient(#ccc 0% 25%, transparent 0% 50%) 0 0 / 8px 8px';
+}
+
+// ─── SUBSTITUIR IMAGEM ──────────────────────────────────────────────────
+function replImg(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  if (!selImg) { toast('Selecione uma imagem primeiro', true); return; }
+  const r = new FileReader();
+  r.onload = ev => {
+    const dataUrl = ev.target.result;
+    selImg.src = dataUrl;
+    selImg.removeAttribute('srcset');
+    selImg.removeAttribute('data-src');
+    showImgPreview(dataUrl);
+    toast('Imagem trocada!');
+    // Limpa o input pra permitir trocar pela mesma imagem de novo
+    document.getElementById('img-fi').value = '';
+  };
+  r.onerror = () => toast('Erro ao ler arquivo', true);
+  r.readAsDataURL(f);
+}
+
+function showImgPreview(src) {
+  const wrap = document.getElementById('img-prev');
+  wrap.innerHTML = '';
+  const img = document.createElement('img');
+  img.onerror = function() {
+    wrap.innerHTML = '<div class="img-no"><div style="font-size:24px">🖼</div><span>Imagem externa<br><small>Preview bloqueado<br>Substituição funciona</small></span></div>';
+  };
+  img.src = src;
+  wrap.appendChild(img);
+}
+
+// ─── DOWNLOAD ───────────────────────────────────────────────────────────
+function dlHTML() {
+  const fr = document.getElementById('fr');
+  let doc;
+  try { doc = fr.contentDocument || fr.contentWindow.document; }
+  catch(e) { toast('Erro ao acessar conteúdo do iframe', true); return; }
+
+  if (!doc || !doc.documentElement) { toast('Iframe vazio', true); return; }
+
+  // Pega TODO o HTML do iframe — inclui todas as edições ao vivo
+  let h = doc.documentElement.outerHTML;
+
+  // Limpa marcadores do editor
+  h = h.replace(/\s*data-ve-id="[^"]*"/g, '');
+  h = h.replace(/\s*data-ve-sel(="[^"]*")?/g, '');
+  h = h.replace(/\s*data-ve-hov(="[^"]*")?/g, '');
+
+  // Remove o style e script que injetamos
+  h = h.replace(VE_STYLE, '');
+  h = h.replace(mkScript(VE_CODE), '');
+  // Fallback: remove qualquer style ou script com a marca [data-ve-sel]
+  h = h.replace(/<style[^>]*>[^<]*\[data-ve-sel\][\s\S]*?<\/style>/gi, '');
+  h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?MutationObserver[\s\S]*?\}\)\(\);<\/script>/gi, '');
+
+  // Adiciona doctype
+  if (!/^\s*<!DOCTYPE/i.test(h)) h = '<!DOCTYPE html>\n' + h;
+
+  const blob = new Blob([h], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pagina-editada.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('Baixado!');
+}
+
+// ─── DEVICE / TABS ──────────────────────────────────────────────────────
+function setDev(d) {
+  dev = d; desel();
+  document.getElementById('stage').classList.toggle('mobile', d === 'mobile');
+  document.getElementById('btn-desk').classList.toggle('active', d === 'desktop');
+  document.getElementById('btn-mob').classList.toggle('active', d === 'mobile');
+}
+
+function switchTab(t) {
+  ['text','img','style'].forEach(k => {
+    document.getElementById('t-'+k).classList.toggle('active', k === t);
+    document.getElementById('c-'+k).style.display = k === t ? 'block' : 'none';
+  });
+}
+
+// ─── UTIL ───────────────────────────────────────────────────────────────
+function sv(id, v) { document.getElementById(id).textContent = v; }
+function setVal(id, v) { document.getElementById(id).value = v; }
+
+function syncColor(prevId, inputId, hexId) {
+  const v = document.getElementById(inputId).value;
+  document.getElementById(prevId).style.cssText = 'background:' + v;
+  document.getElementById(hexId).value = v;
+}
+
+function syncHex(hexId, inputId, prevId, prop) {
+  const v = document.getElementById(hexId).value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    document.getElementById(inputId).value = v;
+    document.getElementById(prevId).style.cssText = 'background:' + v;
+    liveStyle(prop, v);
+  }
+}
+
+function rgbHex(rgb) {
+  if (!rgb) return null;
+  const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!m) return null;
+  return '#' + [m[1],m[2],m[3]].map(x => (+x).toString(16).padStart(2,'0')).join('');
+}
+
+function undoAll() {
+  if (!confirm('Desfazer todas as alterações?')) return;
+  desel();
+  renderIframes(document.getElementById('html-in').value);
+  toast('Desfeito');
+}
+
+function goBack() {
+  sel = null; selImg = null;
+  document.getElementById('editor').style.display = 'none';
+  document.getElementById('import').style.display = 'flex';
+  document.getElementById('dev-sw').style.display = 'none';
+  document.getElementById('tr').innerHTML = '';
+  document.getElementById('fr').srcdoc = '';
+  setDev('desktop');
+}
+
+let toastTimer;
+function toast(msg, err) {
+  document.getElementById('tmsg').textContent = msg;
+  document.getElementById('tdot').style.background = err ? '#ef4444' : '#22c55e';
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>
