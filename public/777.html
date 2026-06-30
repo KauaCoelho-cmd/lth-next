@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunter X — Apresentação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   RESET & GLOBALS
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #06090d;
+  --bg2:       #0a0f14;
+  --bg3:       #0d1420;
+  --violet:    #7c3aed;
+  --violet-l:  #a78bfa;
+  --violet-d:  #6d28d9;
+  --cyan:      #22d3ee;
+  --cyan-d:    #0891b2;
+  --green:     #22c55e;
+  --orange:    #f97316;
+  --red:       #ef4444;
+  --white:     #f4f4f5;
+  --z400:      #a1a1aa;
+  --z500:      #71717a;
+  --z600:      #52525b;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE ENGINE
+═══════════════════════════════════════════════════════════ */
+.deck {
+  width: 100vw; height: 100vh;
+  position: relative;
+}
+
+.slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 4vh 6vw;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1);
+  transform: translateY(24px);
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.slide.exit-up   { opacity: 0; transform: translateY(-32px); }
+.slide.exit-down { opacity: 0; transform: translateY(32px); }
+
+/* ── SHARED BG FX ── */
+.slide::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 110%, rgba(124,58,237,0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 5%  50%,  rgba(124,58,237,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 95% 15%,  rgba(34,211,238,0.09) 0%, transparent 60%);
+}
+.slide.cyan-bg::before {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 110%, rgba(34,211,238,0.3) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 5%  50%,  rgba(34,211,238,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 95% 15%,  rgba(124,58,237,0.1) 0%, transparent 60%);
+}
+.slide.red-bg::before {
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(239,68,68,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 80% at 50% 50%,  rgba(6,9,13,0.5) 0%, transparent 100%);
+}
+
+.grid-overlay {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.022;
+  background-image:
+    linear-gradient(rgba(167,139,250,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167,139,250,1) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 16px;
+  z-index: 100;
+  background: rgba(10,15,20,0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  padding: 8px 16px;
+}
+
+.nav-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  color: var(--violet-l); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.nav-btn:hover { background: rgba(124,58,237,0.35); transform: scale(1.1); }
+.nav-btn:disabled { opacity: 0.25; cursor: default; transform: none; }
+
+.nav-dots { display: flex; gap: 6px; }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer; transition: all 0.3s;
+}
+.dot.active { background: var(--violet-l); width: 20px; border-radius: 3px; }
+
+.slide-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--z500);
+  min-width: 32px; text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════════════ */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fadeIn   { from { opacity:0 } to { opacity:1 } }
+@keyframes scaleIn  { from { opacity:0; transform:scale(.92) } to { opacity:1; transform:scale(1) } }
+@keyframes glow     { 0%,100% { opacity:.6 } 50% { opacity:1 } }
+@keyframes pulse    { 0%,100% { transform:scale(1) } 50% { transform:scale(1.05) } }
+@keyframes float    { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-8px) } }
+@keyframes slideR   { from { opacity:0; transform:translateX(-24px) } to { opacity:1; transform:translateX(0) } }
+@keyframes slideL   { from { opacity:0; transform:translateX(24px) }  to { opacity:1; transform:translateX(0) } }
+
+.slide.active .anim-1 { animation: fadeUp  .5s .05s both }
+.slide.active .anim-2 { animation: fadeUp  .5s .15s both }
+.slide.active .anim-3 { animation: fadeUp  .5s .25s both }
+.slide.active .anim-4 { animation: fadeUp  .5s .35s both }
+.slide.active .anim-5 { animation: fadeUp  .5s .45s both }
+.slide.active .anim-6 { animation: fadeUp  .5s .55s both }
+.slide.active .anim-r { animation: slideR  .5s .1s  both }
+.slide.active .anim-l { animation: slideL  .5s .2s  both }
+.slide.active .anim-s { animation: scaleIn .6s .1s  both }
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE COMPONENTS
+═══════════════════════════════════════════════════════════ */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(124,58,237,0.35);
+  background: rgba(124,58,237,0.1);
+  padding: 4px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--violet-l);
+}
+.badge.cyan { border-color: rgba(34,211,238,0.35); background: rgba(34,211,238,0.08); color: var(--cyan); }
+.badge.green { border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.08); color: var(--green); }
+.badge .dot-badge { width:5px; height:5px; border-radius:50%; background: currentColor; }
+
+.section-title {
+  font-size: clamp(28px, 4.5vw, 52px);
+  font-weight: 900; letter-spacing: -1.5px; line-height: 1.05;
+}
+
+.grad { background: linear-gradient(120deg, var(--violet-l), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.grad-g { background: linear-gradient(120deg, #4ade80, #22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+.sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(11px, 1.4vw, 14px);
+  color: var(--z400); line-height: 1.7;
+}
+
+.divider {
+  width: 44px; height: 3px;
+  background: linear-gradient(90deg, var(--violet), var(--cyan));
+  border-radius: 2px; margin: 10px 0 16px;
+}
+.divider.cyan { background: linear-gradient(90deg, var(--cyan), #67e8f9); }
+
+.card {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025);
+  padding: 16px 18px;
+}
+.card.v { border-color: rgba(124,58,237,0.25); background: rgba(124,58,237,0.07); }
+.card.c { border-color: rgba(34,211,238,0.2);  background: rgba(34,211,238,0.04); }
+.card.g { border-color: rgba(34,197,94,0.2);   background: rgba(34,197,94,0.04); }
+
+.img-ph {
+  width: 100%; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  object-fit: cover;
+  display: block;
+}
+
+.pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  border-radius: 6px; padding: 2px 8px;
+  border: 1px solid rgba(124,58,237,0.25);
+  background: rgba(124,58,237,0.08);
+  color: var(--violet-l);
+}
+.pill.c { border-color: rgba(34,211,238,0.25); background: rgba(34,211,238,0.06); color: var(--cyan); }
+.pill.g { border-color: rgba(34,197,94,0.25);  background: rgba(34,197,94,0.06);  color: var(--green); }
+.pill.r { border-color: rgba(239,68,68,0.3);   background: rgba(239,68,68,0.06);  color: #fca5a5; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 1 — CAPA
+═══════════════════════════════════════════════════════════ */
+#s1 { text-align: center; }
+#s1 .logo-ring {
+  width: 80px; height: 80px; border-radius: 22px;
+  border: 1.5px solid rgba(124,58,237,0.55);
+  background: rgba(124,58,237,0.14);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 40px rgba(124,58,237,0.4), inset 0 1px 0 rgba(167,139,250,0.2);
+  animation: float 3s ease-in-out infinite;
+}
+#s1 h1 {
+  font-size: clamp(56px, 9vw, 100px);
+  font-weight: 900; letter-spacing: -4px; line-height: 1;
+  margin-bottom: 14px;
+}
+#s1 .tagline {
+  font-size: clamp(14px, 2vw, 20px);
+  color: rgba(244,244,245,0.6);
+  max-width: 560px; margin: 0 auto 28px;
+  line-height: 1.5; font-weight: 600;
+}
+#s1 .meta-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; flex-wrap: wrap;
+}
+#s1 .meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--z500);
+  display: flex; align-items: center; gap: 6px;
+}
+#s1 .meta-sep { width:1px; height:16px; background: rgba(255,255,255,0.1); }
+#s1 .img-wrap {
+  position: absolute; right: 6vw; top: 50%; transform: translateY(-50%);
+  width: min(280px, 22vw);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 2 — ORIGEM
+═══════════════════════════════════════════════════════════ */
+#s2 .layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 5vw; width: 100%; align-items: center; }
+#s2 .timeline { display: flex; flex-direction: column; gap: 16px; position: relative; padding-left: 24px; }
+#s2 .timeline::before {
+  content:''; position:absolute; left:8px; top:8px; bottom:8px; width:2px;
+  background: linear-gradient(to bottom, var(--violet), var(--cyan), transparent);
+}
+#s2 .titem { position: relative; }
+#s2 .titem::before {
+  content:''; position:absolute; left:-20px; top:6px;
+  width:10px; height:10px; border-radius:50%;
+  background: var(--violet-l); box-shadow: 0 0 8px rgba(167,139,250,.7);
+}
+#s2 .titem.cyan::before { background: var(--cyan); box-shadow: 0 0 8px rgba(34,211,238,.7); }
+#s2 .titem .yr { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--z500); margin-bottom:2px; }
+#s2 .titem .tt { font-size:clamp(12px,1.5vw,15px); font-weight:700; color:var(--white); margin-bottom:4px; }
+#s2 .titem .td { font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1.1vw,12px); color:var(--z400); line-height:1.6; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 3 — GOBLIN
+═══════════════════════════════════════════════════════════ */
+#s3 .layout { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 5vw; width: 100%; align-items: center; }
+#s3 .goblin-card {
+  border-radius: 20px;
+  border: 1px solid rgba(124,58,237,0.3);
+  background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(124,58,237,0.04));
+  padding: 24px; text-align: center;
+  box-shadow: 0 0 60px rgba(124,58,237,0.15);
+}
+#s3 .trait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+#s3 .trait {
+  border-radius: 10px; padding: 10px 12px;
+  border: 1px solid rgba(124,58,237,0.15);
+  background: rgba(124,58,237,0.06);
+}
+#s3 .trait .icon { font-size: 18px; margin-bottom: 4px; }
+#s3 .trait .label { font-size: 11px; font-weight: 700; color: var(--white); }
+#s3 .trait .desc { font-family:'JetBrains Mono',monospace; font-size: 9px; color: var(--z500); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 4 — PROBLEMA
+═══════════════════════════════════════════════════════════ */
+#s4 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 100%; align-items: start; }
+#s4 .pain-list { display: flex; flex-direction: column; gap: 8px; }
+#s4 .pain-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  border-radius: 10px; padding: 10px 14px;
+  border: 1px solid rgba(239,68,68,0.15);
+  background: rgba(239,68,68,0.04);
+}
+#s4 .pain-x {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(239,68,68,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #f87171; font-weight: 900; margin-top: 1px;
+}
+#s4 .pain-text { font-size: clamp(11px, 1.3vw, 13px); color: #fca5a5; line-height: 1.4; }
+#s4 .cost-box {
+  border-radius: 14px; padding: 20px;
+  border: 1px solid rgba(239,68,68,0.25);
+  background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.02));
+  margin-top: 12px; text-align: center;
+}
+#s4 .cost-num { font-size: clamp(32px, 4vw, 48px); font-weight: 900; color: #f87171; line-height: 1; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 5 — SOLUÇÃO
+═══════════════════════════════════════════════════════════ */
+#s5 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 100%; align-items: start; }
+#s5 .fix-list { display: flex; flex-direction: column; gap: 8px; }
+#s5 .fix-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  border-radius: 10px; padding: 10px 14px;
+  border: 1px solid rgba(34,197,94,0.15);
+  background: rgba(34,197,94,0.04);
+}
+#s5 .fix-check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--green); font-weight: 900; margin-top: 1px;
+}
+#s5 .fix-text { font-size: clamp(11px, 1.3vw, 13px); color: #86efac; line-height: 1.4; }
+#s5 .mock-browser {
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: #0d1117;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+#s5 .mock-bar {
+  display:flex; align-items:center; gap:5px; padding:8px 12px;
+  background:#161b22; border-bottom:1px solid rgba(255,255,255,0.05);
+}
+#s5 .mock-dot { width:8px;height:8px;border-radius:50%; }
+#s5 .mock-url {
+  flex:1; margin-left:6px;
+  background:rgba(255,255,255,0.05); border-radius:4px;
+  padding:2px 8px; font-family:'JetBrains Mono',monospace;
+  font-size:7.5px; color:rgba(255,255,255,0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 6 — COMO FUNCIONA
+═══════════════════════════════════════════════════════════ */
+#s6 .steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; }
+#s6 .step-card {
+  border-radius: 16px; padding: 22px 18px;
+  border: 1px solid rgba(124,58,237,0.2);
+  background: rgba(124,58,237,0.05);
+  position: relative; overflow: hidden;
+}
+#s6 .step-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--violet), var(--cyan));
+}
+#s6 .step-num {
+  font-size: clamp(40px, 5vw, 56px); font-weight: 900;
+  color: rgba(124,58,237,0.2); line-height: 1;
+  font-family:'JetBrains Mono',monospace; margin-bottom: 10px;
+}
+#s6 .step-title { font-size: clamp(14px, 1.6vw, 17px); font-weight: 700; margin-bottom: 8px; }
+#s6 .step-desc { font-family:'JetBrains Mono',monospace; font-size: clamp(10px, 1.1vw, 12px); color: var(--z400); line-height: 1.6; }
+#s6 .step-tag { display:inline-block; margin-top: 10px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 7 — FERRAMENTAS PRO
+═══════════════════════════════════════════════════════════ */
+#s7 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 100%; align-items: start; }
+#s7 .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#s7 .feat-card {
+  border-radius: 12px; padding: 14px;
+  border: 1px solid rgba(124,58,237,0.15);
+  background: rgba(124,58,237,0.05);
+}
+#s7 .feat-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; margin-bottom: 8px;
+}
+#s7 .feat-title { font-size: clamp(11px,1.3vw,13px); font-weight: 700; margin-bottom: 3px; }
+#s7 .feat-desc  { font-family:'JetBrains Mono',monospace; font-size: clamp(9px,1vw,11px); color: var(--z500); line-height:1.5; }
+#s7 .plat-cloud { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+#s7 .plat-tag   { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--z400); border:1px solid rgba(255,255,255,0.06); background:rgba(124,58,237,0.05); padding:3px 9px; border-radius:6px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 8 — SITESCOPE ORIGEM
+═══════════════════════════════════════════════════════════ */
+#s8 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; width: 100%; align-items: center; }
+#s8 .flow {
+  display: flex; flex-direction: column; gap: 0;
+}
+#s8 .flow-step {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding-bottom: 16px;
+  position: relative;
+}
+#s8 .flow-step:not(:last-child)::after {
+  content:''; position:absolute; left:16px; top:36px; bottom:0; width:2px;
+  background: linear-gradient(to bottom, rgba(34,211,238,0.4), transparent);
+}
+#s8 .flow-circle {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--cyan);
+  background: rgba(34,211,238,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-family:'JetBrains Mono',monospace; font-size: 12px; font-weight: 700;
+  color: var(--cyan);
+}
+#s8 .flow-txt .ft { font-size:clamp(12px,1.4vw,14px); font-weight:700; margin-bottom:3px; }
+#s8 .flow-txt .fd { font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1.1vw,12px); color:var(--z400); line-height:1.5; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 9 — SITESCOPE FEATURES
+═══════════════════════════════════════════════════════════ */
+#s9 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 100%; align-items: center; }
+#s9 .feat-list { display: flex; flex-direction: column; gap: 10px; }
+#s9 .feat-row {
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 10px; padding: 10px 14px;
+  border: 1px solid rgba(34,211,238,0.12);
+  background: rgba(34,211,238,0.03);
+}
+#s9 .feat-ico {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+#s9 .feat-name { font-size: clamp(11px,1.3vw,13px); font-weight: 700; }
+#s9 .feat-sub  { font-family:'JetBrains Mono',monospace; font-size: clamp(9px,1vw,11px); color: var(--z500); margin-top: 1px; }
+#s9 .editor-mock {
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(34,211,238,0.2);
+  background: #0a0f14;
+  box-shadow: 0 0 40px rgba(34,211,238,0.1);
+}
+#s9 .em-bar { display:flex; align-items:center; gap:5px; padding:8px 12px; background:#0d1520; border-bottom:1px solid rgba(34,211,238,0.08); }
+#s9 .em-dot { width:8px;height:8px;border-radius:50%; }
+#s9 .em-url { flex:1; margin-left:6px; background:rgba(34,211,238,0.05); border-radius:4px; padding:2px 8px; font-family:'JetBrains Mono',monospace; font-size:7.5px; color:rgba(34,211,238,0.4); }
+#s9 .em-body { padding: 16px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 10 — PREÇO
+═══════════════════════════════════════════════════════════ */
+#s10 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; width: 100%; align-items: start; }
+#s10 .fase-list { display: flex; flex-direction: column; gap: 8px; position: relative; padding-left: 26px; }
+#s10 .fase-list::before {
+  content:''; position:absolute; left:8px; top:0; bottom:0; width:2px;
+  background: linear-gradient(to bottom, var(--green), var(--violet), rgba(255,255,255,0.05));
+}
+#s10 .fase-row {
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 10px; padding: 10px 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.015);
+  position: relative;
+}
+#s10 .fase-row.atual {
+  border-color: rgba(124,58,237,0.45);
+  background: linear-gradient(135deg,rgba(124,58,237,0.12),rgba(124,58,237,0.04));
+  box-shadow: 0 0 30px rgba(124,58,237,0.12);
+}
+#s10 .fase-row.dim { opacity: 0.35; }
+#s10 .fase-dot {
+  position: absolute; left: -22px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,.6);
+}
+#s10 .fase-dot.atual { background: var(--violet-l); box-shadow: 0 0 10px rgba(167,139,250,1); }
+#s10 .fase-dot.dim   { background: var(--z600); box-shadow: none; }
+#s10 .fase-num  { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--z500); text-transform:uppercase; letter-spacing:.1em; min-width:42px; }
+#s10 .fase-price { font-size: clamp(16px,2vw,20px); font-weight: 900; min-width: 60px; }
+#s10 .fase-info  { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--z500); flex:1; }
+#s10 .fase-tag   { font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; padding:2px 8px; border-radius:6px; }
+#s10 .price-box {
+  border-radius: 18px; padding: 24px;
+  border: 1px solid rgba(124,58,237,0.3);
+  background: linear-gradient(135deg,rgba(124,58,237,0.12),rgba(124,58,237,0.04));
+  text-align: center;
+  box-shadow: 0 0 50px rgba(124,58,237,0.15);
+}
+#s10 .big-price { font-size: clamp(48px,6vw,72px); font-weight: 900; line-height: 1; color: var(--white); }
+#s10 .big-price sub { font-size: 0.35em; color: var(--z400); font-weight: 500; }
+#s10 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+#s10 .stat-box { border-radius: 10px; padding: 12px; border:1px solid rgba(124,58,237,0.15); background: rgba(124,58,237,0.06); text-align:center; }
+#s10 .stat-val { font-size: clamp(20px,2.5vw,28px); font-weight: 900; color: var(--violet-l); }
+#s10 .stat-lbl { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--z500); margin-top:2px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE 11 — CTA FINAL
+═══════════════════════════════════════════════════════════ */
+#s11 { text-align: center; }
+#s11 h2 { font-size: clamp(36px,5vw,64px); font-weight:900; letter-spacing:-2px; line-height:1.05; margin-bottom:14px; }
+#s11 .url-big {
+  font-family:'JetBrains Mono',monospace;
+  font-size: clamp(16px,2.5vw,28px); font-weight:700;
+  color: var(--violet-l); letter-spacing:.05em;
+  border-bottom: 2px solid rgba(167,139,250,0.4);
+  padding-bottom: 4px; margin-bottom: 28px; display:inline-block;
+}
+#s11 .cta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:660px; margin:0 auto; }
+#s11 .cta-item { border-radius:12px; padding:16px; border:1px solid rgba(124,58,237,0.2); background:rgba(124,58,237,0.07); }
+#s11 .cta-big  { font-size:clamp(22px,2.8vw,32px); font-weight:900; color:var(--violet-l); }
+#s11 .cta-lbl  { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--z500); margin-top:2px; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══ SLIDE 1 — CAPA ═══ -->
+  <div class="slide active" id="s1">
+    <div class="grid-overlay"></div>
+
+    <div class="anim-1" style="margin-bottom:16px;">
+      <div class="logo-ring">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="badge anim-2"><span class="dot-badge"></span>Chrome Extension · SaaS · v2.1.0</div>
+
+    <h1 class="section-title anim-3" style="font-size:clamp(64px,10vw,110px);letter-spacing:-5px;margin-top:10px;">
+      <span class="grad">Hunter X</span>
+    </h1>
+
+    <p class="anim-4" style="font-size:clamp(15px,2.2vw,22px);color:rgba(244,244,245,0.6);font-weight:600;max-width:580px;line-height:1.5;margin:10px auto 24px;">
+      A extensão que transforma a Biblioteca de Anúncios do Meta em máquina de garimpar produtos validados
+    </p>
+
+    <div class="meta-row anim-5">
+      <div class="meta-item"><span style="color:#22c55e;font-weight:700;">hunterx.site</span></div>
+      <div class="meta-sep"></div>
+      <div class="meta-item"><span style="color:var(--violet-l);font-weight:700;">Fase 4</span>&nbsp;·&nbsp;$12.90/mês</div>
+      <div class="meta-sep"></div>
+      <div class="meta-item"><span style="color:var(--cyan);font-weight:700;">200+</span>&nbsp;usuários</div>
+      <div class="meta-sep"></div>
+      <div class="meta-item"><span style="color:var(--z400);">15 plataformas detectadas</span></div>
+    </div>
+
+  </div>
+
+  <!-- ═══ SLIDE 2 — ORIGEM DO NOME ═══ -->
+  <div class="slide" id="s2">
+    <div class="grid-overlay"></div>
+    <div class="layout" style="width:100%;">
+      <div>
+        <div class="badge anim-1"><span class="dot-badge"></span>A Origem</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          Por que <span class="grad">Hunter X</span>?
+        </h2>
+        <div class="divider anim-3"></div>
+
+        <div class="timeline anim-4">
+          <div class="titem">
+            <div class="yr">2023 — A Frustração</div>
+            <div class="tt">Horas perdidas de madrugada</div>
+            <div class="td">O criador garimpava manualmente a Biblioteca do Meta e percebeu que a informação de preço e validação estava escondida dentro do HTML de cada anúncio. Ninguém estava mostrando isso de forma automática.</div>
+          </div>
+          <div class="titem">
+            <div class="yr">A Sacada</div>
+            <div class="tt">E se eu fizesse isso aparecer pra todo mundo?</div>
+            <div class="td">Começou como uma ferramenta pessoal. Em semanas, amigos pediram acesso. Em meses, virou um SaaS com mais de 200 usuários pagantes.</div>
+          </div>
+          <div class="titem cyan">
+            <div class="yr">O Nome</div>
+            <div class="tt">Hunter = Caçador · X = A incógnita</div>
+            <div class="td"><strong style="color:var(--violet-l);">Hunter</strong> porque o produto é feito para quem caça oportunidades no digital. <strong style="color:var(--cyan);">X</strong> porque é o produto validado que você ainda não encontrou — mas o Hunter X vai te mostrar onde ele está.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-l">
+        <img src="/pitch-origin.png" alt="Origem Hunter X" style="aspect-ratio:4/5;margin-bottom:14px;opacity:0.75;border:1px solid rgba(124,58,237,0.25);" class="img-ph">
+        <!-- HIGGSFIELD: A young Brazilian entrepreneur working late at night on a laptop, the screen glowing in purple and cyan colors, code and ad data visible on the screen, dark moody atmosphere, cinematic lighting from below, determined focused expression, dark room with neon purple accent lighting, photorealistic, 4:5 portrait format -->
+        <div class="card v" style="padding:14px 16px;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--z400);font-style:italic;line-height:1.6;">"Você é o caçador. O Hunter X é a sua mira."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3 — O GOBLIN ═══ -->
+  <div class="slide" id="s3">
+    <div class="grid-overlay"></div>
+    <div class="layout" style="width:100%;">
+      <div class="anim-r">
+        <div class="goblin-card">
+          <img src="/pitch-goblin.png" alt="Goblin mascote Hunter X" style="aspect-ratio:1/1;margin-bottom:12px;border-radius:10px;object-fit:contain;background:rgba(124,58,237,0.08);" class="img-ph">
+          <!-- HIGGSFIELD: A mischievous but clever cartoon goblin mascot for a tech product called Hunter X. The goblin holds a magnifying glass in one hand and a glowing golden coin in the other. It has large sharp eyes and a cunning smile. Dark fantasy digital art style, purple and cyan neon glow, dark background, flat illustration with depth, game-art quality, perfect symmetry, front-facing character design, 1:1 square format -->
+          <div class="trait-grid">
+            <div class="trait">
+              <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+              <div class="label">Veloz</div><div class="desc">Analisa 100+ anúncios por minuto</div>
+            </div>
+            <div class="trait">
+              <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="label">Enxerga no Escuro</div><div class="desc">Vê o que outros perdem</div>
+            </div>
+            <div class="trait">
+              <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              <div class="label">Garimpador</div><div class="desc">Nunca para de procurar</div>
+            </div>
+            <div class="trait">
+              <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+              <div class="label">Esperto</div><div class="desc">Score viral inteligente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="badge anim-1"><span class="dot-badge"></span>Mascote</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          O <span class="grad">Goblin</span><br>do Hunter X
+        </h2>
+        <div class="divider anim-3"></div>
+
+        <div class="anim-4" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="card">
+            <p style="font-size:clamp(11px,1.3vw,13px);color:var(--z400);line-height:1.7;">Na mitologia de fantasia, goblins vivem em cavernas encontrando <strong style="color:var(--white);">tesouros escondidos</strong> que ninguém mais consegue achar. No mercado digital, o tesouro é o <strong style="color:var(--violet-l);">produto validado</strong> que está escalando antes que você descubra.</div>
+          </div>
+          <div class="card v">
+            <p style="font-size:clamp(12px,1.4vw,14px);font-weight:700;color:var(--white);margin-bottom:4px;">Por que o Goblin?</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:clamp(10px,1.1vw,12px);color:var(--z400);line-height:1.6;">Ele nunca dorme, nunca para de garimpar, é irreverente e não segue regras convencionais — exatamente como quem usa o Hunter X para sair na frente da concorrência. É o símbolo da vantagem injusta.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" class="anim-5">
+            <span class="pill">Pequeno mas letal</span>
+            <span class="pill">Vantagem injusta</span>
+            <span class="pill c">Garimpador nato</span>
+            <span class="pill">Nunca dorme</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4 — O PROBLEMA ═══ -->
+  <div class="slide red-bg" id="s4">
+    <div class="grid-overlay"></div>
+    <div class="layout" style="width:100%;align-items:center;">
+      <div>
+        <div class="badge anim-1" style="border-color:rgba(239,68,68,0.35);background:rgba(239,68,68,0.08);color:#fca5a5;"><span class="dot-badge" style="background:#f87171;"></span>O Problema</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          A realidade de <span style="background:linear-gradient(120deg,#f87171,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">todo afiliado</span>
+        </h2>
+        <div class="divider anim-3" style="background:linear-gradient(90deg,#ef4444,#f97316);"></div>
+
+        <div class="pain-list anim-4">
+          <div class="pain-item"><div class="pain-x">✕</div><div class="pain-text">Horas garimpando manualmente sem saber o preço real dos produtos</div></div>
+          <div class="pain-item"><div class="pain-x">✕</div><div class="pain-text">Sem saber há quantos dias o anúncio está no ar — não sabe se é novo ou validado</div></div>
+          <div class="pain-item"><div class="pain-x">✕</div><div class="pain-text">Chutando nicho, plataforma de venda e se o produto realmente converte</div></div>
+          <div class="pain-item"><div class="pain-x">✕</div><div class="pain-text">Perdendo produtos com score 90+ enquanto concorrentes já escalam com eles</div></div>
+          <div class="pain-item"><div class="pain-x">✕</div><div class="pain-text">Ferramentas que resolvem cobram $149–$249/mês — inacessível para iniciantes</div></div>
+        </div>
+      </div>
+
+      <div class="anim-l">
+        <img src="/pitch-problem.png" alt="O Problema" style="aspect-ratio:3/4;margin-bottom:14px;opacity:0.85;border:1px solid rgba(239,68,68,0.2);" class="img-ph">
+        <!-- HIGGSFIELD: A frustrated young marketer sitting in front of multiple computer screens showing Facebook Ads Library with dozens of ads but no clear data or pricing visible. Dark office, red and orange tinted lighting conveying stress and frustration, cluttered desk, overwhelmed expression, cinematic photography, moody atmosphere, photorealistic, 4:5 portrait -->
+        <div class="cost-box">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(248,113,113,0.6);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;">Concorrentes cobram</p>
+          <div class="cost-num">$149–$249<sub style="font-size:0.4em;font-weight:500;color:#f87171;">/mês</sub></div>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(248,113,113,0.5);margin-top:6px;">BigSpy · AdSpy · PowerAdSpy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5 — A SOLUÇÃO ═══ -->
+  <div class="slide" id="s5">
+    <div class="grid-overlay"></div>
+    <div class="layout" style="width:100%;align-items:center;">
+      <div>
+        <div class="badge green anim-1"><span class="dot-badge"></span>A Solução</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          Com o Hunter X<br><span class="grad-g">tudo aparece</span>
+        </h2>
+        <div class="divider anim-3" style="background:linear-gradient(90deg,var(--green),var(--cyan));"></div>
+
+        <div class="fix-list anim-4">
+          <div class="fix-item"><div class="fix-check">✓</div><div class="fix-text">Borda verde automática em produtos low ticket (até $100) · Laranja em mid ticket</div></div>
+          <div class="fix-item"><div class="fix-check">✓</div><div class="fix-text">Badge de validação: 1 chama após 7 dias · 2 chamas após 30 dias no ar</div></div>
+          <div class="fix-item"><div class="fix-check">✓</div><div class="fix-text">Score viral 0–100 em cada anúncio baseado em tempo, copy e sinais de escala</div></div>
+          <div class="fix-item"><div class="fix-check">✓</div><div class="fix-text">Plataforma detectada: Hotmart, Kiwify, Eduzz, Shopee, Amazon, Shopify e +9</div></div>
+          <div class="fix-item"><div class="fix-check">✓</div><div class="fix-text">Exporta tudo em CSV e JSON com 1 clique</div></div>
+        </div>
+
+        <div class="anim-5" style="margin-top:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid rgba(34,197,94,0.2);background:rgba(34,197,94,0.05);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(34,197,94,.7);flex-shrink:0;"></div>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--z400);">Ativa sozinho ao abrir <strong style="color:var(--white);">facebook.com/ads/library</strong> · Nenhum dado sai do seu PC</p>
+        </div>
+      </div>
+
+      <div class="anim-l">
+        <div class="mock-browser">
+          <div class="mock-bar">
+            <span class="mock-dot" style="background:#ef4444;opacity:.6;"></span>
+            <span class="mock-dot" style="background:#eab308;opacity:.6;"></span>
+            <span class="mock-dot" style="background:#22c55e;opacity:.6;"></span>
+            <div class="mock-url">facebook.com/ads/library · Hunter X ✓ ativo</div>
+          </div>
+          <img src="/pitch-dashboard.png" alt="Hunter X dashboard" style="aspect-ratio:16/10;border-radius:0;opacity:0.85;" class="img-ph">
+          <!-- HIGGSFIELD: A realistic screenshot of a Chrome browser showing Facebook Ads Library with a Hunter X extension overlay. Each ad card has colored borders (green for low ticket, orange for mid), fire badges (🔥🔥), viral score badges (Score 87, Score 95), and price tags ($19.90, $7.90). Purple and cyan neon glow effects, dark mode browser, ultra HD, flat clean UI design, product photography style, 16:10 landscape -->
+          <div style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--z600);">Hunter X · 12 anúncios analisados</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green);font-weight:700;">9 low ticket encontrados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6 — COMO FUNCIONA ═══ -->
+  <div class="slide" id="s6">
+    <div class="grid-overlay"></div>
+    <div style="width:100%;">
+      <div style="text-align:center;margin-bottom:32px;">
+        <div class="badge anim-1" style="margin-bottom:10px;"><span class="dot-badge"></span>Instalação</div>
+        <h2 class="section-title anim-2">Em <span class="grad">3 passos</span> você começa</h2>
+        <p class="sub anim-3" style="max-width:500px;margin:8px auto 0;">Sem cadastro, sem formulário, sem conta. Só a chave que chega no email.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step-card anim-3">
+          <div class="step-num">01</div>
+          <div class="step-title">Instale no Chrome</div>
+          <div class="step-desc">Acesse hunterx.site, baixe a extensão e ative com sua chave de licença. Sem criar conta, sem email confirmado. Windows e Mac.</div>
+          <span class="step-tag pill">~1 minuto</span>
+          <img src="/pitch-step1.png" alt="Passo 1 - Abrir Meta Ads" style="aspect-ratio:16/9;margin-top:12px;opacity:0.7;" class="img-ph">
+          <!-- HIGGSFIELD: Close-up of a Chrome browser extension installation screen for Hunter X, clean dark UI, purple glow button "Adicionar ao Chrome", professional tech product screenshot style, dark background, neon purple accent, 16:9 landscape, product photography -->
+        </div>
+
+        <div class="step-card anim-4" style="border-color:rgba(34,211,238,0.2);">
+          <div class="step-num" style="color:rgba(34,211,238,0.2);">02</div>
+          <div class="step-title">Abra a Biblioteca do Meta</div>
+          <div class="step-desc">Acesse facebook.com/ads/library normalmente. O Hunter X ativa automaticamente e começa a analisar todos os anúncios na tela.</div>
+          <span class="step-tag pill c">Automático</span>
+          <img src="/pitch-step2.png" alt="Passo 2 - Score Viral" style="aspect-ratio:16/9;margin-top:12px;opacity:0.7;" class="img-ph">
+          <!-- HIGGSFIELD: A Chrome browser open on Facebook Ads Library at the exact moment a Hunter X extension activates, showing a cyan neon loading indicator and the extension icon glowing in the browser toolbar, dark aesthetic, cinematic product demo screenshot, 16:9 -->
+        </div>
+
+        <div class="step-card anim-5" style="border-color:rgba(34,197,94,0.2);">
+          <div class="step-num" style="color:rgba(34,197,94,0.2);">03</div>
+          <div class="step-title">Dados em tempo real</div>
+          <div class="step-desc">Preço, dias rodando, score viral e plataforma aparecem em cada card. Filtre, analise e exporte em CSV/JSON com 1 clique.</div>
+          <span class="step-tag pill g">Resultados imediatos</span>
+          <img src="/pitch-step3.png" alt="Passo 3 - Exportar" style="aspect-ratio:16/9;margin-top:12px;opacity:0.75;" class="img-ph">
+          <!-- HIGGSFIELD: Multiple Facebook ad cards overlaid with Hunter X data badges: green "LOW $" price tags, "Score 92" badges in purple, "47 dias" counters in cyan, fire emojis for validation, clean UI overlay, dark background, neon accents, ultra sharp, 16:9 landscape -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7 — FERRAMENTAS PRO ═══ -->
+  <div class="slide" id="s7">
+    <div class="grid-overlay"></div>
+    <div class="layout" style="width:100%;align-items:start;">
+      <div>
+        <div class="badge anim-1"><span class="dot-badge"></span>Ferramentas Pro</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          Tudo que vem<br><span class="grad">incluso</span>
+        </h2>
+        <div class="divider anim-3"></div>
+        <p class="sub anim-4" style="margin-bottom:16px;">Além do garimpo visual, o Hunter X tem um arsenal completo para modelar, analisar e replicar os anúncios que estão funcionando.</p>
+
+        <div class="plat-cloud anim-5">
+          <span class="plat-tag">Hotmart</span><span class="plat-tag">Kiwify</span><span class="plat-tag">Eduzz</span>
+          <span class="plat-tag">Monetizze</span><span class="plat-tag">PerfectPay</span><span class="plat-tag">Shopee</span>
+          <span class="plat-tag">Amazon</span><span class="plat-tag">Shopify</span><span class="plat-tag">Yampi</span>
+          <span class="plat-tag">Nuvemshop</span><span class="plat-tag">Lastlink</span><span class="plat-tag">Cakto</span>
+          <span class="plat-tag">Pepper</span><span class="plat-tag">Ticto</span><span class="plat-tag">+1</span>
+        </div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--z600);margin-top:8px;">15 plataformas detectadas automaticamente</p>
+      </div>
+
+      <div>
+        <div class="feat-grid anim-l">
+          <div class="feat-card">
+            <div class="feat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <div class="feat-title">Download de criativos</div>
+            <div class="feat-desc">Salve o vídeo de qualquer anúncio em 1 clique para analisar o criativo</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+            <div class="feat-title">Cópia do HTML</div>
+            <div class="feat-desc">Acesse toda a estrutura do anúncio para decifrar copy e gatilhos mentais</div>
+          </div>
+          <div class="feat-card" style="border-color:rgba(34,211,238,0.2);background:rgba(34,211,238,0.04);">
+            <div class="feat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+            <div class="feat-title">Decompõe anúncios</div>
+            <div class="feat-desc">Hook → Prova Social → Oferta → CTA. Modele ofertas vencedoras</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div class="feat-title">Score viral 0–100</div>
+            <div class="feat-desc">Baseado em tempo no ar, linguagem de copy e sinais reais de escala</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div class="feat-title">Atalhos de teclado</div>
+            <div class="feat-desc">L = só low ticket · S = escanear · A = auto-scroll com HUD flutuante</div>
+          </div>
+          <div class="feat-card" style="border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.04);">
+            <div class="feat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+            <div class="feat-title">Exporta CSV/JSON</div>
+            <div class="feat-desc">Todos os dados de todos os anúncios analisados em 1 clique</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8 — SITESCOPE ORIGEM ═══ -->
+  <div class="slide cyan-bg" id="s8">
+    <div class="grid-overlay" style="opacity:0.018;background-image:linear-gradient(rgba(34,211,238,1) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,1) 1px,transparent 1px);"></div>
+    <div class="layout" style="width:100%;align-items:center;">
+      <div>
+        <div class="badge cyan anim-1"><span class="dot-badge"></span>Bônus Incluso · Sem custo extra</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          Por que o<br><span style="background:linear-gradient(120deg,var(--cyan),#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">SiteScope</span> existe?
+        </h2>
+        <div class="divider cyan anim-3"></div>
+
+        <div class="flow anim-4">
+          <div class="flow-step">
+            <div class="flow-circle">1</div>
+            <div class="flow-txt">
+              <div class="ft">Você encontra um produto campeão no Hunter X</div>
+              <div class="fd">Score 94, 67 dias no ar, Hotmart, low ticket $27.90. Produto validado.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-circle">2</div>
+            <div class="flow-txt">
+              <div class="ft">Você quer replicar a página de vendas do anúncio</div>
+              <div class="fd">Como clonar a estrutura sem contratar dev ou pagar por ferramenta cara?</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-circle">3</div>
+            <div class="flow-txt">
+              <div class="ft">SiteScope fecha o ciclo</div>
+              <div class="fd">Editor visual 100% no navegador. Você mira no site e replica a estrutura. Site + Scope = SiteScope.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-l">
+        <img src="/sitescope-logo.png" alt="SiteScope + Hunter X" style="aspect-ratio:1/1;margin-bottom:14px;border-radius:16px;object-fit:contain;padding:32px;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);" class="img-ph">
+        <!-- HIGGSFIELD: A clean dark infographic diagram showing two connected products: Hunter X (search/magnifying glass icon, purple) and SiteScope (browser/scope icon, cyan). Arrow connecting them labeled "O fluxo perfeito". Dark background, neon purple to cyan gradient flow, professional tech product illustration, isometric style, 1:1 square -->
+        <div class="card c">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--z400);line-height:1.7;">Um garimpou o produto e o anúncio vencedor. O outro constrói a página para você vender. <strong style="color:var(--cyan);">Desbloqueado automaticamente com sua licença Hunter X.</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 9 — SITESCOPE FEATURES ═══ -->
+  <div class="slide cyan-bg" id="s9">
+    <div class="grid-overlay" style="opacity:0.018;background-image:linear-gradient(rgba(34,211,238,1) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,1) 1px,transparent 1px);"></div>
+    <div class="layout" style="width:100%;align-items:center;">
+      <div>
+        <div class="badge cyan anim-1"><span class="dot-badge"></span>SiteScope</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          Editor visual<br><span style="background:linear-gradient(120deg,var(--cyan),#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">100% no navegador</span>
+        </h2>
+        <div class="divider cyan anim-3"></div>
+
+        <div class="feat-list anim-4">
+          <div class="feat-row"><div class="feat-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div><div class="feat-name">Clique e edite qualquer texto</div><div class="feat-sub">Qualquer texto de qualquer site editável na hora sem código</div></div></div>
+          <div class="feat-row"><div class="feat-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><div><div class="feat-name">Troca imagens com 1 clique</div><div class="feat-sub">Vê o tamanho exato necessário antes de substituir</div></div></div>
+          <div class="feat-row"><div class="feat-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="feat-name">Preview mobile e desktop</div><div class="feat-sub">Veja como fica nos dois formatos lado a lado antes de baixar</div></div></div>
+          <div class="feat-row"><div class="feat-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div><div class="feat-name">Baixa o HTML final pronto</div><div class="feat-sub">O que você vê na tela é exatamente o que você baixa</div></div></div>
+          <div class="feat-row"><div class="feat-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></div><div><div class="feat-name">Desbloqueado com Hunter X</div><div class="feat-sub">Automático. Sem custo extra. Sem conta adicional.</div></div></div>
+        </div>
+      </div>
+
+      <div class="anim-l">
+        <div class="editor-mock">
+          <div class="em-bar">
+            <span class="em-dot" style="background:#ef4444;opacity:.6;"></span>
+            <span class="em-dot" style="background:#eab308;opacity:.6;"></span>
+            <span class="em-dot" style="background:#22c55e;opacity:.6;"></span>
+            <div class="em-url">sitescope · editor visual</div>
+          </div>
+          <img src="/pitch-sitescope.png" alt="SiteScope editor visual" style="aspect-ratio:16/10;border-radius:0;object-fit:contain;padding:24px;background:rgba(34,211,238,0.04);" class="img-ph">
+          <!-- HIGGSFIELD: A dark-themed browser-based visual website editor called SiteScope. The interface shows a webpage being edited in real-time: a headline is selected with a cyan glowing outline and editable cursor, an image placeholder with exact dimensions shown, a cyan "texto" tooltip label, and a glowing download HTML button at the bottom. Cyan and teal color scheme, professional SaaS UI, ultra sharp screenshot style, 16:10 landscape -->
+          <div class="em-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--z600);">O que você vê é o que você baixa.</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--cyan);">100% no navegador</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 10 — PREÇO E FASES ═══ -->
+  <div class="slide" id="s10">
+    <div class="grid-overlay"></div>
+    <div class="layout" style="width:100%;align-items:start;">
+      <div>
+        <div class="badge anim-1"><span class="dot-badge"></span>Modelo de Preço</div>
+        <h2 class="section-title anim-2" style="margin-top:8px;">
+          Fase 4 aberta.<br><span class="grad">Ainda dá tempo.</span>
+        </h2>
+        <div class="divider anim-3"></div>
+        <p class="sub anim-4" style="margin-bottom:16px;">O preço sobe a cada fase encerrada e nunca volta. Quem garantiu cedo, pagou menos.</p>
+
+        <div class="fase-list anim-5">
+          <div class="fase-row dim">
+            <div class="fase-dot dim"></div>
+            <span class="fase-num">Fase 1</span>
+            <span class="fase-price" style="color:var(--z500);text-decoration:line-through;text-decoration-color:var(--z700);">$5.90</span>
+            <span class="fase-info">200 vagas · Jan 2024</span>
+            <span class="fase-tag" style="color:#166534;border:1px solid rgba(21,83,52,.4);background:rgba(21,83,52,.08);">Encerrada</span>
+          </div>
+          <div class="fase-row dim">
+            <div class="fase-dot dim"></div>
+            <span class="fase-num">Fase 2</span>
+            <span class="fase-price" style="color:var(--z500);text-decoration:line-through;text-decoration-color:var(--z700);">$7.90</span>
+            <span class="fase-info">230 vagas · Mai 2024</span>
+            <span class="fase-tag" style="color:#166534;border:1px solid rgba(21,83,52,.4);background:rgba(21,83,52,.08);">Encerrada</span>
+          </div>
+          <div class="fase-row dim">
+            <div class="fase-dot dim"></div>
+            <span class="fase-num">Fase 3</span>
+            <span class="fase-price" style="color:var(--z500);text-decoration:line-through;text-decoration-color:var(--z700);">$9.90</span>
+            <span class="fase-info">260 vagas · Nov 2024</span>
+            <span class="fase-tag" style="color:#166534;border:1px solid rgba(21,83,52,.4);background:rgba(21,83,52,.08);">Encerrada</span>
+          </div>
+          <div class="fase-row atual">
+            <div class="fase-dot atual"></div>
+            <span class="fase-num" style="color:var(--violet-l);">Fase 4</span>
+            <span class="fase-price" style="color:var(--white);">$12.90</span>
+            <span class="fase-info">230 vagas · Jun 2025</span>
+            <span class="fase-tag" style="color:var(--violet-l);border:1px solid rgba(124,58,237,.45);background:rgba(124,58,237,.15);">Aberta agora</span>
+          </div>
+          <div class="fase-row" style="opacity:.3;">
+            <div class="fase-dot" style="background:var(--z600);box-shadow:none;"></div>
+            <span class="fase-num">Fase 5</span>
+            <span class="fase-price" style="color:var(--z600);">$19.90</span>
+            <span class="fase-info">Em breve</span>
+            <span class="fase-tag" style="color:var(--z700);border:1px solid rgba(63,63,70,.5);">Em breve</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-l">
+        <div class="price-box">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--violet-l);margin-bottom:8px;">Fase 4 — Acesso completo</p>
+          <div class="big-price">$12.90<sub>/mês</sub></div>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--z500);margin:10px 0 16px;line-height:1.6;">Trava o preço para sempre.<br>Quando fechar, sobe para $19.90. Sem volta.</p>
+          <div class="stat-grid">
+            <div class="stat-box"><div class="stat-val">920</div><div class="stat-lbl">vagas totais</div></div>
+            <div class="stat-box"><div class="stat-val" style="color:var(--green);">690</div><div class="stat-lbl">já encerradas</div></div>
+            <div class="stat-box"><div class="stat-val">230</div><div class="stat-lbl">restantes</div></div>
+            <div class="stat-box" style="border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.06);"><div class="stat-val" style="color:#f87171;">12x</div><div class="stat-lbl">mais barato</div></div>
+          </div>
+          <div style="margin-top:14px;padding:10px;border-radius:10px;border:1px solid rgba(34,197,94,.2);background:rgba(34,197,94,.05);">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--z400);line-height:1.6;">✓ Hunter X completo &nbsp;·&nbsp; ✓ SiteScope incluso<br>✓ Cancele quando quiser &nbsp;·&nbsp; ✓ Chave no email</p>
+          </div>
+        </div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--violet-l);text-align:center;margin-top:12px;font-weight:700;">hunterx.site</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 11 — CTA FINAL ═══ -->
+  <div class="slide" id="s11">
+    <div class="grid-overlay"></div>
+
+    <div class="badge anim-1"><span class="dot-badge"></span>Garanta agora</div>
+
+    <h2 class="anim-2" style="font-size:clamp(36px,5.5vw,68px);font-weight:900;letter-spacing:-2.5px;line-height:1.05;margin:12px 0 8px;text-align:center;">
+      O Goblin já está garimpando.<br>
+      <span class="grad">E você?</span>
+    </h2>
+
+    <p class="sub anim-3" style="max-width:520px;text-align:center;margin-bottom:20px;">
+      230 vagas na Fase 4. Quando fechar, o preço sobe para $19.90 e não volta mais.
+    </p>
+
+    <div class="url-big anim-4">hunterx.site</div>
+
+    <div class="cta-grid anim-5">
+      <div class="cta-item">
+        <div class="cta-big">$12.90</div>
+        <div class="cta-lbl">por mês na Fase 4</div>
+      </div>
+      <div class="cta-item" style="border-color:rgba(34,211,238,0.2);background:rgba(34,211,238,0.05);">
+        <div class="cta-big" style="color:var(--cyan);">2 em 1</div>
+        <div class="cta-lbl">Hunter X + SiteScope</div>
+      </div>
+      <div class="cta-item" style="border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.05);">
+        <div class="cta-big" style="color:var(--green);">Zero</div>
+        <div class="cta-lbl">dados enviados pra fora</div>
+      </div>
+    </div>
+
+    <div class="anim-6" style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <span class="pill">Chave no email em minutos</span>
+      <span class="pill c">Cancele quando quiser</span>
+      <span class="pill">Windows e Mac</span>
+      <span class="pill g">Zero cadastro</span>
+    </div>
+
+    <!-- Imagem de fundo opcional -->
+    <!-- <img src="" alt="Goblin mascote Hunter X comemorando em cima de pilha de ouro digital, fundo escuro com partículas roxas e ciano" style="position:absolute;right:4vw;bottom:0;height:70vh;object-fit:contain;opacity:0.15;pointer-events:none;"> -->
+    <!-- HIGGSFIELD: A triumphant glowing goblin mascot standing on top of a pile of golden coins with a magnifying glass raised in victory, digital fantasy art style, purple and cyan particle effects surrounding it, dark background with neon lights, cinematic composition, hero pose, bottom anchor, full body, game art quality, transparent background PNG style, dramatic lighting -->
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="nav" id="nav">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>&#8592;</button>
+  <div class="nav-dots" id="dots"></div>
+  <span class="slide-counter" id="counter">1 / 11</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">&#8594;</button>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  let cur = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    if (n < 0 || n >= slides.length) return;
+    const dir = n > cur ? 'exit-up' : 'exit-down';
+    slides[cur].classList.remove('active');
+    slides[cur].classList.add(dir);
+    setTimeout(() => slides[cur].classList.remove(dir), 600);
+    cur = n;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+    counter.textContent = (cur + 1) + ' / ' + slides.length;
+    prevBtn.disabled = cur === 0;
+    nextBtn.disabled = cur === slides.length - 1;
+  }
+
+  function navigate(dir) { goTo(cur + dir); }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); navigate(-1); }
+  });
+
+  // Touch swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => tx = e.touches[0].clientX, { passive: true });
+  document.addEventListener('touchend',   e => {
+    const dx = tx - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) navigate(dx > 0 ? 1 : -1);
+  }, { passive: true });
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+   PROMPTS HIGGSFIELD — COPIE E GERE AS IMAGENS
+═══════════════════════════════════════════════════════════
+
+[SLIDE 1 — Capa]
+A glowing dark-themed Chrome browser extension UI overlay on a Facebook Ads Library page. Purple and cyan neon borders highlight ad cards with viral score badges (0-100), green borders on low ticket products, fire validation badges. Dark background #06090d, purple violet and cyan accent lights, futuristic digital hacker aesthetic, high contrast, cinematic lighting, 9:16 vertical format
+
+[SLIDE 2 — Origem]
+A young Brazilian entrepreneur working late at night on a laptop, the screen glowing in purple and cyan colors, code and ad data visible on the screen, dark moody atmosphere, cinematic lighting from below, determined focused expression, dark room with neon purple accent lighting, photorealistic, 4:5 portrait format
+
+[SLIDE 3 — Goblin]
+A mischievous but clever cartoon goblin mascot for a tech product called Hunter X. The goblin holds a magnifying glass in one hand and a glowing golden coin in the other. It has large sharp eyes and a cunning smile. Dark fantasy digital art style, purple and cyan neon glow, dark background, flat illustration with depth, game-art quality, perfect symmetry, front-facing character design, 1:1 square format
+
+[SLIDE 4 — Problema]
+A frustrated young marketer sitting in front of multiple computer screens showing Facebook Ads Library with dozens of ads but no clear data or pricing visible. Dark office, red and orange tinted lighting conveying stress and frustration, cluttered desk, overwhelmed expression, cinematic photography, moody atmosphere, photorealistic, 4:5 portrait
+
+[SLIDE 5 — Solução - Browser Mock]
+A realistic screenshot of a Chrome browser showing Facebook Ads Library with a Hunter X extension overlay. Each ad card has colored borders (green for low ticket, orange for mid), fire badges, viral score badges (Score 87, Score 95), and price tags ($19.90, $7.90). Purple and cyan neon glow effects, dark mode browser, ultra HD, flat clean UI design, product photography style, 16:10 landscape
+
+[SLIDE 6a — Como Funciona - Step 1]
+Close-up of a Chrome browser extension installation screen for Hunter X, clean dark UI, purple glow button "Adicionar ao Chrome", professional tech product screenshot style, dark background, neon purple accent, 16:9 landscape, product photography
+
+[SLIDE 6b — Como Funciona - Step 2]
+A Chrome browser open on Facebook Ads Library at the exact moment a Hunter X extension activates, showing a cyan neon loading indicator and the extension icon glowing in the browser toolbar, dark aesthetic, cinematic product demo screenshot, 16:9
+
+[SLIDE 6c — Como Funciona - Step 3]
+Multiple Facebook ad cards overlaid with Hunter X data badges: green "LOW $" price tags, "Score 92" badges in purple, "47 dias" counters in cyan, fire emojis for validation, clean UI overlay, dark background, neon accents, ultra sharp, 16:9 landscape
+
+[SLIDE 8 — SiteScope Origem]
+A clean dark infographic diagram showing two connected products: Hunter X (search/magnifying glass icon, purple) and SiteScope (browser/scope icon, cyan). Arrow connecting them labeled "O fluxo perfeito". Dark background, neon purple to cyan gradient flow, professional tech product illustration, isometric style, 1:1 square
+
+[SLIDE 9 — SiteScope Editor]
+A dark-themed browser-based visual website editor called SiteScope. The interface shows a webpage being edited in real-time: a headline is selected with a cyan glowing outline and editable cursor, an image placeholder with exact dimensions shown, a cyan "texto" tooltip label, and a glowing download HTML button at the bottom. Cyan and teal color scheme, professional SaaS UI, ultra sharp screenshot style, 16:10 landscape
+
+[SLIDE 11 — CTA Final]
+A triumphant glowing goblin mascot standing on top of a pile of golden coins with a magnifying glass raised in victory, digital fantasy art style, purple and cyan particle effects surrounding it, dark background with neon lights, cinematic composition, hero pose, bottom anchor, full body, game art quality, dramatic lighting
+
+═══════════════════════════════════════════════════════════ -->
+</body>
+</html>
