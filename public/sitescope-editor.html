@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor Visual</title>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#080c10; --surface:#0d1117; --surface2:#111820;
+  --border:#1a2535; --accent:#22d3ee; --accent2:#67e8f9;
+  --text:#e0f7fa; --text2:#4d8fa0; --text3:#2a5060;
+  --green:#22c55e; --red:#ef4444; --r:8px;
+}
+body { font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; font-size:14px; }
+
+.topbar { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; gap:12px; }
+.brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
+.brand-icon { width:28px; height:28px; background:linear-gradient(135deg,#0891b2,var(--accent)); border-radius:7px; display:flex; align-items:center; justify-content:center; }
+.topbar-center { display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:3px; }
+.dev-btn { display:flex; align-items:center; gap:6px; padding:5px 12px; border:none; background:transparent; color:var(--text2); border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; }
+.dev-btn.active { background:var(--surface2); color:var(--text); }
+.topbar-right { display:flex; gap:8px; }
+button { cursor:pointer; font-family:inherit; border:none; }
+.btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; transition:all .15s; }
+.btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--surface2); color:var(--text); }
+.btn-primary { background:linear-gradient(135deg,#0891b2,var(--accent)); color:#08131a; font-weight:700; }
+.btn-primary:hover { background:linear-gradient(135deg,#0e7490,#22d3ee); }
+
+.workspace { flex:1; display:flex; width:100%; overflow:hidden; }
+
+/* IMPORT */
+#import { flex:1; display:flex; align-items:flex-start; justify-content:center; padding:32px; overflow-y:auto; }
+.import-box { width:100%; max-width:500px; display:flex; flex-direction:column; gap:14px; }
+.import-box h2 { font-size:26px; font-weight:800; letter-spacing:-.5px; line-height:1.2; }
+.import-box h2 span { background:linear-gradient(135deg,var(--accent),#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.import-box p { color:var(--text2); font-size:13px; }
+
+.code-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.code-box:focus-within { border-color:var(--accent); }
+.code-head { padding:8px 12px; border-bottom:1px solid var(--border); font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+.code-box textarea { width:100%; height:160px; background:transparent; border:none; color:var(--text); font-family:monospace; font-size:12px; padding:12px; resize:none; outline:none; line-height:1.5; }
+
+.load-btn { background:linear-gradient(135deg,#0891b2,#22d3ee); color:#08131a; padding:12px; border-radius:var(--r); font-size:14px; font-weight:700; width:100%; transition:all .2s; }
+.load-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(34,211,238,.3); }
+
+.or-row { display:flex; align-items:center; gap:10px; color:var(--text3); font-size:12px; margin:4px 0; }
+.or-row::before, .or-row::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.dz { border:1.5px dashed var(--border); border-radius:var(--r); padding:18px; text-align:center; cursor:pointer; transition:all .2s; }
+.dz:hover, .dz.over { border-color:var(--accent); background:rgba(109,92,246,.04); }
+.dz strong { font-size:13px; color:var(--text); display:block; margin-top:6px; }
+.dz span { font-size:11px; color:var(--text3); }
+
+/* EDITOR */
+#editor { display:none; position:fixed; top:52px; left:0; right:0; bottom:0; overflow:hidden; }
+.editor-wrap { display:flex; width:100%; height:100%; }
+
+.canvas-wrap { flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; background:#111118; }
+.canvas-bar { height:36px; display:flex; align-items:center; padding:0 14px; gap:10px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+.hint-pill { display:flex; align-items:center; gap:5px; background:rgba(34,211,238,.1); border:1px solid rgba(34,211,238,.2); padding:3px 10px; border-radius:20px; font-size:11px; color:var(--accent2); }
+.hint-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+#crumb { font-size:11px; color:var(--text3); font-family:monospace; }
+
+.stage { flex:1; display:flex; align-items:flex-start; justify-content:center; overflow:auto; padding:20px; transition:background .2s; }
+.stage.mobile { padding:24px; background:#111118; }
+
+.frame-wrap { display:flex; flex-direction:column; width:100%; min-height:100%; flex-shrink:0; transition:width .2s; }
+.phone-notch { display:none; }
+.frame-inner { width:100%; flex:1; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,.4); }
+.frame-inner iframe { width:100%; height:100%; min-height:calc(100vh - 88px); border:none; display:block; }
+
+.stage.mobile .frame-wrap { width:390px; min-height:auto; background:#1a1a1a; border-radius:44px; padding:12px; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 40px 80px rgba(0,0,0,.7); }
+.stage.mobile .phone-notch { display:block; height:32px; background:#111; border-radius:16px; width:120px; margin:0 auto 8px; }
+.stage.mobile .frame-inner { width:366px; height:720px; border-radius:36px; }
+.stage.mobile .frame-inner iframe { width:366px; height:720px; min-height:unset; }
+
+.sidebar { width:300px; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
+.sb-top { padding:14px 16px 0; flex-shrink:0; }
+.sb-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--text3); margin-bottom:12px; }
+
+.tabs { display:flex; gap:2px; background:var(--bg); border-radius:6px; padding:3px; border:1px solid var(--border); margin-bottom:12px; }
+.tab { flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:6px 4px; border-radius:5px; font-size:12px; font-weight:600; color:var(--text3); cursor:pointer; background:transparent; font-family:inherit; }
+.tab.active { background:var(--surface2); color:var(--text); }
+
+.empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:32px 20px; text-align:center; color:var(--text3); }
+.empty-icon { width:46px; height:46px; background:var(--surface2); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); }
+.empty p { font-size:13px; line-height:1.6; }
+
+#panel { flex:1; overflow-y:auto; padding:0 16px 16px; }
+#panel::-webkit-scrollbar { width:4px; }
+#panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.ps { margin-bottom:18px; }
+.ps-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text3); margin-bottom:8px; }
+
+.tag-chip { display:inline-flex; align-items:center; background:rgba(34,211,238,.1); border:1px solid rgba(34,211,238,.25); color:var(--accent); padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; font-family:monospace; }
+
+.field { margin-bottom:10px; }
+.field label { display:block; font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
+.field textarea, .field input[type="text"] { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:13px; padding:8px 10px; font-family:inherit; outline:none; resize:none; }
+.field textarea:focus, .field input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(34,211,238,.1); }
+.field textarea { height:80px; }
+
+.slider-row { display:flex; align-items:center; gap:8px; }
+.slider-row input[type="range"] { flex:1; height:4px; background:var(--border); border-radius:2px; outline:none; cursor:pointer; accent-color:var(--accent); }
+.sv { min-width:36px; text-align:right; font-size:12px; color:var(--text2); }
+
+.color-row { display:flex; gap:8px; align-items:center; }
+.swatch { width:32px; height:32px; border-radius:6px; border:1px solid var(--border); overflow:hidden; cursor:pointer; flex-shrink:0; position:relative; }
+.swatch input[type="color"] { position:absolute; inset:-4px; width:calc(100% + 8px); height:calc(100% + 8px); opacity:0; cursor:pointer; }
+.sw-prev { width:100%; height:100%; }
+
+.pill-group { display:flex; gap:4px; flex-wrap:wrap; }
+.pill { padding:4px 10px; background:var(--bg); border:1px solid var(--border); border-radius:20px; font-size:12px; color:var(--text2); cursor:pointer; font-family:inherit; }
+.pill.active { background:var(--accent); border-color:var(--accent); color:#08131a; font-weight:700; }
+
+/* GALERIA */
+#c-gallery { display:none; padding-top:14px; }
+.gallery-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.gallery-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; overflow:hidden; cursor:pointer; transition:all .15s; position:relative; }
+.gallery-item:hover { border-color:var(--accent); transform:translateY(-1px); }
+.gallery-item.selected { border-color:var(--accent); box-shadow:0 0 0 2px rgba(109,92,246,.3); }
+.gallery-thumb { width:100%; height:72px; object-fit:cover; display:block; background:var(--surface2); }
+.gallery-thumb-placeholder { width:100%; height:72px; display:flex; align-items:center; justify-content:center; background:var(--surface2); color:var(--text3); font-size:22px; }
+.gallery-info { padding:6px 8px; }
+.gallery-dims { font-size:10px; font-family:monospace; color:var(--accent2); font-weight:700; }
+.gallery-idx { font-size:10px; color:var(--text3); }
+.gallery-empty { padding:24px 16px; text-align:center; color:var(--text3); font-size:13px; }
+.gallery-scroll-btn { position:absolute; top:4px; right:4px; background:rgba(109,92,246,.85); border:none; border-radius:4px; color:#fff; font-size:10px; font-weight:700; padding:2px 6px; cursor:pointer; opacity:0; transition:opacity .15s; }
+.gallery-item:hover .gallery-scroll-btn { opacity:1; }
+
+.img-prev { width:100%; height:110px; background:var(--bg); border:1px solid var(--border); border-radius:6px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+.img-prev img { max-width:100%; max-height:100%; object-fit:contain; }
+.img-no { color:var(--text3); font-size:12px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; padding:8px; }
+
+.upload-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px; background:linear-gradient(135deg,#0891b2,#22d3ee); color:#08131a; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s; }
+.upload-btn:hover { opacity:.88; transform:translateY(-1px); }
+
+.desel-btn { width:100%; padding:7px; background:transparent; color:var(--text3); border:1px solid var(--border); border-radius:6px; font-size:12px; cursor:pointer; font-family:inherit; margin-top:8px; }
+.desel-btn:hover { color:var(--text2); }
+
+/* LINKS TAB */
+#c-links { display:none; padding-top:14px; }
+.link-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:all .15s; }
+.link-item:hover { border-color:var(--accent); }
+.link-item.selected { border-color:var(--accent); background:rgba(34,211,238,0.05); }
+.link-label { font-size:11px; font-weight:700; color:var(--text); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.link-href { font-family:monospace; font-size:10px; color:var(--accent2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.link-edit-row { margin-top:8px; display:flex; gap:6px; }
+.link-edit-row input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:monospace; font-size:11px; padding:5px 8px; outline:none; }
+.link-edit-row input:focus { border-color:var(--accent); }
+.link-save-btn { background:var(--accent); color:#08131a; border:none; border-radius:5px; font-size:11px; font-weight:700; padding:5px 10px; cursor:pointer; white-space:nowrap; }
+.link-open-btn { background:transparent; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; padding:5px 8px; cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+.link-open-btn:hover { border-color:var(--accent); color:var(--accent); }
+.links-empty { padding:24px 16px; text-align:center; color:var(--text3); font-size:13px; }
+
+/* API TAB */
+#c-api { display:none; padding-top:14px; }
+.api-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+.api-type { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.api-type.fetch { color:#f59e0b; }
+.api-type.script { color:#8b5cf6; }
+.api-type.img-src { color:#22d3ee; }
+.api-type.form { color:#22c55e; }
+.api-url { font-family:monospace; font-size:10px; color:var(--text2); word-break:break-all; margin-bottom:8px; line-height:1.5; }
+.api-actions { display:flex; gap:6px; }
+.api-btn { font-size:10px; font-weight:700; padding:4px 10px; border-radius:5px; cursor:pointer; border:none; font-family:inherit; }
+.api-btn-remove { background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25); }
+.api-btn-remove:hover { background:rgba(239,68,68,0.2); }
+.api-btn-replace { background:rgba(34,211,238,0.1); color:var(--accent); border:1px solid rgba(34,211,238,0.25); }
+.api-btn-replace:hover { background:rgba(34,211,238,0.18); }
+.api-replace-row { margin-top:8px; display:none; gap:6px; }
+.api-replace-row.open { display:flex; }
+.api-replace-row input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:monospace; font-size:11px; padding:5px 8px; outline:none; }
+.api-replace-row input:focus { border-color:var(--accent); }
+.api-replace-row button { background:var(--accent); color:#08131a; border:none; border-radius:5px; font-size:11px; font-weight:700; padding:5px 10px; cursor:pointer; }
+.api-empty { padding:24px 16px; text-align:center; color:var(--text3); font-size:13px; }
+
+/* SEO TAB */
+#c-seo { display:none; padding:14px 16px 16px; overflow-y:auto; flex:1; flex-direction:column; }
+.seo-score-ring { display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:16px; }
+.seo-ring-wrap { position:relative; width:96px; height:96px; }
+.seo-ring-wrap svg { transform:rotate(-90deg); }
+.seo-ring-bg { fill:none; stroke:var(--border); stroke-width:8; }
+.seo-ring-fg { fill:none; stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1), stroke .3s; }
+.seo-ring-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.seo-ring-num { font-size:26px; font-weight:900; line-height:1; }
+.seo-ring-txt { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text3); margin-top:2px; }
+.seo-status { font-size:12px; font-weight:700; }
+.seo-items { display:flex; flex-direction:column; gap:7px; }
+.seo-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:9px 11px; display:flex; gap:10px; align-items:flex-start; }
+.seo-item-icon { flex-shrink:0; width:18px; height:18px; border-radius:5px; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.seo-item-icon.ok { background:rgba(34,197,94,.15); }
+.seo-item-icon.warn { background:rgba(249,115,22,.15); }
+.seo-item-icon.bad { background:rgba(239,68,68,.15); }
+.seo-item-body { flex:1; min-width:0; }
+.seo-item-title { font-size:12px; font-weight:700; color:var(--text); }
+.seo-item-desc { font-size:11px; color:var(--text2); margin-top:2px; line-height:1.5; word-break:break-word; }
+.seo-rescan { width:100%; margin-top:12px; padding:8px; background:rgba(34,211,238,.08); border:1px solid rgba(34,211,238,.2); border-radius:6px; color:var(--accent); font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
+.seo-rescan:hover { background:rgba(34,211,238,.15); }
+
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 18px; border-radius:20px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(0,0,0,.4); transition:transform .35s cubic-bezier(.34,1.56,.64,1); z-index:9999; pointer-events:none; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast-dot { width:7px; height:7px; border-radius:50%; background:var(--green); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon"><img src="/sitescope-logo.png" width="22" height="22" style="object-fit:contain;" /></div>
+    <span style="color:var(--accent)">SiteScope</span>
+  </div>
+  <div class="topbar-center" id="dev-sw" style="display:none">
+    <button class="dev-btn active" id="btn-desk" onclick="setDev('desktop')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Desktop
+    </button>
+    <button class="dev-btn" id="btn-mob" onclick="setDev('mobile')">
+      <svg width="11" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>Celular
+    </button>
+  </div>
+  <div class="topbar-right" id="tr"></div>
+</div>
+
+<div class="workspace">
+
+<div id="import">
+  <div class="import-box">
+    <div>
+      <h2>Edite seu HTML<br><span style="background:linear-gradient(135deg,#22d3ee,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">visualmente</span></h2>
+      <p style="margin-top:8px">Cole o código, clique em qualquer texto ou imagem, edite e baixe.</p>
+    </div>
+
+    <div class="code-box">
+      <div class="code-head">CÓDIGO HTML <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(Ctrl+U → Ctrl+A → Ctrl+C → cole aqui)</span></div>
+      <textarea id="html-in" placeholder="Cole o código HTML aqui..."></textarea>
+    </div>
+
+    <div class="code-box" style="margin-top:-6px">
+      <div class="code-head" style="border:0;padding:8px 12px">
+        URL ORIGINAL DO SITE <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(opcional — corrige caminhos das imagens/CSS)</span>
+      </div>
+      <input type="text" id="src-url" placeholder="https://seusite.com.br/pagina" style="width:100%;background:transparent;border:none;color:var(--text);font-size:13px;padding:0 12px 12px;font-family:monospace;outline:none">
+    </div>
+
+    <button class="load-btn" onclick="loadPaste()">Abrir editor com correções →</button>
+    <div id="fix-info" style="font-size:11px;color:var(--text2);text-align:center;margin-top:-8px;display:none"></div>
+
+    <div class="or-row">ou carregue um arquivo</div>
+
+    <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <strong>Arrastar arquivo .html</strong>
+      <span>ou clique para selecionar</span>
+    </div>
+    <input type="file" id="fi" accept=".html,.htm" style="display:none" onchange="loadFile(event)">
+
+    <div class="or-row">ou explore o sitemap do site</div>
+
+    <div class="code-box">
+      <div class="code-head">URL DO SITEMAP</div>
+      <div style="display:flex;gap:6px;padding:8px 12px 10px;">
+        <input type="text" id="sitemap-url" placeholder="https://seusite.com/sitemap.xml" style="flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-family:monospace;outline:none">
+        <button onclick="loadSitemap()" style="background:linear-gradient(135deg,#0891b2,#22d3ee);color:#08131a;border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Buscar →</button>
+      </div>
+    </div>
+
+    <div id="sitemap-result" style="display:none;max-height:220px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:12px;">
+      <div style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center">
+        <span id="sitemap-count">0 páginas encontradas</span>
+        <span style="color:var(--text3);font-weight:400">clique para abrir em nova aba</span>
+      </div>
+      <div id="sitemap-list"></div>
+    </div>
+    <div id="sitemap-error" style="display:none;font-size:12px;color:#f87171;text-align:center;padding:8px"></div>
+
+    <div class="or-row">ou analise um checkout</div>
+
+    <div class="code-box">
+      <div class="code-head">URL DO CHECKOUT</div>
+      <div style="display:flex;gap:6px;padding:8px 12px 10px;">
+        <input type="text" id="checkout-url" placeholder="https://pay.hotmart.com/... ou página de vendas" style="flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-family:monospace;outline:none">
+        <button onclick="analyzeCheckout()" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Analisar →</button>
+      </div>
+    </div>
+
+    <div id="checkout-loading" style="display:none;font-size:12px;color:var(--text2);text-align:center;padding:10px">⏳ Analisando checkout...</div>
+
+    <div id="checkout-result" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:12px;">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase">
+        📊 Resultado da Análise
+      </div>
+      <div id="checkout-body" style="padding:14px;display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+    <div id="checkout-error" style="display:none;font-size:12px;color:#f87171;text-align:center;padding:8px"></div>
+  </div>
+</div>
+
+<div id="editor">
+  <div class="editor-wrap">
+    <div class="canvas-wrap">
+      <div class="canvas-bar">
+        <div class="hint-pill"><div class="hint-dot"></div>Clique em um elemento</div>
+        <span id="crumb"></span>
+      </div>
+      <div class="stage" id="stage">
+        <div class="frame-wrap">
+          <div class="phone-notch"></div>
+          <div class="frame-inner"><iframe id="fr"></iframe></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sb-top">
+        <div class="sb-label">Painel de Edição</div>
+        <!-- Linha 1: edição de elemento -->
+        <div class="tabs" style="margin-bottom:4px;">
+          <button class="tab active" id="t-text" onclick="switchTab('text')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Texto
+          </button>
+          <button class="tab" id="t-img" onclick="switchTab('img')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Imagem
+          </button>
+          <button class="tab" id="t-style" onclick="switchTab('style')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>Estilo
+          </button>
+        </div>
+        <!-- Linha 2: página toda -->
+        <div class="tabs">
+          <button class="tab" id="t-gallery" onclick="switchTab('gallery');buildGallery()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Galeria
+          </button>
+          <button class="tab" id="t-links" onclick="switchTab('links');buildLinks()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>Links
+          </button>
+          <button class="tab" id="t-api" onclick="switchTab('api');buildApi()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l3 3-3 3"/><line x1="13" y1="15" x2="16" y2="15"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>APIs
+          </button>
+          <button class="tab" id="t-seo" onclick="switchTab('seo');buildSeo()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>SEO
+          </button>
+        </div>
+      </div>
+
+      <div class="empty" id="empty">
+        <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <p>Clique em qualquer<br>elemento para editar</p>
+      </div>
+
+      <!-- SEO — fora do #panel -->
+      <div id="c-seo">
+        <div class="seo-score-ring">
+          <div class="seo-ring-wrap">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle class="seo-ring-bg" cx="48" cy="48" r="40"/>
+              <circle class="seo-ring-fg" id="seo-ring-fg" cx="48" cy="48" r="40"
+                stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke="#22d3ee"/>
+            </svg>
+            <div class="seo-ring-label">
+              <div class="seo-ring-num" id="seo-num">—</div>
+              <div class="seo-ring-txt">/ 100</div>
+            </div>
+          </div>
+          <div class="seo-status" id="seo-status" style="color:var(--text3)">Analisando...</div>
+        </div>
+        <div class="seo-items" id="seo-items"></div>
+        <button class="seo-rescan" onclick="buildSeo()">Reanalisar página</button>
+      </div>
+
+      <div id="panel" style="display:none">
+        <div class="ps" style="padding-top:14px">
+          <div class="ps-label">Selecionado</div>
+          <span class="tag-chip" id="el-tag">&lt;div&gt;</span>
+        </div>
+
+        <div id="c-text">
+          <div class="ps">
+            <div class="ps-label">Conteúdo</div>
+            <div class="field"><label>Texto</label><textarea id="el-text" oninput="liveText()"></textarea></div>
+            <div class="field" id="link-field" style="display:none">
+              <label>Link (href)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="text" id="el-href" oninput="liveHref()" placeholder="https://..." style="flex:1" />
+                <a id="el-href-open" href="#" target="_blank" title="Abrir link" style="display:none;color:var(--accent);font-size:12px;flex-shrink:0;padding:6px 8px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.2);border-radius:6px;text-decoration:none;">↗</a>
+              </div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Tipografia</div>
+            <div class="field"><label>Tamanho</label>
+              <div class="slider-row">
+                <input type="range" id="el-fs" min="8" max="120" value="16" oninput="sv('fs-v',this.value+'px');liveStyle('fontSize',this.value+'px')">
+                <span class="sv" id="fs-v">16px</span>
+              </div>
+            </div>
+            <div class="field"><label>Peso</label>
+              <div class="pill-group">
+                <button class="pill" data-fw="400" onclick="setFW(this)">Normal</button>
+                <button class="pill" data-fw="600" onclick="setFW(this)">Semi</button>
+                <button class="pill active" data-fw="700" onclick="setFW(this)">Negrito</button>
+                <button class="pill" data-fw="900" onclick="setFW(this)">Black</button>
+              </div>
+            </div>
+            <div class="field"><label>Cor do texto</label>
+              <div class="color-row">
+                <div class="swatch"><div class="sw-prev" id="cp-text" style="background:#000"></div><input type="color" id="el-color" value="#000000" oninput="syncColor('cp-text','el-color','el-chex');liveStyle('color',this.value)"></div>
+                <input type="text" id="el-chex" placeholder="#000000" oninput="syncHex('el-chex','el-color','cp-text','color')">
+              </div>
+            </div>
+          </div>
+          <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
+        </div>
+
+        <div id="c-img" style="display:none">
+          <div class="ps" style="padding-top:14px">
+            <div class="ps-label">Imagem</div>
+            <div class="img-prev" id="img-prev"><div class="img-no"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><span>Nenhuma imagem</span></div></div>
+
+            <!-- Dimensões da imagem atual -->
+            <div id="img-dims" style="display:none;margin:8px 0 10px;background:rgba(109,92,246,0.08);border:1px solid rgba(109,92,246,0.2);border-radius:6px;padding:8px 12px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:4px;">Tamanho atual</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span id="img-dims-val" style="font-family:monospace;font-size:13px;font-weight:700;color:var(--accent2);">— × —</span>
+                <span style="font-size:11px;color:var(--text3);">px</span>
+                <span id="img-dims-copy" onclick="copyDims()" style="margin-left:auto;font-size:10px;font-weight:600;color:var(--accent2);cursor:pointer;background:rgba(109,92,246,0.15);border:1px solid rgba(109,92,246,0.25);border-radius:4px;padding:2px 7px;">copiar</span>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">Use o mesmo tamanho na imagem nova</div>
+            </div>
+
+            <button class="upload-btn" onclick="document.getElementById('img-fi').click()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Substituir imagem
+            </button>
+            <input type="file" id="img-fi" accept="image/*" style="display:none" onchange="replImg(event)">
+            <div class="field" style="margin-top:10px"><label>Alt text</label><input type="text" id="el-alt" oninput="liveAlt()" placeholder="Descrição..."></div>
+          </div>
+          <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
+        </div>
+
+        <div id="c-style" style="display:none">
+          <div class="ps" style="padding-top:14px">
+            <div class="ps-label">Fundo</div>
+            <div class="field"><label>Cor de fundo</label>
+              <div class="color-row">
+                <div class="swatch"><div class="sw-prev" id="cp-bg"></div><input type="color" id="el-bg" value="#ffffff" oninput="syncColor('cp-bg','el-bg','el-bghex');liveStyle('backgroundColor',this.value)"></div>
+                <input type="text" id="el-bghex" placeholder="#ffffff" oninput="syncHex('el-bghex','el-bg','cp-bg','backgroundColor')">
+                <button class="pill" onclick="clearBG()">✕</button>
+              </div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Espaçamento</div>
+            <div class="field"><label>Padding</label>
+              <div class="slider-row">
+                <input type="range" id="el-pad" min="0" max="80" value="0" oninput="sv('pad-v',this.value+'px');liveStyle('padding',this.value+'px')">
+                <span class="sv" id="pad-v">0px</span>
+              </div>
+            </div>
+            <div class="field"><label>Borda arredondada</label>
+              <div class="slider-row">
+                <input type="range" id="el-rad" min="0" max="50" value="0" oninput="sv('rad-v',this.value+'px');liveStyle('borderRadius',this.value+'px')">
+                <span class="sv" id="rad-v">0px</span>
+              </div>
+            </div>
+          </div>
+          <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
+        </div>
+
+        <!-- GALERIA -->
+        <div id="c-gallery">
+          <div class="ps-label" style="margin-bottom:10px;">Todas as imagens da página</div>
+          <div id="gallery-grid" class="gallery-grid"></div>
+        </div>
+
+        <!-- LINKS -->
+        <div id="c-links">
+          <div class="ps-label" style="margin-bottom:10px;">Todos os links da página</div>
+          <div id="links-list"></div>
+        </div>
+
+        <!-- APIs -->
+        <div id="c-api">
+          <div class="ps-label" style="margin-bottom:10px;">APIs e recursos externos</div>
+          <div id="api-list"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"><div class="toast-dot" id="tdot"></div><span id="tmsg">Salvo!</span></div>
+
+<script>
+'use strict';
+
+// ─── ESTADO ─────────────────────────────────────────────────────────────
+// CHAVE: a fonte da verdade é o iframe (`fr.contentDocument`).
+// Não usamos parentDoc duplicado. Toda alteração é direta no iframe.
+// Para o download, lemos `fr.contentDocument.documentElement.outerHTML`.
+
+let sel = null;        // Elemento clicado (no iframe)
+let selImg = null;     // Imagem dentro do elemento selecionado
+let dev = 'desktop';   // 'desktop' ou 'mobile'
+let fw = '700';
+const SKIP_TAGS = new Set(['html','head','script','style','meta','link','title','noscript','iframe','base']);
+const TXT_TAGS = new Set(['p','h1','h2','h3','h4','h5','h6','span','a','button','li','td','th','label','strong','em','b','i','small','div','section','header','footer','article','aside','nav','main','figcaption','caption']);
+
+// ─── CARREGAR HTML ──────────────────────────────────────────────────────
+function loadPaste() {
+  const h = document.getElementById('html-in').value.trim();
+  if (!h) { toast('Cole um HTML primeiro', true); return; }
+  const userUrl = document.getElementById('src-url').value.trim();
+  const fixed = fixHTML(h, userUrl);
+  if (fixed.info) {
+    const el = document.getElementById('fix-info');
+    el.textContent = fixed.info;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+  openEditor(fixed.html);
+}
+
+// ─── AUTO-CORREÇÃO DE HTML COPIADO ──────────────────────────────────────
+// Detecta a URL original e corrige caminhos relativos (imagens, CSS, fontes)
+// para que tudo carregue corretamente no editor.
+function fixHTML(html, userUrl) {
+  let info = [];
+  let baseUrl = userUrl;
+
+  // 1. Se usuário não digitou URL, tenta detectar do próprio HTML
+  if (!baseUrl) {
+    const candidates = [
+      /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i,
+      /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i,
+      /<meta[^>]+property=["']og:url["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:url["']/i,
+      /<meta[^>]+name=["']twitter:url["'][^>]+content=["']([^"']+)["']/i,
+    ];
+    for (const re of candidates) {
+      const m = html.match(re);
+      if (m && m[1] && /^https?:\/\//i.test(m[1])) { baseUrl = m[1]; info.push('URL detectada: ' + new URL(m[1]).hostname); break; }
+    }
+  } else if (!/^https?:\/\//i.test(baseUrl)) {
+    baseUrl = 'https://' + baseUrl;
+  }
+
+  // 2. Injeta <base href> se temos URL e o HTML ainda não tem base
+  if (baseUrl && !/<base\s+href=/i.test(html)) {
+    const origin = baseUrl.replace(/#.*$/, '').replace(/\?.*$/, '');
+    // Usa o caminho completo (sem o arquivo) para resolver paths relativos certinho
+    let basePath;
+    try {
+      const u = new URL(origin);
+      const pathParts = u.pathname.split('/');
+      pathParts.pop(); // remove o arquivo final
+      basePath = u.origin + pathParts.join('/') + '/';
+    } catch(e) { basePath = origin + '/'; }
+
+    const tag = '<base href="' + basePath + '">';
+    if (/<head[\s>]/i.test(html)) {
+      html = html.replace(/<head([^>]*)>/i, '<head$1>' + tag);
+      info.unshift('Base href aplicado');
+    } else {
+      html = tag + html;
+    }
+  }
+
+  // 3. Converte URLs protocolo-relativas (//cdn.com) para https://
+  const before = html.length;
+  html = html.replace(/(src|href)=("|')\/\//gi, '$1=$2https://');
+  if (html.length !== before) info.push('Links sem protocolo corrigidos');
+
+  // 4. Converte data-src → src (lazy loading desfeito)
+  const lazyMatches = (html.match(/\sdata-src=/gi) || []).length;
+  if (lazyMatches > 0) {
+    html = html.replace(/<img([^>]*?)\s+data-src=("|')([^"']+)\2/gi, '<img$1 src=$2$3$2');
+    info.push(lazyMatches + ' imagens lazy convertidas');
+  }
+
+  // 5. Reescreve links de CSS e fontes para passar pelo proxy (resolve CORS e paths relativos)
+  html = html.replace(/<link([^>]*?)\s+href=(["'])([^"']+)\2([^>]*)>/gi, function(m, a1, q, href, a2) {
+    const isCss = /rel=["']stylesheet["']/i.test(a1 + a2) || /\.css(\?|$)/i.test(href);
+    const isFont = /\.(woff2?|ttf|eot|otf)(\?|$)/i.test(href);
+    if (!isCss && !isFont) return m;
+    let absHref = href;
+    if (!/^https?:\/\//i.test(href) && baseUrl) {
+      try { absHref = new URL(href, baseUrl).href; } catch(e) {}
+    }
+    if (!/^https?:\/\//i.test(absHref)) return m;
+    // URL absoluta obrigatória: a <base href> aponta pro site original, não pro hunterx.site
+    const proxyUrl = 'https://hunterx.site/api/sitescope/proxy?url=' + encodeURIComponent(absHref);
+    // Remove crossorigin para evitar CORS check desnecessário na URL proxiada
+    const cleanA1 = a1.replace(/\s*crossorigin(=["'][^"']*["'])?/gi, '');
+    const cleanA2 = a2.replace(/\s*crossorigin(=["'][^"']*["'])?/gi, '');
+    return '<link' + cleanA1 + ' href=' + q + proxyUrl + q + cleanA2 + '>';
+  });
+
+  // 5b. Remove apenas scripts de analytics/tracking (não quebra CSS-in-JS)
+  const trackingRe = /<script[^>]*src=["'][^"']*(google-analytics|gtag|fbevents|hotjar|clarity|pixel|analytics|tiktok|taboola|outbrain)[^"']*["'][^>]*>\s*<\/script>/gi;
+  html = html.replace(trackingRe, '');
+
+  // 6. Remove handlers inline de navegação (mas mantém onload que inicializa CSS)
+  html = html.replace(/\s+on(click|submit|contextmenu)=("[^"]*"|'[^']*')/gi, '');
+
+  return { html, info: info.length ? '✓ ' + info.join(' • ') : '' };
+}
+
+async function analyzeCheckout() {
+  const raw = document.getElementById('checkout-url').value.trim();
+  if (!raw) return;
+  const url = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+
+  const loadEl  = document.getElementById('checkout-loading');
+  const resEl   = document.getElementById('checkout-result');
+  const bodyEl  = document.getElementById('checkout-body');
+  const errEl   = document.getElementById('checkout-error');
+
+  errEl.style.display = 'none';
+  resEl.style.display = 'none';
+  loadEl.style.display = 'block';
+
+  try {
+    const resp = await fetch('https://hunterx.site/api/sitescope/proxy?url=' + encodeURIComponent(url));
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const html = await resp.text();
+    const lower = html.toLowerCase();
+
+    // ── Plataforma ──────────────────────────────────────────────
+    const PLATFORMS = [
+      { name: 'Hotmart',     color:'#ff6c00', patterns: [/hotmart\.com/,/pay\.hotmart/] },
+      { name: 'Kiwify',      color:'#8b5cf6', patterns: [/kiwify\.(com|app)/] },
+      { name: 'Cakto',       color:'#22c55e', patterns: [/cakto\.com\.br/,/pay\.cakto/] },
+      { name: 'Monetizze',   color:'#3b82f6', patterns: [/monetizze\.com/] },
+      { name: 'PerfectPay',  color:'#10b981', patterns: [/perfectpay\.com/] },
+      { name: 'Eduzz',       color:'#f59e0b', patterns: [/eduzz\.com/,/sun\.eduzz/] },
+      { name: 'Ticto',       color:'#6366f1', patterns: [/ticto\.com/] },
+      { name: 'Lastlink',    color:'#06b6d4', patterns: [/lastlink\.com/] },
+      { name: 'Pepper',      color:'#ef4444', patterns: [/pepper\.com\.br/] },
+      { name: 'Shopify',     color:'#96bf48', patterns: [/myshopify\.com/,/shopify\.com/,/cdn\.shopify/] },
+      { name: 'WooCommerce', color:'#7f54b3', patterns: [/woocommerce/,/wp-content/] },
+      { name: 'Yampi',       color:'#f97316', patterns: [/yampi\.com/] },
+      { name: 'Nuvemshop',   color:'#1366f9', patterns: [/nuvemshop\.com/,/tiendanube/] },
+    ];
+    let platform = null;
+    for (const p of PLATFORMS) {
+      if (p.patterns.some(re => re.test(lower) || re.test(url))) { platform = p; break; }
+    }
+
+    // ── Pixels ───────────────────────────────────────────────────
+    const PIXELS = [
+      { name:'Facebook Pixel',  icon:'📘', re:/fbq\s*\(|facebook\.net\/signals|connect\.facebook\.net/ },
+      { name:'TikTok Pixel',    icon:'🎵', re:/ttq\s*\.|tiktok\.com\/i18n\/pixel|analytics\.tiktok/ },
+      { name:'Google Ads',      icon:'🔍', re:/gtag\s*\(|googleadservices|google-analytics|gtm\.js/ },
+      { name:'Taboola',         icon:'📰', re:/taboola/ },
+      { name:'Outbrain',        icon:'📣', re:/outbrain/ },
+      { name:'Kwai Ads',        icon:'🎬', re:/kwai|ssp\.kwai/ },
+      { name:'UTMify',          icon:'🔗', re:/utmify\.com/ },
+    ];
+    const pixels = PIXELS.filter(p => p.re.test(lower));
+
+    // ── Order Bump ───────────────────────────────────────────────
+    const hasOrderBump = /order.?bump|bump offer|adicionar ao pedido|adicione ao pedido/i.test(html);
+
+    // ── Upsell ───────────────────────────────────────────────────
+    const hasUpsell = /upsell|one.?time.?offer|oferta.?especial|aproveite.?essa/i.test(html);
+
+    // ── Garantia ─────────────────────────────────────────────────
+    const gMatch = html.match(/garantia\s+(?:incondicional\s+)?de\s+(\d+)\s*dias?|(\d+)\s*dias?\s+(?:de\s+)?garantia/i);
+    const guarantee = gMatch ? (gMatch[1] || gMatch[2]) + ' dias' : null;
+
+    // ── Formas de pagamento ───────────────────────────────────────
+    const payments = [];
+    if (/\bpix\b/i.test(html)) payments.push('PIX');
+    if (/cart.o de cr.dito|credit.?card|cartao/i.test(html)) payments.push('Cartão de crédito');
+    if (/boleto/i.test(html)) payments.push('Boleto');
+    if (/parcel|x sem juros|x de r\$/i.test(html)) payments.push('Parcelamento');
+
+    // ── Preço ─────────────────────────────────────────────────────
+    const priceMatch = html.match(/R\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?|\d+(?:,\d{2})?)/i);
+    const price = priceMatch ? 'R$ ' + priceMatch[1] : null;
+
+    // ── Renderiza resultado ───────────────────────────────────────
+    function row(label, value, color) {
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text2)">${label}</span>
+        <span style="font-weight:700;color:${color||'var(--text)'};">${value}</span>
+      </div>`;
+    }
+    function badge(label, color) {
+      return `<span style="background:${color}22;border:1px solid ${color}55;color:${color};border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700">${label}</span>`;
+    }
+
+    let html2 = '';
+    html2 += row('Plataforma', platform ? badge(platform.name, platform.color) : badge('Não identificada','#71717a'), '');
+    html2 += row('Preço detectado', price || '—', price ? '#22d3ee' : 'var(--text3)');
+    html2 += row('Order Bump', hasOrderBump ? badge('✓ Sim','#22c55e') : badge('✗ Não','#71717a'), '');
+    html2 += row('Upsell', hasUpsell ? badge('✓ Sim','#22c55e') : badge('✗ Não','#71717a'), '');
+    html2 += row('Garantia', guarantee ? badge('🛡 ' + guarantee,'#a78bfa') : '—', guarantee ? '' : 'var(--text3)');
+
+    if (payments.length > 0) {
+      html2 += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text2)">Pagamentos</span>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${payments.map(p => badge(p,'#22d3ee')).join('')}</div>
+      </div>`;
+    }
+
+    if (pixels.length > 0) {
+      html2 += `<div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <div style="color:var(--text2);margin-bottom:6px">Pixels rastreadores</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">${pixels.map(p => badge(p.icon+' '+p.name,'#f59e0b')).join('')}</div>
+      </div>`;
+    }
+
+    html2 += `<div style="padding-top:4px"><a href="${url}" target="_blank" rel="noopener" style="color:var(--accent);font-size:11px;text-decoration:none">↗ Abrir checkout original</a></div>`;
+
+    bodyEl.innerHTML = html2;
+    loadEl.style.display = 'none';
+    resEl.style.display = 'block';
+
+  } catch(e) {
+    loadEl.style.display = 'none';
+    errEl.textContent = '✗ ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+async function loadSitemap() {
+  const raw = document.getElementById('sitemap-url').value.trim();
+  if (!raw) return;
+  const url = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+  const errEl = document.getElementById('sitemap-error');
+  const resEl = document.getElementById('sitemap-result');
+  const listEl = document.getElementById('sitemap-list');
+  const countEl = document.getElementById('sitemap-count');
+  errEl.style.display = 'none';
+  resEl.style.display = 'none';
+  listEl.innerHTML = '<div style="padding:12px;color:var(--text2);text-align:center">Buscando...</div>';
+  resEl.style.display = 'block';
+
+  try {
+    const proxyUrl = 'https://hunterx.site/api/sitescope/proxy?url=' + encodeURIComponent(url);
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const text = await resp.text();
+
+    // Extrai todas as <loc> do XML (inclui sitemap index)
+    const locs = [...text.matchAll(/<loc[^>]*>([\s\S]*?)<\/loc>/gi)]
+      .map(m => m[1].trim().replace(/&amp;/g, '&'))
+      .filter(l => /^https?:\/\//i.test(l));
+
+    if (locs.length === 0) { throw new Error('Nenhuma URL encontrada. Verifique se é um sitemap válido.'); }
+
+    countEl.textContent = locs.length + ' páginas encontradas';
+    listEl.innerHTML = locs.map(l => {
+      const short = l.replace(/^https?:\/\/[^/]+/, '') || '/';
+      return `<a href="${l}" target="_blank" rel="noopener"
+        style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none;gap:8px;cursor:pointer"
+        onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"
+        title="${l}">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${short}</span>
+        <span style="color:var(--accent);flex-shrink:0;font-size:11px">↗</span>
+      </a>`;
+    }).join('');
+  } catch(e) {
+    listEl.innerHTML = '';
+    resEl.style.display = 'none';
+    errEl.textContent = '✗ ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function loadFile(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    document.getElementById('html-in').value = ev.target.result;
+    const userUrl = document.getElementById('src-url').value.trim();
+    const fixed = fixHTML(ev.target.result, userUrl);
+    if (fixed.info) {
+      const el = document.getElementById('fix-info');
+      el.textContent = fixed.info;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 4000);
+    }
+    openEditor(fixed.html);
+  };
+  r.readAsText(f);
+}
+
+const dz = document.getElementById('dz');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) { const r = new FileReader(); r.onload = ev => { document.getElementById('html-in').value = ev.target.result; openEditor(ev.target.result); }; r.readAsText(f); }
+});
+
+function openEditor(html) {
+  document.getElementById('import').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
+  document.getElementById('dev-sw').style.display = 'flex';
+  document.getElementById('tr').innerHTML =
+    '<button class="btn btn-ghost" onclick="goBack()">← Voltar</button>' +
+    '<button class="btn btn-ghost" onclick="undoAll()">Desfazer</button>' +
+    '<button class="btn btn-primary" onclick="dlHTML()">⬇ Baixar HTML</button>';
+
+  renderIframes(html);
+}
+
+// ─── INJETAR EDITOR DENTRO DO IFRAME ────────────────────────────────────
+// Injeta CSS de highlight + script que captura cliques e envia pro pai.
+const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}</style>';
+
+const VE_CODE = '(function(){'
+  + 'var SK={html:1,head:1,script:1,style:1,meta:1,link:1,title:1,noscript:1,iframe:1,base:1};'
+  + 'var n=0;'
+  // Pega o maior data-ve-id existente pra continuar a partir dele
+  + 'document.querySelectorAll("[data-ve-id]").forEach(function(e){var v=+e.getAttribute("data-ve-id");if(v>n)n=v;});'
+  + 'function tag(){document.querySelectorAll("*").forEach(function(e){if(SK[e.tagName.toLowerCase()])return;if(!e.getAttribute("data-ve-id"))e.setAttribute("data-ve-id",++n)})}'
+  + 'document.addEventListener("mouseover",function(e){var t=e.target;if(!t||!t.tagName||SK[t.tagName.toLowerCase()])return;var p=document.querySelector("[data-ve-hov]");if(p)p.removeAttribute("data-ve-hov");if(!t.hasAttribute("data-ve-sel"))t.setAttribute("data-ve-hov","")},true);'
+  + 'document.addEventListener("mouseout",function(e){if(e.target&&e.target.removeAttribute)e.target.removeAttribute("data-ve-hov")},true);'
+  + 'document.addEventListener("click",function(e){var t=e.target;if(!t||!t.tagName||SK[t.tagName.toLowerCase()])return;e.preventDefault();e.stopImmediatePropagation();var p=document.querySelector("[data-ve-sel]");if(p)p.removeAttribute("data-ve-sel");t.setAttribute("data-ve-sel","");if(!t.getAttribute("data-ve-id"))t.setAttribute("data-ve-id",++n);window.parent.postMessage({veId:t.getAttribute("data-ve-id")},"*")},true);'
+  + 'tag();new MutationObserver(tag).observe(document.documentElement,{childList:true,subtree:true});'
+  + '})();';
+
+function mkScript(c) { return '<' + 'script>' + c + '<' + '/script>'; }
+
+const NAV_BLOCK = '(function(){'
+  + 'try{Object.defineProperty(window,"location",{get:function(){return window._loc||location},set:function(v){console.log("[SS] nav bloqueada:",v)}});}catch(e){}'
+  + 'var _ps=history.pushState.bind(history);history.pushState=function(){};'
+  + 'history.replaceState=function(){};'
+  + 'window.addEventListener("beforeunload",function(e){e.preventDefault();e.returnValue="";},true);'
+  + 'document.addEventListener("submit",function(e){e.preventDefault();e.stopPropagation();},true);'
+  + '})();';
+
+function inject(html) {
+  const inj = VE_STYLE + mkScript(NAV_BLOCK) + mkScript(VE_CODE);
+  if (/<\/head>/i.test(html)) return html.replace(/<\/head>/i, inj + '</head>');
+  if (/<body[\s>]/i.test(html)) return html.replace(/<body([^>]*)>/i, '<body$1>' + inj);
+  return inj + html;
+}
+
+function renderIframes(html) {
+  document.getElementById('fr').srcdoc = inject(html);
+}
+
+// ─── RECEBE CLICK DO IFRAME ─────────────────────────────────────────────
+window.addEventListener('message', function(e) {
+  if (!e.data || !e.data.veId) return;
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { toast('Erro: iframe inacessível', true); return; }
+  const el = doc.querySelector('[data-ve-id="' + e.data.veId + '"]');
+  if (el) selectEl(el);
+});
+
+// ─── SELECIONAR ELEMENTO ────────────────────────────────────────────────
+function selectEl(el) {
+  if (sel) sel.removeAttribute('data-ve-sel');
+  sel = el;
+  el.setAttribute('data-ve-sel', '');
+  el.removeAttribute('data-ve-hov');
+
+  const tag = el.tagName.toLowerCase();
+  document.getElementById('el-tag').textContent = '<' + tag + '>';
+  document.getElementById('crumb').textContent = '<' + tag + '>';
+  document.getElementById('empty').style.display = 'none';
+  document.getElementById('panel').style.display = 'block';
+
+  const cs = el.ownerDocument.defaultView.getComputedStyle(el);
+
+  // TEXTO
+  const isT = TXT_TAGS.has(tag);
+  document.getElementById('el-text').value = isT ? (el.innerText || '') : '';
+  document.getElementById('el-text').disabled = !isT;
+  document.getElementById('el-text').style.opacity = isT ? '1' : '.4';
+
+  const fs = parseInt(cs.fontSize) || 16;
+  document.getElementById('el-fs').value = fs;
+  document.getElementById('fs-v').textContent = fs + 'px';
+
+  fw = cs.fontWeight || '400';
+  document.querySelectorAll('[data-fw]').forEach(p => p.classList.toggle('active', p.dataset.fw === fw));
+
+  const col = rgbHex(cs.color) || '#000000';
+  setVal('el-color', col); setVal('el-chex', col);
+  document.getElementById('cp-text').style.background = col;
+
+  // LINK
+  const linkEl = tag === 'a' ? el : el.closest('a');
+  const linkField = document.getElementById('link-field');
+  const openBtn = document.getElementById('el-href-open');
+  if (linkEl) {
+    linkField.style.display = 'block';
+    const href = linkEl.getAttribute('href') || '';
+    setVal('el-href', href);
+    openBtn.href = href;
+    openBtn.style.display = href ? 'block' : 'none';
+  } else {
+    linkField.style.display = 'none';
+    setVal('el-href', '');
+    openBtn.style.display = 'none';
+  }
+
+  // IMAGEM
+  selImg = (tag === 'img') ? el : (el.querySelector('img') || null);
+  const wrap = document.getElementById('img-prev');
+  if (selImg) {
+    showImgPreview(selImg.src);
+    setVal('el-alt', selImg.alt || '');
+  } else {
+    wrap.innerHTML = '<div class="img-no"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><span>Nenhuma imagem<br>neste elemento</span></div>';
+  }
+
+  // ESTILO
+  const bg = cs.backgroundColor;
+  if (bg && bg !== 'rgba(0, 0, 0, 0)') {
+    const bh = rgbHex(bg) || '#ffffff';
+    setVal('el-bg', bh); setVal('el-bghex', bh);
+    document.getElementById('cp-bg').style.cssText = 'background:' + bh;
+  } else {
+    setVal('el-bghex', '');
+    document.getElementById('cp-bg').style.cssText = 'background:repeating-conic-gradient(#ccc 0% 25%, transparent 0% 50%) 0 0 / 8px 8px';
+  }
+
+  const pad = parseInt(cs.paddingTop) || 0;
+  setVal('el-pad', pad); sv('pad-v', pad + 'px');
+  const rad = parseInt(cs.borderRadius) || 0;
+  setVal('el-rad', rad); sv('rad-v', rad + 'px');
+
+  if (selImg) switchTab('img');
+  else if (isT) switchTab('text');
+}
+
+function desel() {
+  if (sel) sel.removeAttribute('data-ve-sel');
+  sel = null; selImg = null;
+  document.getElementById('empty').style.display = 'flex';
+  document.getElementById('panel').style.display = 'none';
+  document.getElementById('crumb').textContent = '';
+}
+
+// ─── UPDATES AO VIVO ────────────────────────────────────────────────────
+// Tudo aplica DIRETO no elemento do iframe. Como o iframe é nossa fonte
+// da verdade, o download (que lê o iframe) automaticamente tem as alterações.
+
+function liveText() {
+  if (!sel) return;
+  sel.innerText = document.getElementById('el-text').value;
+}
+
+function liveHref() {
+  if (!sel) return;
+  const link = sel.tagName.toLowerCase() === 'a' ? sel : sel.closest('a');
+  if (link) {
+    const val = document.getElementById('el-href').value;
+    link.href = val;
+    const openBtn = document.getElementById('el-href-open');
+    openBtn.href = val;
+    openBtn.style.display = val ? 'block' : 'none';
+  }
+}
+
+function liveStyle(prop, val) {
+  if (!sel) return;
+  sel.style[prop] = val;
+}
+
+function liveAlt() {
+  if (!selImg) return;
+  selImg.alt = document.getElementById('el-alt').value;
+}
+
+function setFW(btn) {
+  document.querySelectorAll('[data-fw]').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  fw = btn.dataset.fw;
+  liveStyle('fontWeight', fw);
+}
+
+function clearBG() {
+  if (sel) { sel.style.backgroundColor = ''; sel.style.background = ''; }
+  setVal('el-bghex', '');
+  document.getElementById('cp-bg').style.cssText = 'background:repeating-conic-gradient(#ccc 0% 25%, transparent 0% 50%) 0 0 / 8px 8px';
+}
+
+// ─── SUBSTITUIR IMAGEM ──────────────────────────────────────────────────
+function replImg(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  if (!selImg) { toast('Selecione uma imagem primeiro', true); return; }
+  const r = new FileReader();
+  r.onload = ev => {
+    const dataUrl = ev.target.result;
+    selImg.src = dataUrl;
+    selImg.removeAttribute('srcset');
+    selImg.removeAttribute('data-src');
+    showImgPreview(dataUrl);
+    toast('Imagem trocada!');
+    // Limpa o input pra permitir trocar pela mesma imagem de novo
+    document.getElementById('img-fi').value = '';
+  };
+  r.onerror = () => toast('Erro ao ler arquivo', true);
+  r.readAsDataURL(f);
+}
+
+function showImgPreview(src) {
+  const wrap = document.getElementById('img-prev');
+  const dims = document.getElementById('img-dims');
+  const dimsVal = document.getElementById('img-dims-val');
+  wrap.innerHTML = '';
+  dims.style.display = 'none';
+
+  const img = document.createElement('img');
+  img.onload = function() {
+    dimsVal.textContent = img.naturalWidth + ' × ' + img.naturalHeight;
+    dims.style.display = 'block';
+  };
+  img.onerror = function() {
+    // Tenta pegar dimensões via objeto Image separado mesmo que o preview bloqueie
+    const probe = new Image();
+    probe.onload = function() {
+      dimsVal.textContent = probe.naturalWidth + ' × ' + probe.naturalHeight;
+      dims.style.display = 'block';
+    };
+    probe.src = src;
+    wrap.innerHTML = '<div class="img-no"><div style="font-size:24px">🖼</div><span>Imagem externa<br><small>Preview bloqueado<br>Substituição funciona</small></span></div>';
+  };
+  img.src = src;
+  wrap.appendChild(img);
+}
+
+function copyDims() {
+  const val = document.getElementById('img-dims-val').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.getElementById('img-dims-copy');
+    btn.textContent = '✓ copiado';
+    setTimeout(() => btn.textContent = 'copiar', 1800);
+  });
+}
+
+// ─── DOWNLOAD ───────────────────────────────────────────────────────────
+function dlHTML() {
+  const fr = document.getElementById('fr');
+  let doc;
+  try { doc = fr.contentDocument || fr.contentWindow.document; }
+  catch(e) { toast('Erro ao acessar conteúdo do iframe', true); return; }
+
+  if (!doc || !doc.documentElement) { toast('Iframe vazio', true); return; }
+
+  // Pega TODO o HTML do iframe — inclui todas as edições ao vivo
+  let h = doc.documentElement.outerHTML;
+
+  // Limpa marcadores do editor
+  h = h.replace(/\s*data-ve-id="[^"]*"/g, '');
+  h = h.replace(/\s*data-ve-sel(="[^"]*")?/g, '');
+  h = h.replace(/\s*data-ve-hov(="[^"]*")?/g, '');
+
+  // Remove o style e script que injetamos
+  h = h.replace(VE_STYLE, '');
+  h = h.replace(mkScript(VE_CODE), '');
+  // Fallback: remove qualquer style ou script com a marca [data-ve-sel]
+  h = h.replace(/<style[^>]*>[^<]*\[data-ve-sel\][\s\S]*?<\/style>/gi, '');
+  h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?MutationObserver[\s\S]*?\}\)\(\);<\/script>/gi, '');
+
+  // Adiciona doctype
+  if (!/^\s*<!DOCTYPE/i.test(h)) h = '<!DOCTYPE html>\n' + h;
+
+  const blob = new Blob([h], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pagina-editada.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('Baixado!');
+}
+
+// ─── DEVICE / TABS ──────────────────────────────────────────────────────
+function setDev(d) {
+  dev = d; desel();
+  document.getElementById('stage').classList.toggle('mobile', d === 'mobile');
+  document.getElementById('btn-desk').classList.toggle('active', d === 'desktop');
+  document.getElementById('btn-mob').classList.toggle('active', d === 'mobile');
+}
+
+function switchTab(t) {
+  const isSeo = t === 'seo';
+  const emptyEl = document.getElementById('empty');
+  const panelEl = document.getElementById('panel');
+  const seoEl   = document.getElementById('c-seo');
+  if (isSeo) {
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (panelEl) panelEl.style.display = 'none';
+    if (seoEl)   seoEl.style.display   = 'flex';
+  } else {
+    if (seoEl) seoEl.style.display = 'none';
+    if (sel) {
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (panelEl) panelEl.style.display = 'block';
+    } else {
+      if (emptyEl) emptyEl.style.display = 'flex';
+      if (panelEl) panelEl.style.display = 'none';
+    }
+  }
+  ['text','img','style','gallery','links','api','seo'].forEach(k => {
+    const tab = document.getElementById('t-'+k);
+    const panel = document.getElementById('c-'+k);
+    if (tab) tab.classList.toggle('active', k === t);
+    if (panel && k !== 'seo') panel.style.display = k === t ? 'block' : 'none';
+  });
+}
+
+function buildSeo() {
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  const itemsEl = document.getElementById('seo-items');
+  const numEl   = document.getElementById('seo-num');
+  const ringFg  = document.getElementById('seo-ring-fg');
+  const statusEl= document.getElementById('seo-status');
+  itemsEl.innerHTML = '';
+  if (!doc || !doc.body) { numEl.textContent='—'; statusEl.textContent='Carregue um HTML primeiro.'; return; }
+  const checks = [];
+  const title = doc.querySelector('title');
+  const titleTxt = title ? title.textContent.trim() : '';
+  if (!titleTxt) checks.push({st:'bad',title:'Sem &lt;title&gt;',desc:'Adicione uma tag title com 40–60 caracteres.'});
+  else if (titleTxt.length < 30) checks.push({st:'warn',title:'Title curto',desc:`"${titleTxt.slice(0,40)}" — tente entre 40–60 caracteres.`});
+  else if (titleTxt.length > 65) checks.push({st:'warn',title:'Title longo',desc:`"${titleTxt.slice(0,40)}…" — Google corta acima de 65 chars.`});
+  else checks.push({st:'ok',title:'Title perfeito',desc:`"${titleTxt.slice(0,50)}" — ${titleTxt.length} chars.`});
+  const metaDesc = doc.querySelector('meta[name="description"]');
+  const descTxt = metaDesc ? (metaDesc.getAttribute('content')||'').trim() : '';
+  if (!descTxt) checks.push({st:'bad',title:'Sem meta description',desc:'Adicione meta description com 120–155 chars.'});
+  else if (descTxt.length < 70) checks.push({st:'warn',title:'Description curta',desc:`${descTxt.length} chars — ideal: 120–155.`});
+  else if (descTxt.length > 160) checks.push({st:'warn',title:'Description longa',desc:`${descTxt.length} chars — Google corta acima de 160.`});
+  else checks.push({st:'ok',title:'Meta description OK',desc:`${descTxt.length} chars — dentro do ideal.`});
+  const h1s = doc.querySelectorAll('h1');
+  if (!h1s.length) checks.push({st:'bad',title:'Sem H1',desc:'Toda página precisa de um H1 com a palavra-chave principal.'});
+  else if (h1s.length > 1) checks.push({st:'warn',title:`${h1s.length} H1 encontrados`,desc:'Use apenas um H1 por página.'});
+  else checks.push({st:'ok',title:'H1 presente',desc:`"${h1s[0].textContent.trim().slice(0,60)}"`});
+  const imgs = Array.from(doc.querySelectorAll('img'));
+  const semAlt = imgs.filter(i => !i.getAttribute('alt')||!i.getAttribute('alt').trim());
+  if (semAlt.length) checks.push({st:semAlt.length>3?'bad':'warn',title:`${semAlt.length} imagem(ns) sem alt`,desc:'Adicione texto alternativo em todas as imagens.'});
+  else if (imgs.length) checks.push({st:'ok',title:'Todas as imagens têm alt',desc:`${imgs.length} imagem(ns) com alt.`});
+  const links = Array.from(doc.querySelectorAll('a[href]'));
+  const internos = links.filter(a=>{const h=a.getAttribute('href');return h&&!h.startsWith('http')&&!h.startsWith('//')});
+  if (!internos.length) checks.push({st:'warn',title:'Sem links internos',desc:'Links internos ajudam o Google a indexar mais páginas.'});
+  else checks.push({st:'ok',title:`${internos.length} link(s) interno(s)`,desc:'Boa estrutura de navegação interna.'});
+  const og = doc.querySelector('meta[property="og:title"]');
+  if (!og) checks.push({st:'warn',title:'Sem Open Graph',desc:'Adicione og:title, og:description e og:image para preview nas redes sociais.'});
+  else checks.push({st:'ok',title:'Open Graph presente',desc:'Preview de compartilhamento configurado.'});
+  const vp = doc.querySelector('meta[name="viewport"]');
+  if (!vp) checks.push({st:'bad',title:'Sem viewport',desc:'Adicione meta viewport para o site ser responsivo.'});
+  else checks.push({st:'ok',title:'Viewport configurada',desc:'Página responsiva para mobile.'});
+  const pts = {ok:14,warn:6,bad:0};
+  const total = checks.reduce((s,c)=>s+pts[c.st],0);
+  const score = Math.round((total/(checks.length*14))*100);
+  numEl.textContent = score;
+  const color = score>=80?'#22c55e':score>=50?'#f97316':'#ef4444';
+  statusEl.textContent = score>=80?'Ótimo':score>=50?'Melhorar':'Crítico';
+  statusEl.style.color = color;
+  ringFg.style.stroke = color;
+  const circ = 2*Math.PI*40;
+  ringFg.style.strokeDashoffset = circ-(circ*score/100);
+  const icons = {
+    ok:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`,
+    warn:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    bad:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  };
+  checks.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='seo-item';
+    div.innerHTML=`<div class="seo-item-icon ${c.st}">${icons[c.st]}</div><div class="seo-item-body"><div class="seo-item-title">${c.title}</div><div class="seo-item-desc">${c.desc}</div></div>`;
+    itemsEl.appendChild(div);
+  });
+}
+
+// ─── LINKS TAB ──────────────────────────────────────────────────────────
+function buildLinks() {
+  const list = document.getElementById('links-list');
+  list.innerHTML = '';
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { list.innerHTML = '<div class="links-empty">Carregue um HTML primeiro.</div>'; return; }
+
+  const anchors = Array.from(doc.querySelectorAll('a[href]'));
+  if (!anchors.length) { list.innerHTML = '<div class="links-empty">Nenhum link encontrado.</div>'; return; }
+
+  anchors.forEach((a, i) => {
+    const item = document.createElement('div');
+    item.className = 'link-item';
+
+    const label = (a.innerText || a.getAttribute('aria-label') || 'Link ' + (i+1)).trim().slice(0, 60);
+    const href = a.getAttribute('href') || '';
+
+    item.innerHTML = `
+      <div class="link-label">${label || '(sem texto)'}</div>
+      <div class="link-href">${href || '(sem href)'}</div>
+      <div class="link-edit-row">
+        <input type="text" value="${href.replace(/"/g,'&quot;')}" placeholder="https://..." data-idx="${i}" oninput="updateLinkHref(this,${i})" />
+        <a class="link-open-btn" href="${href}" target="_blank" title="Abrir">↗</a>
+      </div>
+    `;
+
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.link-item').forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+      selectEl(a);
+      switchTab('text');
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function updateLinkHref(input, idx) {
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  const anchors = Array.from(doc.querySelectorAll('a[href]'));
+  if (anchors[idx]) {
+    anchors[idx].href = input.value;
+    const openBtn = input.parentElement.querySelector('.link-open-btn');
+    if (openBtn) openBtn.href = input.value;
+  }
+}
+
+// ─── API TAB ─────────────────────────────────────────────────────────────
+function buildApi() {
+  const list = document.getElementById('api-list');
+  list.innerHTML = '';
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { list.innerHTML = '<div class="api-empty">Carregue um HTML primeiro.</div>'; return; }
+
+  const items = [];
+
+  // Scripts externos
+  doc.querySelectorAll('script[src]').forEach(el => {
+    items.push({ type: 'script', label: 'Script externo', url: el.getAttribute('src'), el });
+  });
+
+  // Formulários com action
+  doc.querySelectorAll('form[action]').forEach(el => {
+    items.push({ type: 'form', label: 'Form action', url: el.getAttribute('action'), el });
+  });
+
+  // Iframes
+  doc.querySelectorAll('iframe[src]').forEach(el => {
+    items.push({ type: 'fetch', label: 'iframe src', url: el.getAttribute('src'), el });
+  });
+
+  // Links externos (href com http)
+  doc.querySelectorAll('a[href^="http"]').forEach(el => {
+    items.push({ type: 'img-src', label: 'Link externo', url: el.getAttribute('href'), el });
+  });
+
+  // Imagens externas
+  doc.querySelectorAll('img[src^="http"]').forEach(el => {
+    items.push({ type: 'img-src', label: 'Imagem externa', url: el.getAttribute('src'), el });
+  });
+
+  // CSS externos
+  doc.querySelectorAll('link[rel="stylesheet"][href]').forEach(el => {
+    items.push({ type: 'script', label: 'CSS externo', url: el.getAttribute('href'), el });
+  });
+
+  if (!items.length) {
+    list.innerHTML = '<div class="api-empty">Nenhuma API ou recurso externo encontrado.</div>';
+    return;
+  }
+
+  items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'api-item';
+    div.innerHTML = `
+      <div class="api-type ${item.type}">${item.label}</div>
+      <div class="api-url">${item.url}</div>
+      <div class="api-actions">
+        <button class="api-btn api-btn-remove" onclick="apiRemove(${i})">✕ Remover</button>
+        <button class="api-btn api-btn-replace" onclick="apiToggleReplace(${i})">↻ Substituir</button>
+      </div>
+      <div class="api-replace-row" id="api-replace-${i}">
+        <input type="text" placeholder="Nova URL..." id="api-new-${i}" />
+        <button onclick="apiReplace(${i})">OK</button>
+      </div>
+    `;
+    div._item = item;
+    list.appendChild(div);
+  });
+
+  list._items = items;
+}
+
+function apiRemove(idx) {
+  const list = document.getElementById('api-list');
+  const item = list._items[idx];
+  if (!item) return;
+  item.el.remove();
+  buildApi();
+  toast('Removido!');
+}
+
+function apiToggleReplace(idx) {
+  const row = document.getElementById('api-replace-' + idx);
+  row.classList.toggle('open');
+  if (row.classList.contains('open')) {
+    const list = document.getElementById('api-list');
+    const item = list._items[idx];
+    document.getElementById('api-new-' + idx).value = item.url;
+    document.getElementById('api-new-' + idx).focus();
+  }
+}
+
+function apiReplace(idx) {
+  const list = document.getElementById('api-list');
+  const item = list._items[idx];
+  const newUrl = document.getElementById('api-new-' + idx).value.trim();
+  if (!newUrl || !item) return;
+
+  const el = item.el;
+  const tag = el.tagName.toLowerCase();
+  if (tag === 'script' || tag === 'link') el.setAttribute('src', newUrl) || el.setAttribute('href', newUrl);
+  if (tag === 'img') el.src = newUrl;
+  if (tag === 'iframe') el.src = newUrl;
+  if (tag === 'form') el.action = newUrl;
+  if (tag === 'a') el.href = newUrl;
+
+  buildApi();
+  toast('Substituído!');
+}
+
+function buildGallery() {
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { grid.innerHTML = '<div class="gallery-empty">Carregue um HTML primeiro.</div>'; return; }
+
+  const imgs = Array.from(doc.querySelectorAll('img'));
+  if (!imgs.length) { grid.innerHTML = '<div class="gallery-empty">Nenhuma imagem encontrada.</div>'; return; }
+
+  imgs.forEach((img, i) => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    if (sel && sel === img) item.classList.add('selected');
+
+    // Thumb
+    const thumb = document.createElement('img');
+    thumb.className = 'gallery-thumb';
+    thumb.src = img.src || img.getAttribute('data-src') || '';
+    thumb.alt = img.alt || '';
+    thumb.onerror = function() {
+      this.outerHTML = '<div class="gallery-thumb-placeholder">🖼</div>';
+    };
+
+    // Info
+    const info = document.createElement('div');
+    info.className = 'gallery-info';
+    const dims = (img.naturalWidth && img.naturalHeight)
+      ? img.naturalWidth + ' × ' + img.naturalHeight + ' px'
+      : '— × — px';
+    info.innerHTML = `<div class="gallery-dims">${dims}</div><div class="gallery-idx">Imagem ${i + 1}</div>`;
+
+    // Botão rolar até ela
+    const scrollBtn = document.createElement('button');
+    scrollBtn.className = 'gallery-scroll-btn';
+    scrollBtn.textContent = '↗ ir';
+    scrollBtn.onclick = function(e) {
+      e.stopPropagation();
+      img.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    item.appendChild(thumb);
+    item.appendChild(info);
+    item.appendChild(scrollBtn);
+
+    // Clicar no card seleciona a imagem no editor
+    item.onclick = function() {
+      selectEl(img);
+      switchTab('img');
+      // Atualiza destaque na galeria
+      document.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+    };
+
+    // Atualiza dimensões depois que a imagem carregar no thumb
+    thumb.onload = function() {
+      if (img.naturalWidth && img.naturalHeight) {
+        item.querySelector('.gallery-dims').textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
+      }
+    };
+
+    grid.appendChild(item);
+  });
+}
+
+// ─── UTIL ───────────────────────────────────────────────────────────────
+function sv(id, v) { document.getElementById(id).textContent = v; }
+function setVal(id, v) { document.getElementById(id).value = v; }
+
+function syncColor(prevId, inputId, hexId) {
+  const v = document.getElementById(inputId).value;
+  document.getElementById(prevId).style.cssText = 'background:' + v;
+  document.getElementById(hexId).value = v;
+}
+
+function syncHex(hexId, inputId, prevId, prop) {
+  const v = document.getElementById(hexId).value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    document.getElementById(inputId).value = v;
+    document.getElementById(prevId).style.cssText = 'background:' + v;
+    liveStyle(prop, v);
+  }
+}
+
+function rgbHex(rgb) {
+  if (!rgb) return null;
+  const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!m) return null;
+  return '#' + [m[1],m[2],m[3]].map(x => (+x).toString(16).padStart(2,'0')).join('');
+}
+
+function undoAll() {
+  if (!confirm('Desfazer todas as alterações?')) return;
+  desel();
+  renderIframes(document.getElementById('html-in').value);
+  toast('Desfeito');
+}
+
+function goBack() {
+  sel = null; selImg = null;
+  document.getElementById('editor').style.display = 'none';
+  document.getElementById('import').style.display = 'flex';
+  document.getElementById('dev-sw').style.display = 'none';
+  document.getElementById('tr').innerHTML = '';
+  document.getElementById('fr').srcdoc = '';
+  setDev('desktop');
+}
+
+let toastTimer;
+function toast(msg, err) {
+  document.getElementById('tmsg').textContent = msg;
+  document.getElementById('tdot').style.background = err ? '#ef4444' : '#22c55e';
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>
