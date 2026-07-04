@@ -7,16 +7,16 @@
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
-  --bg:#0c0c10; --surface:#13131a; --surface2:#1c1c28;
-  --border:#252535; --accent:#6d5cf6; --accent2:#8b7cf8;
-  --text:#f0f0f8; --text2:#7878a0; --text3:#4a4a6a;
+  --bg:#080c10; --surface:#0d1117; --surface2:#111820;
+  --border:#1a2535; --accent:#22d3ee; --accent2:#67e8f9;
+  --text:#e0f7fa; --text2:#4d8fa0; --text3:#2a5060;
   --green:#22c55e; --red:#ef4444; --r:8px;
 }
 body { font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; font-size:14px; }
 
 .topbar { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; gap:12px; }
 .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
-.brand-icon { width:28px; height:28px; background:linear-gradient(135deg,var(--accent),#a78bfa); border-radius:7px; display:flex; align-items:center; justify-content:center; }
+.brand-icon { width:28px; height:28px; background:linear-gradient(135deg,#0891b2,var(--accent)); border-radius:7px; display:flex; align-items:center; justify-content:center; }
 .topbar-center { display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:3px; }
 .dev-btn { display:flex; align-items:center; gap:6px; padding:5px 12px; border:none; background:transparent; color:var(--text2); border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; }
 .dev-btn.active { background:var(--surface2); color:var(--text); }
@@ -25,10 +25,10 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; transition:all .15s; }
 .btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
 .btn-ghost:hover { background:var(--surface2); color:var(--text); }
-.btn-primary { background:var(--accent); color:#fff; }
-.btn-primary:hover { background:var(--accent2); }
+.btn-primary { background:linear-gradient(135deg,#0891b2,var(--accent)); color:#08131a; font-weight:700; }
+.btn-primary:hover { background:linear-gradient(135deg,#0e7490,#22d3ee); }
 
-.workspace { flex:1; display:flex; overflow:hidden; }
+.workspace { flex:1; display:flex; width:100%; overflow:hidden; }
 
 /* IMPORT */
 #import { flex:1; display:flex; align-items:center; justify-content:center; padding:32px; }
@@ -42,8 +42,8 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .code-head { padding:8px 12px; border-bottom:1px solid var(--border); font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
 .code-box textarea { width:100%; height:160px; background:transparent; border:none; color:var(--text); font-family:monospace; font-size:12px; padding:12px; resize:none; outline:none; line-height:1.5; }
 
-.load-btn { background:linear-gradient(135deg,var(--accent),#8b5cf6); color:#fff; padding:12px; border-radius:var(--r); font-size:14px; font-weight:700; width:100%; transition:all .2s; }
-.load-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(109,92,246,.3); }
+.load-btn { background:linear-gradient(135deg,#0891b2,#22d3ee); color:#08131a; padding:12px; border-radius:var(--r); font-size:14px; font-weight:700; width:100%; transition:all .2s; }
+.load-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(34,211,238,.3); }
 
 .or-row { display:flex; align-items:center; gap:10px; color:var(--text3); font-size:12px; margin:4px 0; }
 .or-row::before, .or-row::after { content:''; flex:1; height:1px; background:var(--border); }
@@ -54,29 +54,28 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .dz span { font-size:11px; color:var(--text3); }
 
 /* EDITOR */
-#editor { display:none; flex:1; overflow:hidden; }
-.editor-wrap { display:flex; height:100%; }
+#editor { display:none; position:fixed; top:52px; left:0; right:0; bottom:0; overflow:hidden; }
+.editor-wrap { display:flex; width:100%; height:100%; }
 
-.canvas-wrap { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#111118; }
+.canvas-wrap { flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; background:#111118; }
 .canvas-bar { height:36px; display:flex; align-items:center; padding:0 14px; gap:10px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
-.hint-pill { display:flex; align-items:center; gap:5px; background:rgba(109,92,246,.12); border:1px solid rgba(109,92,246,.2); padding:3px 10px; border-radius:20px; font-size:11px; color:var(--accent2); }
-.hint-dot { width:5px; height:5px; border-radius:50%; background:var(--accent2); animation:blink 2s infinite; }
+.hint-pill { display:flex; align-items:center; gap:5px; background:rgba(34,211,238,.1); border:1px solid rgba(34,211,238,.2); padding:3px 10px; border-radius:20px; font-size:11px; color:var(--accent2); }
+.hint-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:blink 2s infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 #crumb { font-size:11px; color:var(--text3); font-family:monospace; }
 
 .stage { flex:1; display:flex; align-items:flex-start; justify-content:center; overflow:auto; padding:20px; transition:background .2s; }
 .stage.mobile { padding:24px; background:#111118; }
 
-/* UM único iframe — muda só o tamanho do wrapper via CSS pra simular mobile */
-.frame-wrap { display:flex; flex-direction:column; width:100%; height:100%; flex-shrink:0; transition:width .2s; }
+.frame-wrap { display:flex; flex-direction:column; width:100%; min-height:100%; flex-shrink:0; transition:width .2s; }
 .phone-notch { display:none; }
-.frame-inner { width:100%; height:100%; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,.4); }
-.frame-inner iframe { width:100%; height:100%; border:none; display:block; }
+.frame-inner { width:100%; flex:1; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,.4); }
+.frame-inner iframe { width:100%; height:100%; min-height:calc(100vh - 88px); border:none; display:block; }
 
-.stage.mobile .frame-wrap { width:390px; height:auto; background:#1a1a1a; border-radius:44px; padding:12px; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 40px 80px rgba(0,0,0,.7); }
+.stage.mobile .frame-wrap { width:390px; min-height:auto; background:#1a1a1a; border-radius:44px; padding:12px; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 40px 80px rgba(0,0,0,.7); }
 .stage.mobile .phone-notch { display:block; height:32px; background:#111; border-radius:16px; width:120px; margin:0 auto 8px; }
 .stage.mobile .frame-inner { width:366px; height:720px; border-radius:36px; }
-.stage.mobile .frame-inner iframe { width:366px; height:720px; }
+.stage.mobile .frame-inner iframe { width:366px; height:720px; min-height:unset; }
 
 .sidebar { width:300px; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
 .sb-top { padding:14px 16px 0; flex-shrink:0; }
@@ -96,12 +95,12 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .ps { margin-bottom:18px; }
 .ps-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text3); margin-bottom:8px; }
 
-.tag-chip { display:inline-flex; align-items:center; background:rgba(109,92,246,.12); border:1px solid rgba(109,92,246,.25); color:var(--accent2); padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; font-family:monospace; }
+.tag-chip { display:inline-flex; align-items:center; background:rgba(34,211,238,.1); border:1px solid rgba(34,211,238,.25); color:var(--accent); padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; font-family:monospace; }
 
 .field { margin-bottom:10px; }
 .field label { display:block; font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
 .field textarea, .field input[type="text"] { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:13px; padding:8px 10px; font-family:inherit; outline:none; resize:none; }
-.field textarea:focus, .field input:focus { border-color:var(--accent); }
+.field textarea:focus, .field input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(34,211,238,.1); }
 .field textarea { height:80px; }
 
 .slider-row { display:flex; align-items:center; gap:8px; }
@@ -115,17 +114,92 @@ button { cursor:pointer; font-family:inherit; border:none; }
 
 .pill-group { display:flex; gap:4px; flex-wrap:wrap; }
 .pill { padding:4px 10px; background:var(--bg); border:1px solid var(--border); border-radius:20px; font-size:12px; color:var(--text2); cursor:pointer; font-family:inherit; }
-.pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.pill.active { background:var(--accent); border-color:var(--accent); color:#08131a; font-weight:700; }
+
+/* GALERIA */
+#c-gallery { display:none; padding-top:14px; }
+.gallery-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.gallery-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; overflow:hidden; cursor:pointer; transition:all .15s; position:relative; }
+.gallery-item:hover { border-color:var(--accent); transform:translateY(-1px); }
+.gallery-item.selected { border-color:var(--accent); box-shadow:0 0 0 2px rgba(109,92,246,.3); }
+.gallery-thumb { width:100%; height:72px; object-fit:cover; display:block; background:var(--surface2); }
+.gallery-thumb-placeholder { width:100%; height:72px; display:flex; align-items:center; justify-content:center; background:var(--surface2); color:var(--text3); font-size:22px; }
+.gallery-info { padding:6px 8px; }
+.gallery-dims { font-size:10px; font-family:monospace; color:var(--accent2); font-weight:700; }
+.gallery-idx { font-size:10px; color:var(--text3); }
+.gallery-empty { padding:24px 16px; text-align:center; color:var(--text3); font-size:13px; }
+.gallery-scroll-btn { position:absolute; top:4px; right:4px; background:rgba(109,92,246,.85); border:none; border-radius:4px; color:#fff; font-size:10px; font-weight:700; padding:2px 6px; cursor:pointer; opacity:0; transition:opacity .15s; }
+.gallery-item:hover .gallery-scroll-btn { opacity:1; }
 
 .img-prev { width:100%; height:110px; background:var(--bg); border:1px solid var(--border); border-radius:6px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
 .img-prev img { max-width:100%; max-height:100%; object-fit:contain; }
 .img-no { color:var(--text3); font-size:12px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; padding:8px; }
 
-.upload-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px; background:var(--accent); color:#fff; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s; }
-.upload-btn:hover { background:var(--accent2); transform:translateY(-1px); }
+.upload-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px; background:linear-gradient(135deg,#0891b2,#22d3ee); color:#08131a; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s; }
+.upload-btn:hover { opacity:.88; transform:translateY(-1px); }
 
 .desel-btn { width:100%; padding:7px; background:transparent; color:var(--text3); border:1px solid var(--border); border-radius:6px; font-size:12px; cursor:pointer; font-family:inherit; margin-top:8px; }
 .desel-btn:hover { color:var(--text2); }
+
+/* LINKS TAB */
+#c-links { display:none; padding-top:14px; }
+.link-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:all .15s; }
+.link-item:hover { border-color:var(--accent); }
+.link-item.selected { border-color:var(--accent); background:rgba(34,211,238,0.05); }
+.link-label { font-size:11px; font-weight:700; color:var(--text); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.link-href { font-family:monospace; font-size:10px; color:var(--accent2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.link-edit-row { margin-top:8px; display:flex; gap:6px; }
+.link-edit-row input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:monospace; font-size:11px; padding:5px 8px; outline:none; }
+.link-edit-row input:focus { border-color:var(--accent); }
+.link-save-btn { background:var(--accent); color:#08131a; border:none; border-radius:5px; font-size:11px; font-weight:700; padding:5px 10px; cursor:pointer; white-space:nowrap; }
+.link-open-btn { background:transparent; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; padding:5px 8px; cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+.link-open-btn:hover { border-color:var(--accent); color:var(--accent); }
+.links-empty { padding:24px 16px; text-align:center; color:var(--text3); font-size:13px; }
+
+/* API TAB */
+#c-api { display:none; padding-top:14px; }
+.api-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+.api-type { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.api-type.fetch { color:#f59e0b; }
+.api-type.script { color:#8b5cf6; }
+.api-type.img-src { color:#22d3ee; }
+.api-type.form { color:#22c55e; }
+.api-url { font-family:monospace; font-size:10px; color:var(--text2); word-break:break-all; margin-bottom:8px; line-height:1.5; }
+.api-actions { display:flex; gap:6px; }
+.api-btn { font-size:10px; font-weight:700; padding:4px 10px; border-radius:5px; cursor:pointer; border:none; font-family:inherit; }
+.api-btn-remove { background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25); }
+.api-btn-remove:hover { background:rgba(239,68,68,0.2); }
+.api-btn-replace { background:rgba(34,211,238,0.1); color:var(--accent); border:1px solid rgba(34,211,238,0.25); }
+.api-btn-replace:hover { background:rgba(34,211,238,0.18); }
+.api-replace-row { margin-top:8px; display:none; gap:6px; }
+.api-replace-row.open { display:flex; }
+.api-replace-row input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:monospace; font-size:11px; padding:5px 8px; outline:none; }
+.api-replace-row input:focus { border-color:var(--accent); }
+.api-replace-row button { background:var(--accent); color:#08131a; border:none; border-radius:5px; font-size:11px; font-weight:700; padding:5px 10px; cursor:pointer; }
+.api-empty { padding:24px 16px; text-align:center; color:var(--text3); font-size:13px; }
+
+/* SEO TAB */
+#c-seo { display:none; padding-top:14px; }
+.seo-score-ring { display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:16px; }
+.seo-ring-wrap { position:relative; width:96px; height:96px; }
+.seo-ring-wrap svg { transform:rotate(-90deg); }
+.seo-ring-bg { fill:none; stroke:var(--border); stroke-width:8; }
+.seo-ring-fg { fill:none; stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1), stroke .3s; }
+.seo-ring-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.seo-ring-num { font-size:26px; font-weight:900; line-height:1; }
+.seo-ring-txt { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text3); margin-top:2px; }
+.seo-status { font-size:12px; font-weight:700; }
+.seo-items { display:flex; flex-direction:column; gap:7px; }
+.seo-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:9px 11px; display:flex; gap:10px; align-items:flex-start; }
+.seo-item-icon { flex-shrink:0; width:18px; height:18px; border-radius:5px; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.seo-item-icon.ok { background:rgba(34,197,94,.15); }
+.seo-item-icon.warn { background:rgba(249,115,22,.15); }
+.seo-item-icon.bad { background:rgba(239,68,68,.15); }
+.seo-item-body { flex:1; min-width:0; }
+.seo-item-title { font-size:12px; font-weight:700; color:var(--text); }
+.seo-item-desc { font-size:11px; color:var(--text2); margin-top:2px; line-height:1.5; word-break:break-word; }
+.seo-rescan { width:100%; margin-top:12px; padding:8px; background:rgba(34,211,238,.08); border:1px solid rgba(34,211,238,.2); border-radius:6px; color:var(--accent); font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
+.seo-rescan:hover { background:rgba(34,211,238,.15); }
 
 .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 18px; border-radius:20px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(0,0,0,.4); transition:transform .35s cubic-bezier(.34,1.56,.64,1); z-index:9999; pointer-events:none; }
 .toast.show { transform:translateX(-50%) translateY(0); }
@@ -136,8 +210,8 @@ button { cursor:pointer; font-family:inherit; border:none; }
 
 <div class="topbar">
   <div class="brand">
-    <div class="brand-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h4"/></svg></div>
-    Editor Visual
+    <div class="brand-icon"><img src="/sitescope-logo.png" width="22" height="22" style="object-fit:contain;" /></div>
+    <span style="color:var(--accent)">SiteScope</span>
   </div>
   <div class="topbar-center" id="dev-sw" style="display:none">
     <button class="dev-btn active" id="btn-desk" onclick="setDev('desktop')">
@@ -155,7 +229,7 @@ button { cursor:pointer; font-family:inherit; border:none; }
 <div id="import">
   <div class="import-box">
     <div>
-      <h2>Edite seu HTML<br><span>visualmente</span></h2>
+      <h2>Edite seu HTML<br><span style="background:linear-gradient(135deg,#22d3ee,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">visualmente</span></h2>
       <p style="margin-top:8px">Cole o código, clique em qualquer texto ou imagem, edite e baixe.</p>
     </div>
 
@@ -203,7 +277,8 @@ button { cursor:pointer; font-family:inherit; border:none; }
     <div class="sidebar">
       <div class="sb-top">
         <div class="sb-label">Painel de Edição</div>
-        <div class="tabs">
+        <!-- Linha 1: edição de elemento -->
+        <div class="tabs" style="margin-bottom:4px;">
           <button class="tab active" id="t-text" onclick="switchTab('text')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Texto
           </button>
@@ -214,11 +289,46 @@ button { cursor:pointer; font-family:inherit; border:none; }
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>Estilo
           </button>
         </div>
+        <!-- Linha 2: página toda -->
+        <div class="tabs">
+          <button class="tab" id="t-gallery" onclick="switchTab('gallery');buildGallery()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Galeria
+          </button>
+          <button class="tab" id="t-links" onclick="switchTab('links');buildLinks()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>Links
+          </button>
+          <button class="tab" id="t-api" onclick="switchTab('api');buildApi()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l3 3-3 3"/><line x1="13" y1="15" x2="16" y2="15"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>APIs
+          </button>
+          <button class="tab" id="t-seo" onclick="switchTab('seo');buildSeo()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>SEO
+          </button>
+        </div>
       </div>
 
       <div class="empty" id="empty">
         <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
         <p>Clique em qualquer<br>elemento para editar</p>
+      </div>
+
+      <!-- SEO — fora do #panel, visível independente de seleção -->
+      <div id="c-seo" style="display:none; padding:14px 16px 16px; overflow-y:auto; flex:1;">
+        <div class="seo-score-ring">
+          <div class="seo-ring-wrap">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle class="seo-ring-bg" cx="48" cy="48" r="40"/>
+              <circle class="seo-ring-fg" id="seo-ring-fg" cx="48" cy="48" r="40"
+                stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke="#22d3ee"/>
+            </svg>
+            <div class="seo-ring-label">
+              <div class="seo-ring-num" id="seo-num">—</div>
+              <div class="seo-ring-txt">/ 100</div>
+            </div>
+          </div>
+          <div class="seo-status" id="seo-status" style="color:var(--text3)">Analisando...</div>
+        </div>
+        <div class="seo-items" id="seo-items"></div>
+        <button class="seo-rescan" onclick="buildSeo()">Reanalisar página</button>
       </div>
 
       <div id="panel" style="display:none">
@@ -231,6 +341,13 @@ button { cursor:pointer; font-family:inherit; border:none; }
           <div class="ps">
             <div class="ps-label">Conteúdo</div>
             <div class="field"><label>Texto</label><textarea id="el-text" oninput="liveText()"></textarea></div>
+            <div class="field" id="link-field" style="display:none">
+              <label>Link (href)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="text" id="el-href" oninput="liveHref()" placeholder="https://..." style="flex:1" />
+                <a id="el-href-open" href="#" target="_blank" title="Abrir link" style="display:none;color:var(--accent);font-size:12px;flex-shrink:0;padding:6px 8px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.2);border-radius:6px;text-decoration:none;">↗</a>
+              </div>
+            </div>
           </div>
           <div class="ps">
             <div class="ps-label">Tipografia</div>
@@ -262,6 +379,18 @@ button { cursor:pointer; font-family:inherit; border:none; }
           <div class="ps" style="padding-top:14px">
             <div class="ps-label">Imagem</div>
             <div class="img-prev" id="img-prev"><div class="img-no"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><span>Nenhuma imagem</span></div></div>
+
+            <!-- Dimensões da imagem atual -->
+            <div id="img-dims" style="display:none;margin:8px 0 10px;background:rgba(109,92,246,0.08);border:1px solid rgba(109,92,246,0.2);border-radius:6px;padding:8px 12px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:4px;">Tamanho atual</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span id="img-dims-val" style="font-family:monospace;font-size:13px;font-weight:700;color:var(--accent2);">— × —</span>
+                <span style="font-size:11px;color:var(--text3);">px</span>
+                <span id="img-dims-copy" onclick="copyDims()" style="margin-left:auto;font-size:10px;font-weight:600;color:var(--accent2);cursor:pointer;background:rgba(109,92,246,0.15);border:1px solid rgba(109,92,246,0.25);border-radius:4px;padding:2px 7px;">copiar</span>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">Use o mesmo tamanho na imagem nova</div>
+            </div>
+
             <button class="upload-btn" onclick="document.getElementById('img-fi').click()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Substituir imagem
@@ -300,6 +429,26 @@ button { cursor:pointer; font-family:inherit; border:none; }
           </div>
           <button class="desel-btn" onclick="desel()">Cancelar seleção</button>
         </div>
+
+        <!-- GALERIA -->
+        <div id="c-gallery">
+          <div class="ps-label" style="margin-bottom:10px;">Todas as imagens da página</div>
+          <div id="gallery-grid" class="gallery-grid"></div>
+        </div>
+
+        <!-- LINKS -->
+        <div id="c-links">
+          <div class="ps-label" style="margin-bottom:10px;">Todos os links da página</div>
+          <div id="links-list"></div>
+        </div>
+
+        <!-- APIs -->
+        <div id="c-api">
+          <div class="ps-label" style="margin-bottom:10px;">APIs e recursos externos</div>
+          <div id="api-list"></div>
+        </div>
+
+
       </div>
     </div>
   </div>
@@ -518,6 +667,22 @@ function selectEl(el) {
   setVal('el-color', col); setVal('el-chex', col);
   document.getElementById('cp-text').style.background = col;
 
+  // LINK
+  const linkEl = tag === 'a' ? el : el.closest('a');
+  const linkField = document.getElementById('link-field');
+  const openBtn = document.getElementById('el-href-open');
+  if (linkEl) {
+    linkField.style.display = 'block';
+    const href = linkEl.getAttribute('href') || '';
+    setVal('el-href', href);
+    openBtn.href = href;
+    openBtn.style.display = href ? 'block' : 'none';
+  } else {
+    linkField.style.display = 'none';
+    setVal('el-href', '');
+    openBtn.style.display = 'none';
+  }
+
   // IMAGEM
   selImg = (tag === 'img') ? el : (el.querySelector('img') || null);
   const wrap = document.getElementById('img-prev');
@@ -565,6 +730,18 @@ function liveText() {
   sel.innerText = document.getElementById('el-text').value;
 }
 
+function liveHref() {
+  if (!sel) return;
+  const link = sel.tagName.toLowerCase() === 'a' ? sel : sel.closest('a');
+  if (link) {
+    const val = document.getElementById('el-href').value;
+    link.href = val;
+    const openBtn = document.getElementById('el-href-open');
+    openBtn.href = val;
+    openBtn.style.display = val ? 'block' : 'none';
+  }
+}
+
 function liveStyle(prop, val) {
   if (!sel) return;
   sel.style[prop] = val;
@@ -610,13 +787,37 @@ function replImg(e) {
 
 function showImgPreview(src) {
   const wrap = document.getElementById('img-prev');
+  const dims = document.getElementById('img-dims');
+  const dimsVal = document.getElementById('img-dims-val');
   wrap.innerHTML = '';
+  dims.style.display = 'none';
+
   const img = document.createElement('img');
+  img.onload = function() {
+    dimsVal.textContent = img.naturalWidth + ' × ' + img.naturalHeight;
+    dims.style.display = 'block';
+  };
   img.onerror = function() {
+    // Tenta pegar dimensões via objeto Image separado mesmo que o preview bloqueie
+    const probe = new Image();
+    probe.onload = function() {
+      dimsVal.textContent = probe.naturalWidth + ' × ' + probe.naturalHeight;
+      dims.style.display = 'block';
+    };
+    probe.src = src;
     wrap.innerHTML = '<div class="img-no"><div style="font-size:24px">🖼</div><span>Imagem externa<br><small>Preview bloqueado<br>Substituição funciona</small></span></div>';
   };
   img.src = src;
   wrap.appendChild(img);
+}
+
+function copyDims() {
+  const val = document.getElementById('img-dims-val').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.getElementById('img-dims-copy');
+    btn.textContent = '✓ copiado';
+    setTimeout(() => btn.textContent = 'copiar', 1800);
+  });
 }
 
 // ─── DOWNLOAD ───────────────────────────────────────────────────────────
@@ -665,9 +866,373 @@ function setDev(d) {
 }
 
 function switchTab(t) {
-  ['text','img','style'].forEach(k => {
-    document.getElementById('t-'+k).classList.toggle('active', k === t);
-    document.getElementById('c-'+k).style.display = k === t ? 'block' : 'none';
+  const isSeo = t === 'seo';
+  // esconde/mostra empty e panel quando SEO está ativo
+  const emptyEl = document.getElementById('empty');
+  const panelEl = document.getElementById('panel');
+  const seoEl   = document.getElementById('c-seo');
+  if (isSeo) {
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (panelEl) panelEl.style.display = 'none';
+    if (seoEl)   seoEl.style.display   = 'flex';
+  } else {
+    if (seoEl) seoEl.style.display = 'none';
+    // restaura estado normal (empty ou panel conforme sel)
+    if (sel) {
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (panelEl) panelEl.style.display = 'block';
+    } else {
+      if (emptyEl) emptyEl.style.display = 'flex';
+      if (panelEl) panelEl.style.display = 'none';
+    }
+  }
+  ['text','img','style','gallery','links','api','seo'].forEach(k => {
+    const tab = document.getElementById('t-'+k);
+    const panel = document.getElementById('c-'+k);
+    if (tab) tab.classList.toggle('active', k === t);
+    if (panel && k !== 'seo') panel.style.display = k === t ? 'block' : 'none';
+  });
+}
+
+// ─── SEO TAB ────────────────────────────────────────────────────────────
+function buildSeo() {
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  const itemsEl = document.getElementById('seo-items');
+  const numEl   = document.getElementById('seo-num');
+  const ringFg  = document.getElementById('seo-ring-fg');
+  const statusEl= document.getElementById('seo-status');
+  itemsEl.innerHTML = '';
+
+  if (!doc || !doc.body) {
+    numEl.textContent = '—';
+    statusEl.textContent = 'Carregue um HTML primeiro.';
+    return;
+  }
+
+  const checks = [];
+
+  // 1. Title
+  const title = doc.querySelector('title');
+  const titleTxt = title ? title.textContent.trim() : '';
+  if (!titleTxt) {
+    checks.push({ st:'bad', title:'Sem <title>', desc:'Adicione uma tag <title> descritiva com 40–60 caracteres.' });
+  } else if (titleTxt.length < 30) {
+    checks.push({ st:'warn', title:'Title curto', desc:`"${titleTxt}" — tente entre 40–60 caracteres.` });
+  } else if (titleTxt.length > 65) {
+    checks.push({ st:'warn', title:'Title longo', desc:`"${titleTxt.slice(0,50)}…" — Google corta acima de 65 chars.` });
+  } else {
+    checks.push({ st:'ok', title:'Title perfeito', desc:`"${titleTxt.slice(0,50)}" — ${titleTxt.length} caracteres.` });
+  }
+
+  // 2. Meta description
+  const metaDesc = doc.querySelector('meta[name="description"]');
+  const descTxt = metaDesc ? (metaDesc.getAttribute('content') || '').trim() : '';
+  if (!descTxt) {
+    checks.push({ st:'bad', title:'Sem meta description', desc:'Adicione <meta name="description" content="…"> com 120–155 chars.' });
+  } else if (descTxt.length < 70) {
+    checks.push({ st:'warn', title:'Description curta', desc:`${descTxt.length} chars — ideal: 120–155.` });
+  } else if (descTxt.length > 160) {
+    checks.push({ st:'warn', title:'Description longa', desc:`${descTxt.length} chars — Google corta acima de 160.` });
+  } else {
+    checks.push({ st:'ok', title:'Meta description OK', desc:`${descTxt.length} chars — dentro do ideal.` });
+  }
+
+  // 3. H1
+  const h1s = doc.querySelectorAll('h1');
+  if (!h1s.length) {
+    checks.push({ st:'bad', title:'Sem H1', desc:'Toda página precisa de exatamente um <h1> com a palavra-chave principal.' });
+  } else if (h1s.length > 1) {
+    checks.push({ st:'warn', title:`${h1s.length} H1 encontrados`, desc:'Use apenas um <h1> por página. Os demais devem ser H2 ou H3.' });
+  } else {
+    const h1txt = h1s[0].textContent.trim().slice(0,60);
+    checks.push({ st:'ok', title:'H1 presente', desc:`"${h1txt}"` });
+  }
+
+  // 4. Imagens sem alt
+  const imgs = Array.from(doc.querySelectorAll('img'));
+  const semAlt = imgs.filter(i => !i.getAttribute('alt') || !i.getAttribute('alt').trim());
+  if (semAlt.length) {
+    checks.push({ st: semAlt.length > 3 ? 'bad' : 'warn', title:`${semAlt.length} imagem(ns) sem alt`, desc:'Adicione texto alternativo descritivo em todas as imagens.' });
+  } else if (imgs.length) {
+    checks.push({ st:'ok', title:'Todas as imagens têm alt', desc:`${imgs.length} imagem(ns) com texto alternativo.` });
+  }
+
+  // 5. Links internos
+  const links = Array.from(doc.querySelectorAll('a[href]'));
+  const internos = links.filter(a => { const h = a.getAttribute('href'); return h && !h.startsWith('http') && !h.startsWith('//'); });
+  if (!internos.length) {
+    checks.push({ st:'warn', title:'Sem links internos', desc:'Links internos ajudam o Google a indexar mais páginas do seu site.' });
+  } else {
+    checks.push({ st:'ok', title:`${internos.length} link(s) interno(s)`, desc:'Boa estrutura de navegação interna.' });
+  }
+
+  // 6. Open Graph
+  const og = doc.querySelector('meta[property="og:title"]');
+  if (!og) {
+    checks.push({ st:'warn', title:'Sem Open Graph', desc:'Adicione og:title, og:description e og:image para preview no WhatsApp e redes sociais.' });
+  } else {
+    checks.push({ st:'ok', title:'Open Graph presente', desc:'Preview de compartilhamento configurado.' });
+  }
+
+  // 7. Viewport
+  const vp = doc.querySelector('meta[name="viewport"]');
+  if (!vp) {
+    checks.push({ st:'bad', title:'Sem viewport', desc:'Adicione <meta name="viewport" content="width=device-width, initial-scale=1"> para o site ser responsivo.' });
+  } else {
+    checks.push({ st:'ok', title:'Viewport configurada', desc:'Página responsiva para mobile.' });
+  }
+
+  // Score
+  const pts = { ok: 14, warn: 6, bad: 0 };
+  const total = checks.reduce((s, c) => s + pts[c.st], 0);
+  const maxPts = checks.length * 14;
+  const score = Math.round((total / maxPts) * 100);
+
+  numEl.textContent = score;
+  const color = score >= 80 ? '#22c55e' : score >= 50 ? '#f97316' : '#ef4444';
+  const label = score >= 80 ? 'Ótimo' : score >= 50 ? 'Melhorar' : 'Crítico';
+  statusEl.textContent = label;
+  statusEl.style.color = color;
+  ringFg.style.stroke = color;
+  const circ = 2 * Math.PI * 40;
+  ringFg.style.strokeDashoffset = circ - (circ * score / 100);
+
+  const icons = {
+    ok:   `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`,
+    warn: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="3"><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="1" fill="#f97316"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>`,
+    bad:  `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  };
+
+  checks.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'seo-item';
+    div.innerHTML = `
+      <div class="seo-item-icon ${c.st}">${icons[c.st]}</div>
+      <div class="seo-item-body">
+        <div class="seo-item-title">${c.title}</div>
+        <div class="seo-item-desc">${c.desc}</div>
+      </div>`;
+    itemsEl.appendChild(div);
+  });
+}
+
+// ─── LINKS TAB ──────────────────────────────────────────────────────────
+function buildLinks() {
+  const list = document.getElementById('links-list');
+  list.innerHTML = '';
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { list.innerHTML = '<div class="links-empty">Carregue um HTML primeiro.</div>'; return; }
+
+  const anchors = Array.from(doc.querySelectorAll('a[href]'));
+  if (!anchors.length) { list.innerHTML = '<div class="links-empty">Nenhum link encontrado.</div>'; return; }
+
+  anchors.forEach((a, i) => {
+    const item = document.createElement('div');
+    item.className = 'link-item';
+
+    const label = (a.innerText || a.getAttribute('aria-label') || 'Link ' + (i+1)).trim().slice(0, 60);
+    const href = a.getAttribute('href') || '';
+
+    item.innerHTML = `
+      <div class="link-label">${label || '(sem texto)'}</div>
+      <div class="link-href">${href || '(sem href)'}</div>
+      <div class="link-edit-row">
+        <input type="text" value="${href.replace(/"/g,'&quot;')}" placeholder="https://..." data-idx="${i}" oninput="updateLinkHref(this,${i})" />
+        <a class="link-open-btn" href="${href}" target="_blank" title="Abrir">↗</a>
+      </div>
+    `;
+
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.link-item').forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+      selectEl(a);
+      switchTab('text');
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function updateLinkHref(input, idx) {
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  const anchors = Array.from(doc.querySelectorAll('a[href]'));
+  if (anchors[idx]) {
+    anchors[idx].href = input.value;
+    const openBtn = input.parentElement.querySelector('.link-open-btn');
+    if (openBtn) openBtn.href = input.value;
+  }
+}
+
+// ─── API TAB ─────────────────────────────────────────────────────────────
+function buildApi() {
+  const list = document.getElementById('api-list');
+  list.innerHTML = '';
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { list.innerHTML = '<div class="api-empty">Carregue um HTML primeiro.</div>'; return; }
+
+  const items = [];
+
+  // Scripts externos
+  doc.querySelectorAll('script[src]').forEach(el => {
+    items.push({ type: 'script', label: 'Script externo', url: el.getAttribute('src'), el });
+  });
+
+  // Formulários com action
+  doc.querySelectorAll('form[action]').forEach(el => {
+    items.push({ type: 'form', label: 'Form action', url: el.getAttribute('action'), el });
+  });
+
+  // Iframes
+  doc.querySelectorAll('iframe[src]').forEach(el => {
+    items.push({ type: 'fetch', label: 'iframe src', url: el.getAttribute('src'), el });
+  });
+
+  // Links externos (href com http)
+  doc.querySelectorAll('a[href^="http"]').forEach(el => {
+    items.push({ type: 'img-src', label: 'Link externo', url: el.getAttribute('href'), el });
+  });
+
+  // Imagens externas
+  doc.querySelectorAll('img[src^="http"]').forEach(el => {
+    items.push({ type: 'img-src', label: 'Imagem externa', url: el.getAttribute('src'), el });
+  });
+
+  // CSS externos
+  doc.querySelectorAll('link[rel="stylesheet"][href]').forEach(el => {
+    items.push({ type: 'script', label: 'CSS externo', url: el.getAttribute('href'), el });
+  });
+
+  if (!items.length) {
+    list.innerHTML = '<div class="api-empty">Nenhuma API ou recurso externo encontrado.</div>';
+    return;
+  }
+
+  items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'api-item';
+    div.innerHTML = `
+      <div class="api-type ${item.type}">${item.label}</div>
+      <div class="api-url">${item.url}</div>
+      <div class="api-actions">
+        <button class="api-btn api-btn-remove" onclick="apiRemove(${i})">✕ Remover</button>
+        <button class="api-btn api-btn-replace" onclick="apiToggleReplace(${i})">↻ Substituir</button>
+      </div>
+      <div class="api-replace-row" id="api-replace-${i}">
+        <input type="text" placeholder="Nova URL..." id="api-new-${i}" />
+        <button onclick="apiReplace(${i})">OK</button>
+      </div>
+    `;
+    div._item = item;
+    list.appendChild(div);
+  });
+
+  list._items = items;
+}
+
+function apiRemove(idx) {
+  const list = document.getElementById('api-list');
+  const item = list._items[idx];
+  if (!item) return;
+  item.el.remove();
+  buildApi();
+  toast('Removido!');
+}
+
+function apiToggleReplace(idx) {
+  const row = document.getElementById('api-replace-' + idx);
+  row.classList.toggle('open');
+  if (row.classList.contains('open')) {
+    const list = document.getElementById('api-list');
+    const item = list._items[idx];
+    document.getElementById('api-new-' + idx).value = item.url;
+    document.getElementById('api-new-' + idx).focus();
+  }
+}
+
+function apiReplace(idx) {
+  const list = document.getElementById('api-list');
+  const item = list._items[idx];
+  const newUrl = document.getElementById('api-new-' + idx).value.trim();
+  if (!newUrl || !item) return;
+
+  const el = item.el;
+  const tag = el.tagName.toLowerCase();
+  if (tag === 'script' || tag === 'link') el.setAttribute('src', newUrl) || el.setAttribute('href', newUrl);
+  if (tag === 'img') el.src = newUrl;
+  if (tag === 'iframe') el.src = newUrl;
+  if (tag === 'form') el.action = newUrl;
+  if (tag === 'a') el.href = newUrl;
+
+  buildApi();
+  toast('Substituído!');
+}
+
+function buildGallery() {
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || fr.contentWindow.document;
+  if (!doc) { grid.innerHTML = '<div class="gallery-empty">Carregue um HTML primeiro.</div>'; return; }
+
+  const imgs = Array.from(doc.querySelectorAll('img'));
+  if (!imgs.length) { grid.innerHTML = '<div class="gallery-empty">Nenhuma imagem encontrada.</div>'; return; }
+
+  imgs.forEach((img, i) => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    if (sel && sel === img) item.classList.add('selected');
+
+    // Thumb
+    const thumb = document.createElement('img');
+    thumb.className = 'gallery-thumb';
+    thumb.src = img.src || img.getAttribute('data-src') || '';
+    thumb.alt = img.alt || '';
+    thumb.onerror = function() {
+      this.outerHTML = '<div class="gallery-thumb-placeholder">🖼</div>';
+    };
+
+    // Info
+    const info = document.createElement('div');
+    info.className = 'gallery-info';
+    const dims = (img.naturalWidth && img.naturalHeight)
+      ? img.naturalWidth + ' × ' + img.naturalHeight + ' px'
+      : '— × — px';
+    info.innerHTML = `<div class="gallery-dims">${dims}</div><div class="gallery-idx">Imagem ${i + 1}</div>`;
+
+    // Botão rolar até ela
+    const scrollBtn = document.createElement('button');
+    scrollBtn.className = 'gallery-scroll-btn';
+    scrollBtn.textContent = '↗ ir';
+    scrollBtn.onclick = function(e) {
+      e.stopPropagation();
+      img.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    item.appendChild(thumb);
+    item.appendChild(info);
+    item.appendChild(scrollBtn);
+
+    // Clicar no card seleciona a imagem no editor
+    item.onclick = function() {
+      selectEl(img);
+      switchTab('img');
+      // Atualiza destaque na galeria
+      document.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+    };
+
+    // Atualiza dimensões depois que a imagem carregar no thumb
+    thumb.onload = function() {
+      if (img.naturalWidth && img.naturalHeight) {
+        item.querySelector('.gallery-dims').textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
+      }
+    };
+
+    grid.appendChild(item);
   });
 }
 
