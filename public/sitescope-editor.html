@@ -200,6 +200,13 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .seo-item-desc { font-size:11px; color:var(--text2); margin-top:2px; line-height:1.5; word-break:break-word; }
 .seo-rescan { width:100%; margin-top:12px; padding:8px; background:rgba(34,211,238,.08); border:1px solid rgba(34,211,238,.2); border-radius:6px; color:var(--accent); font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
 .seo-rescan:hover { background:rgba(34,211,238,.15); }
+.seo-fix-btn { display:inline-flex; align-items:center; gap:5px; margin-top:7px; padding:4px 10px; background:rgba(167,139,250,.1); border:1px solid rgba(167,139,250,.25); border-radius:5px; color:#a78bfa; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
+.seo-fix-btn:hover:not(:disabled) { background:rgba(167,139,250,.2); }
+.seo-fix-btn:disabled { opacity:.5; cursor:wait; }
+.seo-fix-result { margin-top:8px; background:rgba(167,139,250,.06); border:1px solid rgba(167,139,250,.2); border-radius:6px; padding:8px 10px; }
+.seo-fix-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#a78bfa; margin-bottom:5px; }
+.seo-fix-text { font-size:12px; color:var(--text); line-height:1.5; font-family:monospace; white-space:pre-wrap; word-break:break-word; }
+.seo-copy-btn { margin-top:6px; padding:3px 10px; background:rgba(34,211,238,.1); border:1px solid rgba(34,211,238,.2); border-radius:4px; color:var(--accent); font-size:10px; font-weight:700; cursor:pointer; font-family:inherit; }
 
 .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 18px; border-radius:20px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(0,0,0,.4); transition:transform .35s cubic-bezier(.34,1.56,.64,1); z-index:9999; pointer-events:none; }
 .toast.show { transform:translateX(-50%) translateY(0); }
@@ -1129,18 +1136,18 @@ function buildSeo() {
   const checks = [];
   const title = doc.querySelector('title');
   const titleTxt = title ? title.textContent.trim() : '';
-  if (!titleTxt) checks.push({st:'bad',title:'Sem &lt;title&gt;',desc:'Adicione uma tag title com 40–60 caracteres.'});
-  else if (titleTxt.length < 30) checks.push({st:'warn',title:'Title curto',desc:`"${titleTxt.slice(0,40)}" — tente entre 40–60 caracteres.`});
-  else if (titleTxt.length > 65) checks.push({st:'warn',title:'Title longo',desc:`"${titleTxt.slice(0,40)}…" — Google corta acima de 65 chars.`});
+  if (!titleTxt) checks.push({st:'bad',title:'Sem &lt;title&gt;',desc:'Adicione uma tag title com 40–60 caracteres.',fixType:'title',context:''});
+  else if (titleTxt.length < 30) checks.push({st:'warn',title:'Title curto',desc:`"${titleTxt.slice(0,40)}" — tente entre 40–60 caracteres.`,fixType:'title',context:titleTxt});
+  else if (titleTxt.length > 65) checks.push({st:'warn',title:'Title longo',desc:`"${titleTxt.slice(0,40)}…" — Google corta acima de 65 chars.`,fixType:'title',context:titleTxt});
   else checks.push({st:'ok',title:'Title perfeito',desc:`"${titleTxt.slice(0,50)}" — ${titleTxt.length} chars.`});
   const metaDesc = doc.querySelector('meta[name="description"]');
   const descTxt = metaDesc ? (metaDesc.getAttribute('content')||'').trim() : '';
-  if (!descTxt) checks.push({st:'bad',title:'Sem meta description',desc:'Adicione meta description com 120–155 chars.'});
-  else if (descTxt.length < 70) checks.push({st:'warn',title:'Description curta',desc:`${descTxt.length} chars — ideal: 120–155.`});
-  else if (descTxt.length > 160) checks.push({st:'warn',title:'Description longa',desc:`${descTxt.length} chars — Google corta acima de 160.`});
+  if (!descTxt) checks.push({st:'bad',title:'Sem meta description',desc:'Adicione meta description com 120–155 chars.',fixType:'description',context:titleTxt});
+  else if (descTxt.length < 70) checks.push({st:'warn',title:'Description curta',desc:`${descTxt.length} chars — ideal: 120–155.`,fixType:'description',context:descTxt});
+  else if (descTxt.length > 160) checks.push({st:'warn',title:'Description longa',desc:`${descTxt.length} chars — Google corta acima de 160.`,fixType:'description',context:descTxt});
   else checks.push({st:'ok',title:'Meta description OK',desc:`${descTxt.length} chars — dentro do ideal.`});
   const h1s = doc.querySelectorAll('h1');
-  if (!h1s.length) checks.push({st:'bad',title:'Sem H1',desc:'Toda página precisa de um H1 com a palavra-chave principal.'});
+  if (!h1s.length) checks.push({st:'bad',title:'Sem H1',desc:'Toda página precisa de um H1 com a palavra-chave principal.',fixType:'h1',context:titleTxt});
   else if (h1s.length > 1) checks.push({st:'warn',title:`${h1s.length} H1 encontrados`,desc:'Use apenas um H1 por página.'});
   else checks.push({st:'ok',title:'H1 presente',desc:`"${h1s[0].textContent.trim().slice(0,60)}"`});
   const imgs = Array.from(doc.querySelectorAll('img'));
@@ -1152,10 +1159,10 @@ function buildSeo() {
   if (!internos.length) checks.push({st:'warn',title:'Sem links internos',desc:'Links internos ajudam o Google a indexar mais páginas.'});
   else checks.push({st:'ok',title:`${internos.length} link(s) interno(s)`,desc:'Boa estrutura de navegação interna.'});
   const og = doc.querySelector('meta[property="og:title"]');
-  if (!og) checks.push({st:'warn',title:'Sem Open Graph',desc:'Adicione og:title, og:description e og:image para preview nas redes sociais.'});
+  if (!og) checks.push({st:'warn',title:'Sem Open Graph',desc:'Adicione og:title, og:description e og:image para preview nas redes sociais.',fixType:'og',context:titleTxt});
   else checks.push({st:'ok',title:'Open Graph presente',desc:'Preview de compartilhamento configurado.'});
   const vp = doc.querySelector('meta[name="viewport"]');
-  if (!vp) checks.push({st:'bad',title:'Sem viewport',desc:'Adicione meta viewport para o site ser responsivo.'});
+  if (!vp) checks.push({st:'bad',title:'Sem viewport',desc:'Adicione meta viewport para o site ser responsivo.',fixType:'viewport',context:''});
   else checks.push({st:'ok',title:'Viewport configurada',desc:'Página responsiva para mobile.'});
   const pts = {ok:14,warn:6,bad:0};
   const total = checks.reduce((s,c)=>s+pts[c.st],0);
@@ -1172,12 +1179,52 @@ function buildSeo() {
     warn:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
     bad:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
   };
+  const fixableTypes = { title:'title', description:'description', h1:'h1', og:'og', viewport:'viewport' };
   checks.forEach(c=>{
     const div=document.createElement('div');
     div.className='seo-item';
-    div.innerHTML=`<div class="seo-item-icon ${c.st}">${icons[c.st]}</div><div class="seo-item-body"><div class="seo-item-title">${c.title}</div><div class="seo-item-desc">${c.desc}</div></div>`;
+    const canFix = c.st !== 'ok' && c.fixType;
+    div.innerHTML=`
+      <div class="seo-item-icon ${c.st}">${icons[c.st]}</div>
+      <div class="seo-item-body">
+        <div class="seo-item-title">${c.title}</div>
+        <div class="seo-item-desc">${c.desc}</div>
+        ${canFix ? `<button class="seo-fix-btn" onclick="fixSeo('${c.fixType}','${(c.context||'').replace(/'/g,"\\'")}',this)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Corrigir com IA
+        </button>
+        <div class="seo-fix-result" style="display:none"></div>` : ''}
+      </div>`;
     itemsEl.appendChild(div);
   });
+}
+
+async function fixSeo(type, context, btn) {
+  const resultEl = btn.nextElementSibling;
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+  try {
+    const res = await fetch('/api/sitescope/fix-seo', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type, context })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = `<div class="seo-fix-label">Sugestão da IA:</div>
+        <div class="seo-fix-text">${data.suggestion}</div>
+        <button class="seo-copy-btn" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent);this.textContent='Copiado!'">Copiar</button>`;
+    } else {
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = '<div style="color:#ef4444;font-size:11px">Erro ao gerar sugestão.</div>';
+    }
+  } catch {
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = '<div style="color:#ef4444;font-size:11px">Erro de conexão.</div>';
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Corrigir com IA';
 }
 
 // ─── LINKS TAB ──────────────────────────────────────────────────────────
