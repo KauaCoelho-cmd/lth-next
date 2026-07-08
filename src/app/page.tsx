@@ -179,9 +179,9 @@ export default function Home() {
 
               <div className="flex flex-col gap-4 mb-8">
                 {[
-                  { n: "01", t: "Instale a extensão", d: "Adicione ao Chrome e ative com sua chave. Sem cadastro, sem dados pessoais." },
-                  { n: "02", t: "Abra a Biblioteca do Meta", d: "Acesse facebook.com/ads/library normalmente. O Hunter X ativa sozinho." },
-                  { n: "03", t: "Veja os dados em tempo real", d: "Preço, dias rodando, score viral e plataforma em cada anúncio. Exporte em CSV." },
+                  { n: "01", t: "Instale a extensão", d: "Dois cliques, cola sua chave e pronto. Ninguém pede seu nome — você entra invisível." },
+                  { n: "02", t: "Abra a Biblioteca do Meta", d: "Abre como sempre abriu. O Hunter X acorda sozinho e começa a ler tudo por você." },
+                  { n: "03", t: "Veja o que ninguém vê", d: "Dias rodando, score viral, plataforma — se está no ar há semanas, está pagando. Exporta e vai." },
                 ].map((s) => (
                   <div key={s.n} className="flex gap-4">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-black text-sm" style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
