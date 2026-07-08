@@ -3,12 +3,37 @@
 import { useState, useEffect } from 'react';
 
 const STEPS = [
-  { icon: '⬇️', text: 'Baixe o arquivo .zip' },
-  { icon: '📂', text: 'Extraia a pasta' },
-  { icon: '🧩', text: 'Abra chrome://extensions' },
-  { icon: '🔧', text: 'Ative o Modo Desenvolvedor' },
-  { icon: '📁', text: 'Carregar sem compactação' },
-  { icon: '🚀', text: 'Selecione a pasta e pronto!' },
+  {
+    icon: '⬇️',
+    text: 'Baixe o arquivo .zip',
+    detail: 'Clique no botão acima e salve o arquivo no seu computador',
+  },
+  {
+    icon: '📂',
+    text: 'Extraia a pasta',
+    detail: 'Clique com botão direito no .zip → "Extrair tudo" (Windows) ou duplo-clique (Mac)',
+  },
+  {
+    icon: '🧩',
+    text: 'Abra chrome://extensions',
+    detail: 'Cole esse endereço na barra do Chrome e pressione Enter',
+    tag: 'chrome://extensions',
+  },
+  {
+    icon: '🔧',
+    text: 'Ative o Modo Desenvolvedor',
+    detail: 'Clique no botão "Modo do desenvolvedor" no canto superior direito da página',
+  },
+  {
+    icon: '📁',
+    text: 'Clique em "Carregar sem compactação"',
+    detail: 'Um botão vai aparecer no topo esquerdo após ativar o modo desenvolvedor',
+  },
+  {
+    icon: '🚀',
+    text: 'Selecione a pasta extraída',
+    detail: 'Navegue até a pasta do Hunter X que você extraiu e clique em "Selecionar pasta"',
+  },
 ];
 
 function FloatingParticle({ style }: { style: React.CSSProperties }) {
@@ -130,8 +155,8 @@ export default function DownloadPage() {
             <div className="mb-6 flex justify-center">
               <div className="relative">
                 <div className="absolute inset-0 rounded-2xl bg-violet-500/20 blur-xl" />
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-violet-500/30 bg-[#0d0d1a]">
-                  <span style={{ fontSize: '3rem' }}>🎯</span>
+                <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-violet-500/30 bg-[#0d0d1a] overflow-hidden">
+                  <img src="/logo.png" alt="Hunter X" className="w-20 h-20 object-contain" />
                 </div>
                 {/* Anel pulsante */}
                 <div className="absolute -inset-2 rounded-2xl border border-violet-500/20 animate-ping" style={{ animationDuration: '2s' }} />
@@ -198,8 +223,10 @@ export default function DownloadPage() {
               download
               className="group flex items-center gap-3 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 transition hover:border-cyan-500/30 hover:bg-cyan-500/5 mb-2"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-lg border border-cyan-500/20">
-                🪟
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#38bdf8">
+                  <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+                </svg>
               </div>
               <div className="flex-1 text-left">
                 <p className="font-mono text-xs font-bold text-white">Instalador Windows</p>
@@ -216,8 +243,10 @@ export default function DownloadPage() {
                 download
                 className="group flex items-center gap-3 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 transition hover:border-violet-500/30 hover:bg-violet-500/5"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-lg border border-violet-500/20">
-                  🍎
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 border border-violet-500/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#a78bfa">
+                    <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/>
+                  </svg>
                 </div>
                 <div className="flex-1 text-left">
                   <p className="font-mono text-xs font-bold text-white">Instalador Mac</p>
@@ -241,35 +270,59 @@ export default function DownloadPage() {
         {/* Steps de instalação */}
         <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
           <p className="mb-4 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-600">
-            Como instalar
+            Passo a passo de instalação
           </p>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {STEPS.map((step, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 transition-all duration-500"
+                className="flex gap-3 transition-all duration-500"
                 style={{
                   opacity: activeStep >= i ? 1 : 0,
                   transform: activeStep >= i ? 'translateX(0)' : 'translateX(-10px)',
                 }}
               >
-                <div
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-sm transition-all duration-500"
-                  style={{
-                    borderColor: activeStep >= i ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.06)',
-                    background: activeStep >= i ? 'rgba(139,92,246,0.1)' : 'transparent',
-                  }}
-                >
-                  {step.icon}
+                {/* Número + linha conectora */}
+                <div className="flex flex-col items-center">
+                  <div
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border font-mono text-[11px] font-bold transition-all duration-500"
+                    style={{
+                      borderColor: activeStep >= i ? 'rgba(139,92,246,0.5)' : 'rgba(255,255,255,0.06)',
+                      background: activeStep >= i ? 'rgba(139,92,246,0.12)' : 'transparent',
+                      color: activeStep >= i ? '#a78bfa' : '#3f3f46',
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                  {i < STEPS.length - 1 && (
+                    <div className="mt-1 w-px flex-1 bg-white/[0.05]" style={{ minHeight: 16 }} />
+                  )}
                 </div>
-                <span className="font-mono text-xs text-zinc-400">{step.text}</span>
-                {i === 2 && (
-                  <span className="ml-auto rounded bg-violet-500/10 px-1.5 py-0.5 font-mono text-[8px] text-violet-400 ring-1 ring-violet-500/20">
-                    copie o link
-                  </span>
-                )}
+
+                {/* Conteúdo */}
+                <div className="pb-2 flex-1">
+                  <p className="font-mono text-xs font-bold text-white mb-0.5">{step.text}</p>
+                  <p className="font-mono text-[10px] text-zinc-500 leading-relaxed">{step.detail}</p>
+                  {'tag' in step && step.tag && (
+                    <button
+                      onClick={() => navigator.clipboard.writeText(step.tag!)}
+                      className="mt-1.5 inline-flex items-center gap-1.5 rounded bg-violet-500/10 px-2 py-1 font-mono text-[10px] text-violet-400 ring-1 ring-violet-500/20 hover:bg-violet-500/20 transition"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      {step.tag}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Nota final */}
+          <div className="mt-4 flex items-start gap-2 rounded-lg bg-green-500/5 border border-green-500/20 px-3 py-2.5">
+            <span className="text-sm shrink-0">✅</span>
+            <p className="font-mono text-[10px] text-green-400/80 leading-relaxed">
+              Após selecionar a pasta, o Hunter X aparece na barra de extensões do Chrome. Clique no ícone e insira sua chave de licença para ativar.
+            </p>
           </div>
         </div>
 

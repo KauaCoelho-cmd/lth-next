@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Target, Menu, X, Download } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
+import Image from "next/image";
 
 const links = [
-  { label: "Por que usar", href: "#problema" },
-  { label: "Funcionalidades", href: "#planos" },
-  { label: "Planos", href: "#planos" },
+  { label: "Início", href: "#hero" },
+  { label: "Como funciona", href: "#como-funciona" },
+  { label: "SiteScope", href: "#sitescope" },
 ];
 
 export function Navbar() {
@@ -45,49 +46,57 @@ export function Navbar() {
           className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a14] rounded-lg"
           aria-label="Hunter X — página inicial"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-violet-500/30 bg-violet-500/10 transition group-hover:border-violet-500/60 group-hover:bg-violet-500/20">
-            <Target className="h-4 w-4 text-violet-400" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 transition group-hover:border-violet-500/60 group-hover:bg-violet-500/20 overflow-hidden">
+            <Image src="/logo.png" alt="Hunter X" width={36} height={36} className="object-contain" />
           </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-display text-[15px] font-bold tracking-tight text-white">
-              Hunter X
-            </span>
-            <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-1.5 py-px font-mono text-[9px] font-bold tracking-widest text-violet-400 uppercase">
-              v2.1.0
-            </span>
-          </div>
+          <span className="font-display text-[20px] font-black tracking-tight text-white">
+            Hunter <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">X</span>
+          </span>
         </a>
 
-        {/* Links centrais — desktop */}
-        <ul className="hidden items-center gap-1 md:flex" role="list">
+        {/* Links centrais — desktop · pílula segmentada */}
+        <ul
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.02] px-1.5 py-1 backdrop-blur-md md:flex"
+          role="list"
+        >
           {links.map((l) => (
             <li key={l.label}>
               <a
                 href={l.href}
-                className="rounded-md px-3 py-1.5 font-mono text-[12px] font-medium text-zinc-400 transition hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70"
+                className="group/link relative block rounded-full px-4 py-1.5 font-mono text-[12px] font-medium text-zinc-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70"
               >
-                {l.label}
+                {/* fundo hover */}
+                <span className="absolute inset-0 scale-90 rounded-full bg-violet-500/10 opacity-0 transition-all duration-200 group-hover/link:scale-100 group-hover/link:opacity-100" />
+                {/* underline reveal */}
+                <span className="absolute bottom-0.5 left-1/2 h-px w-0 -translate-x-1/2 bg-gradient-to-r from-violet-400 to-cyan-400 transition-all duration-300 group-hover/link:w-1/2" />
+                <span className="relative">{l.label}</span>
               </a>
             </li>
           ))}
         </ul>
 
         {/* Ações direita — desktop */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           <a
             href="/download"
-            className="flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[12px] font-medium text-zinc-400 transition hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70"
+            className="group/dl flex items-center gap-1.5 rounded-lg border border-white/[0.07] px-3.5 py-2 font-mono text-[12px] font-medium text-zinc-300 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.04] hover:text-white"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5 transition-transform duration-200 group-hover/dl:translate-y-0.5" />
             Download
           </a>
           <a
-            href="#planos"
-            className="relative overflow-hidden rounded-lg bg-violet-600 px-4 py-2 font-mono text-[12px] font-bold text-white shadow-[0_0_16px_rgba(139,92,246,0.35)] transition hover:bg-violet-500 hover:shadow-[0_0_24px_rgba(139,92,246,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a14]"
+            href="/download"
+            className="group/cta relative overflow-hidden rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-2 font-mono text-[12px] font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all duration-300 hover:shadow-[0_0_32px_rgba(139,92,246,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a14]"
           >
-            {/* shimmer */}
-            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 hover:translate-x-full" />
-            Ver planos →
+            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover/cta:translate-x-full" />
+            <span className="relative flex items-center gap-1.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+              </span>
+              Acesso exclusivo
+              <span className="transition-transform duration-200 group-hover/cta:translate-x-0.5">→</span>
+            </span>
           </a>
         </div>
 
@@ -132,11 +141,11 @@ export function Navbar() {
           </li>
           <li className="pt-1">
             <a
-              href="#planos"
+              href="/download"
               onClick={() => setOpen(false)}
               className="block rounded-lg bg-violet-600 px-4 py-2.5 text-center font-mono text-sm font-bold text-white shadow-[0_0_16px_rgba(139,92,246,0.35)] transition hover:bg-violet-500"
             >
-              Ver planos →
+              Acesso exclusivo →
             </a>
           </li>
         </ul>

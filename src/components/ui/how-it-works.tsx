@@ -145,7 +145,7 @@ export function HowItWorks() {
   }, []);
 
   return (
-    <section ref={ref} className="border-y border-white/[0.05] bg-[#0d0d1a] py-24">
+    <section ref={ref} className="md:border-y border-white/[0.05] bg-[#0d0d1a] py-24">
       <div className="mx-auto max-w-6xl px-5">
 
         {/* Header */}

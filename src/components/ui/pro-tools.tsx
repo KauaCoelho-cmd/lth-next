@@ -253,7 +253,7 @@ export function ProTools() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="border-t border-white/[0.05] bg-[#0a0a14] py-24">
+    <section ref={sectionRef} className="md:border-t border-white/[0.05] bg-[#0a0a14] py-24">
       <div className="mx-auto max-w-6xl px-5">
 
         {/* Header */}
