@@ -593,7 +593,7 @@ function fixHTML(html, userUrl) {
     }
     if (!/^https?:\/\//i.test(absHref)) return m;
     // URL absoluta obrigatória: a <base href> aponta pro site original, não pro hunterx.site
-    const proxyUrl = 'https://hunterx.site/api/sitescope/proxy?url=' + encodeURIComponent(absHref);
+    const proxyUrl = location.origin + '/api/sitescope/proxy?url=' + encodeURIComponent(absHref);
     // Remove crossorigin para evitar CORS check desnecessário na URL proxiada
     const cleanA1 = a1.replace(/\s*crossorigin(=["'][^"']*["'])?/gi, '');
     const cleanA2 = a2.replace(/\s*crossorigin(=["'][^"']*["'])?/gi, '');
@@ -625,7 +625,7 @@ async function analyzeCheckout() {
   loadEl.style.display = 'block';
 
   try {
-    const resp = await fetch('https://hunterx.site/api/sitescope/proxy?url=' + encodeURIComponent(url));
+    const resp = await fetch(location.origin + '/api/sitescope/proxy?url=' + encodeURIComponent(url));
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const html = await resp.text();
     const lower = html.toLowerCase();
@@ -743,7 +743,7 @@ async function loadSitemap() {
   resEl.style.display = 'block';
 
   try {
-    const proxyUrl = 'https://hunterx.site/api/sitescope/proxy?url=' + encodeURIComponent(url);
+    const proxyUrl = location.origin + '/api/sitescope/proxy?url=' + encodeURIComponent(url);
     const resp = await fetch(proxyUrl);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const text = await resp.text();
