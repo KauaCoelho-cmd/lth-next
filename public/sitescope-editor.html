@@ -808,6 +808,15 @@ function openEditor(html) {
   document.getElementById('tr').innerHTML =
     '<button class="btn btn-ghost" onclick="goBack()">← Voltar</button>' +
     '<button class="btn btn-ghost" onclick="undoAll()">Desfazer</button>' +
+    '<select id="tl-lang" class="btn btn-ghost" style="cursor:pointer;background:var(--surface2)">' +
+      '<option value="pt">🇧🇷 Português</option>' +
+      '<option value="en">🇺🇸 English</option>' +
+      '<option value="es">🇪🇸 Español</option>' +
+      '<option value="fr">🇫🇷 Français</option>' +
+      '<option value="it">🇮🇹 Italiano</option>' +
+      '<option value="de">🇩🇪 Deutsch</option>' +
+    '</select>' +
+    '<button class="btn btn-ghost" id="tl-btn" onclick="translatePage()">🌐 Traduzir</button>' +
     '<button class="btn btn-primary" onclick="dlHTML()">⬇ Baixar HTML</button>';
 
   renderIframes(html);
@@ -1440,6 +1449,80 @@ function goBack() {
   document.getElementById('tr').innerHTML = '';
   document.getElementById('fr').srcdoc = '';
   setDev('desktop');
+}
+
+// ─── TRADUZIR PÁGINA INTEIRA ────────────────────────────────────────────
+// Varre todos os nós de texto do iframe e traduz via Google Translate (gtx).
+const TL_SKIP = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','TEXTAREA']);
+
+function tlCollectNodes(doc) {
+  const out = [];
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      if (n.parentElement && TL_SKIP.has(n.parentElement.tagName)) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  let n; while ((n = walker.nextNode())) out.push(n);
+  return out;
+}
+
+async function tlFetch(text, tl) {
+  const u = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='
+    + tl + '&dt=t&q=' + encodeURIComponent(text);
+  const r = await fetch(u);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const j = await r.json();
+  return (j[0] || []).map(s => s[0]).join('');
+}
+
+async function translatePage() {
+  const fr = document.getElementById('fr');
+  const doc = fr.contentDocument || (fr.contentWindow && fr.contentWindow.document);
+  if (!doc || !doc.body) { toast('Carregue uma página primeiro', true); return; }
+
+  const tl = document.getElementById('tl-lang').value;
+  const btn = document.getElementById('tl-btn');
+  const nodes = tlCollectNodes(doc);
+
+  // Atributos que também carregam texto visível
+  const attrEls = [];
+  doc.querySelectorAll('[placeholder],[alt],[title]').forEach(el => {
+    ['placeholder','alt','title'].forEach(a => {
+      const v = el.getAttribute(a);
+      if (v && v.trim()) attrEls.push({ el, a, v });
+    });
+  });
+
+  const total = nodes.length + attrEls.length;
+  if (!total) { toast('Nada para traduzir', true); return; }
+
+  btn.disabled = true;
+  let done = 0, fail = 0;
+  const tick = () => { btn.textContent = '🌐 ' + Math.round(done / total * 100) + '%'; };
+  tick();
+
+  // Pool de 6 requisições simultâneas
+  const jobs = [
+    ...nodes.map(n => async () => { n.nodeValue = await tlFetch(n.nodeValue, tl); }),
+    ...attrEls.map(({ el, a, v }) => async () => { el.setAttribute(a, await tlFetch(v, tl)); }),
+  ];
+  let i = 0;
+  async function worker() {
+    while (i < jobs.length) {
+      const job = jobs[i++];
+      try { await job(); } catch (e) { fail++; }
+      done++; if (done % 5 === 0 || done === total) tick();
+    }
+  }
+  await Promise.all(Array.from({ length: 6 }, worker));
+
+  btn.disabled = false;
+  btn.textContent = '🌐 Traduzir';
+  if (fail && fail === total) toast('Falha na tradução — tente de novo', true);
+  else if (fail) toast('Traduzido com ' + fail + ' trechos ignorados');
+  else toast('Página traduzida! Baixe o HTML para salvar');
 }
 
 let toastTimer;
