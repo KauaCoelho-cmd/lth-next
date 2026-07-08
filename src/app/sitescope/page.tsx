@@ -66,6 +66,21 @@ function getDeviceId(): string {
   return id;
 }
 
+async function checkServerValid(licenseKey: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/verify-key", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: licenseKey }),
+    });
+    const data = await res.json();
+    return data.valid === true;
+  } catch {
+    // Servidor fora do ar não deve trancar quem tem chave válida
+    return true;
+  }
+}
+
 async function checkDevice(licenseKey: string): Promise<{ ok: boolean; reason?: string }> {
   const deviceId = getDeviceId();
   const res = await fetch("/api/sitescope/device", {
@@ -95,10 +110,13 @@ function ManualLogin({ onSuccess }: { onSuccess: (email: string, expiresAt: stri
     e.preventDefault();
     setError("");
     setLoading(true);
-    const payload = await verifyLicenseKey(key.trim());
+    const [payload, serverOk] = await Promise.all([
+      verifyLicenseKey(key.trim()),
+      checkServerValid(key.trim()),
+    ]);
     setLoading(false);
-    if (!payload) {
-      setError("Chave inválida ou expirada. Verifique e tente novamente.");
+    if (!payload || !serverOk) {
+      setError("Chave inválida, expirada ou revogada. Verifique e tente novamente.");
       return;
     }
     const device = await checkDevice(key.trim());
@@ -244,12 +262,13 @@ export default function SiteScope() {
           licenseKey = atob(k + "==".slice(0, (4 - (k.length % 4)) % 4));
         } catch { setStatus("denied"); return; }
 
-        const [payload, tokenOk] = await Promise.all([
+        const [payload, tokenOk, serverOk] = await Promise.all([
           verifyLicenseKey(licenseKey),
           verifyToken(licenseKey, t),
+          checkServerValid(licenseKey),
         ]);
 
-        if (payload && tokenOk) {
+        if (payload && tokenOk && serverOk) {
           const device = await checkDevice(licenseKey);
           if (!device.ok) { setStatus("denied"); return; }
           localStorage.setItem("hx_license", licenseKey);
@@ -264,11 +283,12 @@ export default function SiteScope() {
       // Tenta via chave salva no localStorage
       const saved = localStorage.getItem("hx_license");
       if (saved) {
-        const [payload, device] = await Promise.all([
+        const [payload, device, serverOk] = await Promise.all([
           verifyLicenseKey(saved),
           checkDevice(saved),
+          checkServerValid(saved),
         ]);
-        if (payload && device.ok) {
+        if (payload && device.ok && serverOk) {
           setEmail(payload.email);
           setExpiresAt(payload.expiresAt);
           setStatus("ok");
