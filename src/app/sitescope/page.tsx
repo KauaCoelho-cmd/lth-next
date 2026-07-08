@@ -66,7 +66,7 @@ function getDeviceId(): string {
   return id;
 }
 
-async function checkServerValid(licenseKey: string): Promise<boolean> {
+async function checkServerValid(licenseKey: string): Promise<{ ok: boolean; revoked: boolean }> {
   try {
     const res = await fetch("/api/verify-key", {
       method: "POST",
@@ -74,10 +74,10 @@ async function checkServerValid(licenseKey: string): Promise<boolean> {
       body: JSON.stringify({ key: licenseKey }),
     });
     const data = await res.json();
-    return data.valid === true;
+    return { ok: data.valid === true, revoked: data.reason === "revoked" };
   } catch {
     // Servidor fora do ar não deve trancar quem tem chave válida
-    return true;
+    return { ok: true, revoked: false };
   }
 }
 
@@ -100,7 +100,33 @@ function timeLeft(expiresAt: string) {
   return { days, hours, minutes, total: diff };
 }
 
-function ManualLogin({ onSuccess }: { onSuccess: (email: string, expiresAt: string) => void }) {
+function RevokedScreen({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div style={{ background: "#06090d", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 24px", textAlign: "center", fontFamily: "sans-serif" }}>
+      <div style={{ position: "relative", width: "100%", maxWidth: 560, borderRadius: 16, overflow: "hidden", border: "1px solid rgba(239,68,68,0.2)" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/404-goblin.png" alt="Goblin fechou a porta" style={{ width: "100%", height: "auto", display: "block" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #06090d, transparent 60%)", pointerEvents: "none" }} />
+      </div>
+      <p style={{ marginTop: 32, fontFamily: "monospace", fontSize: 11, fontWeight: 900, letterSpacing: "0.3em", color: "#ef4444" }}>ACESSO REVOGADO</p>
+      <h1 style={{ marginTop: 12, fontSize: 28, fontWeight: 900, color: "#fff" }}>O goblin fechou essa porta.</h1>
+      <p style={{ marginTop: 14, maxWidth: 420, fontSize: 14, lineHeight: 1.7, color: "#a1a1aa" }}>
+        Essa chave foi revogada. Não importa quantas vezes você tentar — ela não abre mais nada aqui dentro.
+      </p>
+      <p style={{ marginTop: 8, fontFamily: "monospace", fontSize: 12, color: "#52525b" }}>
+        Acha que foi um engano? Fala com a gente: suporte@hunterx.site
+      </p>
+      <button
+        onClick={onRetry}
+        style={{ marginTop: 28, background: "transparent", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, color: "#d4d4d8", fontSize: 13, fontWeight: 700, padding: "12px 28px", cursor: "pointer", fontFamily: "monospace" }}
+      >
+        Tentar outra chave →
+      </button>
+    </div>
+  );
+}
+
+function ManualLogin({ onSuccess, onRevoked }: { onSuccess: (email: string, expiresAt: string) => void; onRevoked: () => void }) {
   const [key, setKey] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -110,13 +136,17 @@ function ManualLogin({ onSuccess }: { onSuccess: (email: string, expiresAt: stri
     e.preventDefault();
     setError("");
     setLoading(true);
-    const [payload, serverOk] = await Promise.all([
+    const [payload, server] = await Promise.all([
       verifyLicenseKey(key.trim()),
       checkServerValid(key.trim()),
     ]);
     setLoading(false);
-    if (!payload || !serverOk) {
-      setError("Chave inválida, expirada ou revogada. Verifique e tente novamente.");
+    if (server.revoked) {
+      onRevoked();
+      return;
+    }
+    if (!payload || !server.ok) {
+      setError("Chave inválida ou expirada. Verifique e tente novamente.");
       return;
     }
     const device = await checkDevice(key.trim());
@@ -239,7 +269,7 @@ function ManualLogin({ onSuccess }: { onSuccess: (email: string, expiresAt: stri
 }
 
 export default function SiteScope() {
-  const [status, setStatus] = useState<"loading" | "ok" | "denied">("loading");
+  const [status, setStatus] = useState<"loading" | "ok" | "denied" | "revoked">("loading");
   const [email, setEmail] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [tick, setTick] = useState(0);
@@ -262,13 +292,14 @@ export default function SiteScope() {
           licenseKey = atob(k + "==".slice(0, (4 - (k.length % 4)) % 4));
         } catch { setStatus("denied"); return; }
 
-        const [payload, tokenOk, serverOk] = await Promise.all([
+        const [payload, tokenOk, server] = await Promise.all([
           verifyLicenseKey(licenseKey),
           verifyToken(licenseKey, t),
           checkServerValid(licenseKey),
         ]);
 
-        if (payload && tokenOk && serverOk) {
+        if (server.revoked) { localStorage.removeItem("hx_license"); setStatus("revoked"); return; }
+        if (payload && tokenOk && server.ok) {
           const device = await checkDevice(licenseKey);
           if (!device.ok) { setStatus("denied"); return; }
           localStorage.setItem("hx_license", licenseKey);
@@ -283,12 +314,13 @@ export default function SiteScope() {
       // Tenta via chave salva no localStorage
       const saved = localStorage.getItem("hx_license");
       if (saved) {
-        const [payload, device, serverOk] = await Promise.all([
+        const [payload, device, server] = await Promise.all([
           verifyLicenseKey(saved),
           checkDevice(saved),
           checkServerValid(saved),
         ]);
-        if (payload && device.ok && serverOk) {
+        if (server.revoked) { localStorage.removeItem("hx_license"); setStatus("revoked"); return; }
+        if (payload && device.ok && server.ok) {
           setEmail(payload.email);
           setExpiresAt(payload.expiresAt);
           setStatus("ok");
@@ -310,8 +342,17 @@ export default function SiteScope() {
     );
   }
 
+  if (status === "revoked") {
+    return <RevokedScreen onRetry={() => setStatus("denied")} />;
+  }
+
   if (status === "denied") {
-    return <ManualLogin onSuccess={(e, ex) => { setEmail(e); setExpiresAt(ex); setStatus("ok"); }} />;
+    return (
+      <ManualLogin
+        onSuccess={(e, ex) => { setEmail(e); setExpiresAt(ex); setStatus("ok"); }}
+        onRevoked={() => setStatus("revoked")}
+      />
+    );
   }
 
   const { days, hours, minutes } = timeLeft(expiresAt);
