@@ -447,6 +447,37 @@ export default function Home() {
                 </svg>
               </div>
 
+              {/* O corredor das fases — 3 portas fechadas, 1 aberta */}
+              <div className="relative rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(124,58,237,0.18)" }}>
+                <img
+                  src="/fases-corredor.jpg"
+                  alt="Corredor com três cofres lacrados e um aberto — a Fase 4"
+                  className="w-full h-auto block"
+                  style={{ animation: "keyDrift 20s ease-in-out infinite alternate" }}
+                />
+                {/* pulso dourado na porta aberta */}
+                <div className="pointer-events-none absolute" style={{
+                  left: "52%", top: "18%", width: "30%", height: "64%",
+                  background: "radial-gradient(ellipse, rgba(255,200,90,0.35) 0%, transparent 70%)",
+                  mixBlendMode: "screen", filter: "blur(10px)",
+                  animation: "keyPulse 4s ease-in-out infinite",
+                }} />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16" style={{ background: "linear-gradient(to top, rgba(6,6,14,0.95), transparent)" }} />
+                <p className="absolute bottom-2.5 left-0 right-0 text-center font-mono text-[9px] font-black uppercase tracking-[0.35em] text-zinc-400">
+                  Três lacradas · Uma aberta · Depois, a névoa
+                </p>
+                <style>{`
+                  @keyframes keyPulse {
+                    0%, 100% { opacity: 0.4; transform: scale(0.97); }
+                    50%       { opacity: 1;   transform: scale(1.04); }
+                  }
+                  @keyframes keyDrift {
+                    from { transform: scale(1); }
+                    to   { transform: scale(1.05); }
+                  }
+                `}</style>
+              </div>
+
               {/* fases — timeline vertical compacta */}
               <div className="relative flex flex-col">
                 {/* linha vertical */}
