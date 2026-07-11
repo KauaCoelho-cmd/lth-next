@@ -372,17 +372,17 @@ export default function Home() {
               <div>
                 <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/[0.06] px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-violet-400">
                   <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-                  Fase 4 · Aberta agora
+                  Fase 4 · A porta está aberta
                 </div>
                 <h2 className="text-[2.6rem] font-black text-white tracking-[-0.03em] leading-[1.0]">
-                  Preço sobe<br />
+                  Cada porta que fecha,<br />
                   <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                    a cada fase.
+                    fecha com o preço dentro.
                   </span>
                 </h2>
                 <p className="mt-2.5 text-[13px] text-zinc-500 leading-relaxed max-w-xs">
-                  Quem entrou na Fase 1 paga <span className="text-zinc-300">$5.90</span> para sempre.<br/>
-                  Você ainda pode travar <span className="text-violet-300 font-semibold">$12.90/mês</span> antes de fechar.
+                  Quem cruzou a primeira porta paga <span className="text-zinc-300">$5.90 até hoje</span> — e nunca vai pagar mais.<br/>
+                  A porta aberta agora custa <span className="text-violet-300 font-semibold">$12.90/mês</span>. Depois dela, só a névoa.
                 </p>
               </div>
 
@@ -532,7 +532,7 @@ export default function Home() {
 
               {/* stats + aviso */}
               <div className="flex items-center gap-3">
-                {[["920", "vagas totais"],["690","encerradas"],["230","esta fase"]].map(([v,l]) => (
+                {[["3", "portas lacradas"],["$12.90","a porta aberta"],["$19.90","depois da névoa"]].map(([v,l]) => (
                   <div key={l} className="flex-1 rounded-xl py-3 text-center" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
                     <p className="font-black text-white text-lg tracking-tight">{v}</p>
                     <p className="font-mono text-[8px] text-zinc-600 mt-0.5 uppercase tracking-wider">{l}</p>
@@ -543,8 +543,8 @@ export default function Home() {
               <div className="rounded-xl px-4 py-3 flex items-start gap-3" style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)" }}>
                 <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <p className="font-mono text-[11px] text-zinc-400 leading-relaxed">
-                  Quem garantir agora trava <span className="text-violet-300 font-bold">$12.90/mês para sempre.</span>{" "}
-                  Quando a Fase 4 fechar, sobe para <span className="text-zinc-300">$19.90</span>. Sem volta.
+                  O preço da porta que você cruza é <span className="text-violet-300 font-bold">seu para sempre.</span>{" "}
+                  Ninguém avisa quando ela fecha. As três primeiras fecharam sem aviso — essa não vai ser diferente.
                 </p>
               </div>
 
