@@ -248,12 +248,21 @@ button { cursor:pointer; font-family:inherit; border:none; }
     <button class="load-btn" onclick="loadPaste()">Abrir editor com correções →</button>
     <div id="fix-info" style="font-size:11px;color:var(--text2);text-align:center;margin-top:-8px;display:none"></div>
 
-    <div class="or-row">ou carregue um arquivo</div>
+    <div class="or-row">ou carregue um arquivo (SingleFile)</div>
 
-    <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <strong>Arrastar arquivo .html</strong>
-      <span>ou clique para selecionar</span>
+    <div class="code-box">
+      <div class="code-head" style="border:0;padding:8px 12px">
+        ARQUIVO .HTML <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(salvo com a extensão SingleFile — imagens e CSS já vêm dentro)</span>
+      </div>
+      <div class="dz" id="dz" onclick="document.getElementById('fi').click()" style="margin:0 12px 10px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <strong>Arrastar arquivo .html aqui</strong>
+        <span>ou clique para selecionar — abre direto no editor</span>
+      </div>
+      <div style="display:flex;gap:6px;padding:0 12px 12px;align-items:center">
+        <span style="font-size:10px;color:var(--text3);white-space:nowrap;text-transform:uppercase;letter-spacing:.5px">URL original</span>
+        <input type="text" id="sf-url" placeholder="detectada automaticamente em arquivos SingleFile" style="flex:1;background:transparent;border:none;color:var(--text);font-size:12px;font-family:monospace;outline:none">
+      </div>
     </div>
     <input type="file" id="fi" accept=".html,.htm" style="display:none" onchange="loadFile(event)">
 
@@ -535,6 +544,8 @@ function fixHTML(html, userUrl) {
   // 1. Se usuário não digitou URL, tenta detectar do próprio HTML
   if (!baseUrl) {
     const candidates = [
+      // Comentário gravado pela extensão SingleFile: "url: https://..."
+      /Page saved with SingleFile\s*\n?\s*url:\s*(\S+)/i,
       /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i,
       /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i,
       /<meta[^>]+property=["']og:url["'][^>]+content=["']([^"']+)["']/i,
@@ -778,8 +789,9 @@ function loadFile(e) {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
   r.onload = ev => {
-    document.getElementById('html-in').value = ev.target.result;
-    const userUrl = document.getElementById('src-url').value.trim();
+    // Arquivos SingleFile podem ter 10MB+ — não joga no textarea para não travar
+    const userUrl = (document.getElementById('sf-url').value.trim())
+      || document.getElementById('src-url').value.trim();
     const fixed = fixHTML(ev.target.result, userUrl);
     if (fixed.info) {
       const el = document.getElementById('fix-info');
@@ -798,7 +810,11 @@ dz.addEventListener('dragleave', () => dz.classList.remove('over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('over');
   const f = e.dataTransfer.files[0];
-  if (f) { const r = new FileReader(); r.onload = ev => { document.getElementById('html-in').value = ev.target.result; openEditor(ev.target.result); }; r.readAsText(f); }
+  if (f) { const r = new FileReader(); r.onload = ev => {
+    const userUrl = (document.getElementById('sf-url').value.trim()) || document.getElementById('src-url').value.trim();
+    const fixed = fixHTML(ev.target.result, userUrl);
+    openEditor(fixed.html);
+  }; r.readAsText(f); }
 });
 
 function openEditor(html) {
