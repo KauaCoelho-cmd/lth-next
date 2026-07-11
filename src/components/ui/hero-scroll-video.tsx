@@ -36,54 +36,25 @@ function BIcon({ name, color }: { name: string; color: string }) {
 }
 
 export function HeroScrollVideo() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [overlay, setOverlay] = useState(0);
-  const [videoReady, setVideoReady] = useState(false);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
+  // Parallax 3D sutil seguindo o mouse
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    // Tenta autoplay
-    const tryPlay = () => {
-      video.play().then(() => setVideoReady(true)).catch(() => {
-        // Mobile bloqueou — mostra o poster até o usuário tocar
-        setVideoReady(false);
-      });
+    const el = frameRef.current;
+    if (!el) return;
+    const onMove = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      setTilt({ x: px * 6, y: py * -6 });
     };
-
-    video.addEventListener("canplay", () => tryPlay(), { once: true });
-
-    // No mobile, toca ao primeiro toque na tela
-    const onTouch = () => {
-      video.play().then(() => setVideoReady(true)).catch(() => {});
-    };
-    document.addEventListener("touchstart", onTouch, { once: true });
-
-    tryPlay();
-
-    const onEnded = async () => {
-      // 1. Fica no último frame por 5 segundos
-      await new Promise(r => setTimeout(r, 5000));
-
-      // 2. Overlay aparece (fade in)
-      setOverlay(1);
-      await new Promise(r => setTimeout(r, 600));
-
-      // 3. Reinicia o vídeo
-      video.currentTime = 0;
-      video.play().catch(() => {});
-
-      // 4. Overlay some (fade out)
-      setOverlay(2);
-      await new Promise(r => setTimeout(r, 800));
-      setOverlay(0);
-    };
-
-    video.addEventListener("ended", onEnded);
+    const onLeave = () => setTilt({ x: 0, y: 0 });
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", onLeave);
     return () => {
-      video.removeEventListener("ended", onEnded);
-      document.removeEventListener("touchstart", onTouch);
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", onLeave);
     };
   }, []);
 
@@ -205,30 +176,76 @@ export function HeroScrollVideo() {
             </div>
           </div>
 
-          <div className="relative w-full h-full rounded-2xl border border-violet-500/20 overflow-hidden bg-black">
-            {/* Poster — último frame, aparece antes do vídeo tocar */}
-            <img
-              src="/hero-last-frame.jpg"
-              alt=""
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              style={{ objectFit: "contain", opacity: videoReady ? 0 : 1, transition: "opacity 0.5s" }}
-            />
-            <video
-              ref={videoRef}
-              src="/hero-bg.mp4"
-              muted
-              playsInline
-              preload="auto"
-              autoPlay
-              className="w-full h-full"
-              style={{ objectFit: "contain", opacity: videoReady ? 1 : 0, transition: "opacity 0.5s" }}
-            />
-            <div className="absolute inset-0 bg-black pointer-events-none"
+          <div
+            ref={frameRef}
+            className="relative w-full h-full rounded-2xl border border-violet-500/20 overflow-hidden bg-black"
+            style={{ perspective: "800px" }}
+          >
+            <div
+              className="absolute inset-0"
               style={{
-                opacity: overlay === 0 ? 0 : overlay === 1 ? 1 : 0,
-                transition: overlay === 1 ? "opacity 0.6s ease-in" : "opacity 0.8s ease-out",
+                transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg) scale(1.04)`,
+                transition: "transform 0.3s ease-out",
+                transformStyle: "preserve-3d",
               }}
-            />
+            >
+              {/* Imagem base — zoom lento infinito (Ken Burns) */}
+              <img
+                src="/hero-goblin.jpg"
+                alt="Goblin mago conjurando Hunter X e SiteScope"
+                className="absolute inset-0 w-full h-full"
+                style={{ objectFit: "cover", animation: "kenBurns 22s ease-in-out infinite alternate" }}
+              />
+
+              {/* Respiração do emblema Hunter X (roxo, esquerda) */}
+              <div className="absolute pointer-events-none" style={{
+                left: "4%", top: "12%", width: "34%", height: "34%",
+                background: "radial-gradient(circle, rgba(167,80,255,0.45) 0%, transparent 65%)",
+                mixBlendMode: "screen", filter: "blur(6px)",
+                animation: "sigilPulse 3.2s ease-in-out infinite",
+              }} />
+
+              {/* Respiração do emblema SiteScope (ciano, direita) */}
+              <div className="absolute pointer-events-none" style={{
+                left: "62%", top: "10%", width: "36%", height: "36%",
+                background: "radial-gradient(circle, rgba(34,211,238,0.4) 0%, transparent 65%)",
+                mixBlendMode: "screen", filter: "blur(6px)",
+                animation: "sigilPulse 3.2s ease-in-out infinite 1.6s",
+              }} />
+
+              {/* Olhos do goblin pulsando */}
+              <div className="absolute pointer-events-none" style={{
+                left: "41%", top: "26%", width: "18%", height: "10%",
+                background: "radial-gradient(ellipse, rgba(190,120,255,0.5) 0%, transparent 70%)",
+                mixBlendMode: "screen", filter: "blur(4px)",
+                animation: "eyeGlow 5s ease-in-out infinite",
+              }} />
+
+              {/* Partículas mágicas subindo dentro do quadro */}
+              {[
+                { left: "12%", delay: "0s", size: 3, dur: "6s", c: "rgba(180,80,255,0.9)" },
+                { left: "30%", delay: "2s", size: 2, dur: "8s", c: "rgba(34,211,238,0.9)" },
+                { left: "52%", delay: "1s", size: 3, dur: "7s", c: "rgba(180,80,255,0.9)" },
+                { left: "70%", delay: "3s", size: 2, dur: "6.5s", c: "rgba(34,211,238,0.9)" },
+                { left: "88%", delay: "0.5s", size: 3, dur: "7.5s", c: "rgba(34,211,238,0.9)" },
+              ].map((p, i) => (
+                <div key={i} className="absolute rounded-full pointer-events-none"
+                  style={{
+                    left: p.left, bottom: 0, width: p.size, height: p.size,
+                    background: p.c, boxShadow: `0 0 ${p.size * 4}px ${p.c}`,
+                    animation: `frameFloat ${p.dur} ease-in infinite ${p.delay}`,
+                  }}
+                />
+              ))}
+
+              {/* Varredura de brilho diagonal a cada ciclo */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                background: "linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.09) 50%, transparent 58%)",
+                backgroundSize: "260% 100%",
+                animation: "sheenSweep 8s ease-in-out infinite",
+                mixBlendMode: "screen",
+              }} />
+            </div>
           </div>
         </div>
 
@@ -403,6 +420,28 @@ export function HeroScrollVideo() {
         @keyframes lightPulse {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0.55; }
+        }
+        @keyframes kenBurns {
+          from { transform: scale(1); }
+          to   { transform: scale(1.07); }
+        }
+        @keyframes sigilPulse {
+          0%, 100% { opacity: 0.35; transform: scale(0.96); }
+          50%       { opacity: 1;    transform: scale(1.06); }
+        }
+        @keyframes eyeGlow {
+          0%, 100% { opacity: 0.15; }
+          50%       { opacity: 0.7; }
+        }
+        @keyframes frameFloat {
+          0%   { transform: translateY(0); opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 0.7; }
+          100% { transform: translateY(-480px); opacity: 0; }
+        }
+        @keyframes sheenSweep {
+          0%       { background-position: 130% 0; }
+          55%, 100% { background-position: -130% 0; }
         }
       `}</style>
     </section>
