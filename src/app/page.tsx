@@ -386,66 +386,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* gráfico premium */}
-              <div className="relative rounded-2xl overflow-hidden" style={{ background: "linear-gradient(145deg,#0c0a18,#080612)", border: "1px solid rgba(124,58,237,0.18)" }}>
-                {/* grid sutil */}
-                <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "60px 40px" }} />
-                <div className="px-5 pt-4 pb-1 flex items-center justify-between">
-                  <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-[0.15em]">Evolução de preço</span>
-                  <span className="font-mono text-[9px] text-violet-500 font-bold">Jan 2024 → Hoje</span>
-                </div>
-                <svg viewBox="0 0 460 150" className="w-full" style={{ height: 130 }}>
-                  <defs>
-                    <linearGradient id="areag" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.22"/>
-                      <stop offset="100%" stopColor="#7c3aed" stopOpacity="0"/>
-                    </linearGradient>
-                    <linearGradient id="lineg" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#22d3ee"/>
-                      <stop offset="100%" stopColor="#a78bfa"/>
-                    </linearGradient>
-                    <filter id="gl2">
-                      <feGaussianBlur stdDeviation="2.5" result="b"/>
-                      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                    </filter>
-                  </defs>
-                  {/* linhas horizontais */}
-                  {[18,48,78,108,132].map((y,i) => (
-                    <line key={i} x1="46" y1={y} x2="430" y2={y} stroke="rgba(255,255,255,0.035)" strokeWidth="1"/>
-                  ))}
-                  {/* labels Y */}
-                  {([["$19.90",18],["$12.90",48],["$9.90",78],["$7.90",108],["$5.90",132]] as [string,number][]).map(([l,y]) => (
-                    <text key={l} x="2" y={y+4} fontSize="7.5" fill="rgba(113,113,122,0.45)" fontFamily="monospace">{l}</text>
-                  ))}
-                  {/* área */}
-                  <path d="M62,132 L140,108 L228,78 L316,48 L400,18 L400,140 L62,140 Z" fill="url(#areag)"/>
-                  {/* sombra linha */}
-                  <path d="M62,132 L140,108 L228,78 L316,48 L400,18" fill="none" stroke="#7c3aed" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" opacity="0.1"/>
-                  {/* linha */}
-                  <path d="M62,132 L140,108 L228,78 L316,48 L400,18" fill="none" stroke="url(#lineg)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" filter="url(#gl2)"/>
-                  {/* projeção fase 5 */}
-                  <path d="M400,18 L450,-8" fill="none" stroke="rgba(167,139,250,0.2)" strokeWidth="1.5" strokeDasharray="4,4"/>
-                  {/* pontos encerrados */}
-                  {([[62,132],[140,108],[228,78]] as [number,number][]).map(([x,y],i) => (
-                    <g key={i}>
-                      <circle cx={x} cy={y} r="4" fill="#22c55e" stroke="#080612" strokeWidth="2"/>
-                    </g>
-                  ))}
-                  {/* ponto atual */}
-                  <circle cx="316" cy="48" r="6" fill="#7c3aed" stroke="#080612" strokeWidth="2" filter="url(#gl2)"/>
-                  <circle cx="316" cy="48" r="6" fill="none" stroke="#a78bfa" strokeWidth="1.5" opacity="0.6">
-                    <animate attributeName="r" from="6" to="16" dur="2s" repeatCount="indefinite"/>
-                    <animate attributeName="opacity" from="0.6" to="0" dur="2s" repeatCount="indefinite"/>
-                  </circle>
-                  {/* tag atual */}
-                  <rect x="322" y="33" width="68" height="16" rx="3.5" fill="rgba(124,58,237,0.3)" stroke="rgba(167,139,250,0.4)" strokeWidth="1"/>
-                  <text x="327" y="44.5" fontSize="8" fill="#c4b5fd" fontFamily="monospace" fontWeight="bold">$12.90 AGORA</text>
-                  {/* X labels */}
-                  {([["Jan'24",46],["Mai'24",122],["Nov'24",210],["Jun'25",300]] as [string,number][]).map(([l,x]) => (
-                    <text key={l} x={x} y="148" fontSize="7" fill="rgba(113,113,122,0.35)" fontFamily="monospace">{l}</text>
-                  ))}
-                </svg>
-              </div>
 
               {/* O corredor das fases — 3 portas fechadas, 1 aberta */}
               <div className="relative rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(124,58,237,0.18)" }}>
