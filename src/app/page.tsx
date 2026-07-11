@@ -521,7 +521,42 @@ export default function Home() {
 
             {/* ── DIREITA: formulário ── */}
             <div className="lg:pt-8">
-              <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-8">
+              <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] overflow-hidden">
+
+                {/* A Chave — a mão do goblin entregando */}
+                <div className="relative h-52 md:h-60 overflow-hidden">
+                  <img
+                    src="/key-goblin.jpg"
+                    alt="A chave de acesso, entregue pelo goblin"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    style={{ objectPosition: "50% 32%", animation: "keyDrift 18s ease-in-out infinite alternate" }}
+                  />
+                  {/* pulso de energia sobre a chave */}
+                  <div className="pointer-events-none absolute" style={{
+                    left: "42%", top: "12%", width: "42%", height: "80%",
+                    background: "radial-gradient(ellipse, rgba(120,200,255,0.35) 0%, rgba(167,80,255,0.2) 45%, transparent 70%)",
+                    mixBlendMode: "screen", filter: "blur(8px)",
+                    animation: "keyPulse 3.5s ease-in-out infinite",
+                  }} />
+                  {/* fade para o card */}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24" style={{ background: "linear-gradient(to top, #0a0a15, transparent)" }} />
+                  {/* legenda */}
+                  <p className="absolute bottom-3 left-0 right-0 text-center font-mono text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500">
+                    Forjada para poucos
+                  </p>
+                  <style>{`
+                    @keyframes keyPulse {
+                      0%, 100% { opacity: 0.4; transform: scale(0.97); }
+                      50%       { opacity: 1;   transform: scale(1.04); }
+                    }
+                    @keyframes keyDrift {
+                      from { transform: scale(1); }
+                      to   { transform: scale(1.06); }
+                    }
+                  `}</style>
+                </div>
+
+                <div className="p-8 pt-6">
                 {/* badge */}
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-cyan-300">
                   <span className="relative flex h-1.5 w-1.5">
@@ -553,6 +588,7 @@ export default function Home() {
                 </div>
 
                 <p className="mt-3 font-mono text-[10px] text-zinc-400 text-center">Zero spam · Cancele quando quiser</p>
+                </div>
               </div>
             </div>
 
