@@ -1087,12 +1087,14 @@ function dlHTML() {
   h = h.replace(/\s*data-ve-sel(="[^"]*")?/g, '');
   h = h.replace(/\s*data-ve-hov(="[^"]*")?/g, '');
 
-  // Remove o style e script que injetamos
+  // Remove o style e os scripts que injetamos
   h = h.replace(VE_STYLE, '');
   h = h.replace(mkScript(VE_CODE), '');
-  // Fallback: remove qualquer style ou script com a marca [data-ve-sel]
+  h = h.replace(mkScript(NAV_BLOCK), '');
+  // Fallback: remove qualquer style ou script com as marcas do editor
   h = h.replace(/<style[^>]*>[^<]*\[data-ve-sel\][\s\S]*?<\/style>/gi, '');
   h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?MutationObserver[\s\S]*?\}\)\(\);<\/script>/gi, '');
+  h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?nav bloqueada[\s\S]*?\}\)\(\);<\/script>/gi, '');
 
   // Adiciona doctype
   if (!/^\s*<!DOCTYPE/i.test(h)) h = '<!DOCTYPE html>\n' + h;
