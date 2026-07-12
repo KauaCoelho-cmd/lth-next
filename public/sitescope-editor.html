@@ -840,7 +840,7 @@ function openEditor(html) {
 
 // ─── INJETAR EDITOR DENTRO DO IFRAME ────────────────────────────────────
 // Injeta CSS de highlight + script que captura cliques e envia pro pai.
-const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}</style>';
+const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}</style>';
 
 const VE_CODE = '(function(){'
   + 'var SK={html:1,head:1,script:1,style:1,meta:1,link:1,title:1,noscript:1,iframe:1,base:1};'
@@ -1095,6 +1095,21 @@ function dlHTML() {
   h = h.replace(/<style[^>]*>[^<]*\[data-ve-sel\][\s\S]*?<\/style>/gi, '');
   h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?MutationObserver[\s\S]*?\}\)\(\);<\/script>/gi, '');
   h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?nav bloqueada[\s\S]*?\}\)\(\);<\/script>/gi, '');
+
+  // Remove scripts da página original — fora do site eles quebram (CORS/file://)
+  // e muitos temas (WordPress/Elementor/React) apagam ou escondem o conteúdo
+  // quando o JS falha. Mantém apenas JSON-LD (dados estruturados, inofensivo).
+  h = h.replace(/<script\b(?![^>]*application\/ld\+json)[^>]*>[\s\S]*?<\/script>/gi, '');
+  h = h.replace(/<script\b(?![^>]*application\/ld\+json)[^>]*\/>/gi, '');
+
+  // Força visível o que os temas escondem esperando JS de animação
+  const REVEAL_CSS = '<style data-ss-reveal>'
+    + '[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,'
+    + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded'
+    + '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
+    + 'html,body{opacity:1!important;visibility:visible!important;display:block}'
+    + '</style>';
+  h = /<\/head>/i.test(h) ? h.replace(/<\/head>/i, REVEAL_CSS + '</head>') : REVEAL_CSS + h;
 
   // Adiciona doctype
   if (!/^\s*<!DOCTYPE/i.test(h)) h = '<!DOCTYPE html>\n' + h;
