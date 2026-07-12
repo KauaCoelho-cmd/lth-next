@@ -1108,6 +1108,15 @@ function dlHTML() {
     + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded'
     + '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
     + 'html,body{opacity:1!important;visibility:visible!important;display:block}'
+    // Carrosséis (swiper/slick/slider) sem JS empilham todos os slides e sobrepoem texto.
+    // Recorta o excesso e mostra só o primeiro slide de cada carrossel.
+    + '.swiper,.swiper-container,.slick-slider,.flickity-enabled,[class*="slider"],[class*="carousel"]'
+    + '{overflow:hidden!important;max-height:none!important}'
+    + '.swiper-wrapper,.slick-track{display:block!important;transform:none!important;width:auto!important}'
+    + '.swiper-slide:not(:first-child),.slick-slide:not(:first-child),'
+    + '.flickity-slider>*:not(:first-child),.product__media-list>*:not(:first-child)'
+    + '{display:none!important}'
+    + '.swiper-slide,.slick-slide{width:auto!important;float:none!important;margin:0 auto!important}'
     + '</style>';
   h = /<\/head>/i.test(h) ? h.replace(/<\/head>/i, REVEAL_CSS + '</head>') : REVEAL_CSS + h;
 
