@@ -87,7 +87,8 @@ Responda em JSON: { "plano": [{ "tarefa": "...", "prioridade": "alta|média|baix
 
     return NextResponse.json({ resultado: texto });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: 'Erro ao contatar o gerente' }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('GERENTE_ERR:', msg);
+    return NextResponse.json({ error: 'Erro ao contatar o gerente', detail: msg }, { status: 500 });
   }
 }
