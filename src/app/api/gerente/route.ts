@@ -32,6 +32,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Senha incorreta' }, { status: 401 });
   }
 
+  if (tipo === 'ping') {
+    return NextResponse.json({ ok: true });
+  }
+
   let prompt = '';
 
   if (tipo === 'plano') {
@@ -51,7 +55,7 @@ Responda em JSON: { "plano": [{ "tarefa": "...", "prioridade": "alta|média|baix
   }
 
   const messages = tipo === 'chat' && historico?.length
-    ? [...historico, { role: 'user', content: prompt }]
+    ? historico
     : [{ role: 'user', content: prompt }];
 
   try {
