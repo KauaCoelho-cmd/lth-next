@@ -63,6 +63,9 @@ export default function Debate() {
   const [finalizado, setFinalizado] = useState(false);
   const [parado, setParado] = useState(false);
   const [turno, setTurno] = useState(0);
+  const [prompt, setPrompt] = useState("");
+  const [gerandoPrompt, setGerandoPrompt] = useState(false);
+  const [copiado, setCopiado] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const msgsRef = useRef<Msg[]>([]);
 
@@ -126,6 +129,30 @@ export default function Debate() {
     setFinalizado(true);
   }
 
+  async function gerarPrompt() {
+    if (gerandoPrompt || !msgsRef.current.length) return;
+    setGerandoPrompt(true);
+    setPrompt("");
+    try {
+      const res = await fetch("/api/debate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha, modo: "prompt", historico: msgsRef.current, tema }),
+      });
+      const data = await res.json();
+      if (data.prompt) setPrompt(data.prompt);
+    } catch {
+      // silencioso
+    }
+    setGerandoPrompt(false);
+  }
+
+  async function copiarPrompt() {
+    await navigator.clipboard.writeText(prompt);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 2000);
+  }
+
   function reiniciar() {
     setIniciado(false);
     setMsgs([]);
@@ -134,6 +161,7 @@ export default function Debate() {
     setFinalizado(false);
     setParado(false);
     setTema("");
+    setPrompt("");
   }
 
   if (!senha) return <Login onLogin={setSenha} />;
@@ -291,6 +319,36 @@ export default function Debate() {
                     {parado ? "Você interrompeu o debate." : "Alpha e Beta chegaram ao plano final."}
                   </p>
                 </div>
+                {/* prompt de melhoria */}
+                {!prompt && (
+                  <button onClick={gerarPrompt} disabled={gerandoPrompt}
+                    style={{ width: "100%", background: "linear-gradient(135deg,#7c3aed,#06b6d4)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, padding: "14px", cursor: gerandoPrompt ? "wait" : "pointer", opacity: gerandoPrompt ? 0.6 : 1, marginBottom: 12 }}>
+                    {gerandoPrompt ? "Sintetizando o debate..." : "✨ Gerar prompt de melhoria"}
+                  </button>
+                )}
+
+                {prompt && (
+                  <div style={{ marginBottom: 12, background: "#0a0a12", border: "1px solid rgba(6,182,212,0.3)", borderRadius: 14, overflow: "hidden" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid #1c1c2e", background: "rgba(6,182,212,0.05)" }}>
+                      <p style={{ margin: 0, fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "#06b6d4" }}>
+                        ✨ Prompt de implementação
+                      </p>
+                      <button onClick={copiarPrompt}
+                        style={{ background: copiado ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.05)", border: `1px solid ${copiado ? "rgba(34,197,94,0.4)" : "#27272a"}`, borderRadius: 8, color: copiado ? "#4ade80" : "#a1a1aa", fontSize: 11, fontWeight: 700, padding: "5px 12px", cursor: "pointer" }}>
+                        {copiado ? "✓ Copiado" : "Copiar"}
+                      </button>
+                    </div>
+                    <p style={{ margin: 0, padding: "16px", fontSize: 13, lineHeight: 1.75, color: "#d4d4d8", whiteSpace: "pre-wrap", fontFamily: "ui-monospace, SFMono-Regular, monospace", maxHeight: 420, overflowY: "auto" }}>
+                      {prompt}
+                    </p>
+                    <div style={{ padding: "10px 16px", borderTop: "1px solid #1c1c2e", background: "rgba(124,58,237,0.05)" }}>
+                      <p style={{ margin: 0, fontSize: 11, color: "#52525b" }}>
+                        Cole isso no Claude Code dentro de <span style={{ color: "#a78bfa", fontFamily: "monospace" }}>~/lth-next</span> para executar.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={reiniciar}
                   style={{ width: "100%", background: "transparent", border: "1px solid #27272a", borderRadius: 12, color: "#a1a1aa", fontSize: 14, fontWeight: 700, padding: "12px", cursor: "pointer" }}>
                   🔄 Novo debate
