@@ -24,25 +24,31 @@ Seu papel no debate:
 - Foca em experiência do usuário, retenção técnica, performance do produto
 - Identifica falhas de UX e produto que estão matando conversão silenciosamente
 - Propõe melhorias técnicas com impacto direto na satisfação e churn
-- Questiona e rebate o Agente Alpha quando ele ignora problemas de produto que vão explodir depois
+- Questiona e rebate o Agente Alpha quando ele ignora problemas de produto
 - Linguagem direta, brasileira, sem rodeios
 - Máximo 3 parágrafos por turno`;
 
 export async function POST(req: NextRequest) {
-  const { senha, historico, turno, tema } = await req.json();
+  const body = await req.json();
+  const { senha, historico, turno, tema, ping } = body;
 
   if (senha !== SENHA) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+  }
+
+  if (ping) {
+    return NextResponse.json({ ok: true });
   }
 
   const isAlpha = turno % 2 === 0;
   const sistema = isAlpha ? ESTRATEGISTA : TECNICO;
   const nome = isAlpha ? 'Alpha' : 'Beta';
   const oponente = isAlpha ? 'Beta' : 'Alpha';
+  const isFinal = turno >= 5;
 
   const contexto = historico?.length
-    ? `\n\nDebate até agora:\n${historico.map((m: {nome: string; texto: string}) => `[${m.nome}]: ${m.texto}`).join('\n\n')}\n\nAgora é sua vez de responder ao Agente ${oponente}. Seja direto e específico. Se for o último turno (turno ${turno} de 6), conclua com um PLANO FINAL de 3 ações concretas priorizadas.`
-    : `\n\nInicie o debate sobre: "${tema || 'como melhorar o Hunter X e chegar à perfeição'}"\nSeja direto e específico logo de cara.`;
+    ? `Debate até agora:\n${historico.map((m: { nome: string; texto: string }) => `[${m.nome}]: ${m.texto}`).join('\n\n')}\n\nAgora é sua vez de responder ao Agente ${oponente}.${isFinal ? ' Este é o ÚLTIMO turno. Conclua com um PLANO FINAL com 3 ações concretas e priorizadas para melhorar o Hunter X.' : ' Seja direto e específico.'}`
+    : `Inicie o debate sobre: "${tema || 'como melhorar o Hunter X'}"\nSeja direto e específico logo de cara.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -56,15 +62,19 @@ export async function POST(req: NextRequest) {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
         system: sistema,
-        messages: [{ role: 'user', content: `Você é o Agente ${nome}.${contexto}` }],
+        messages: [{ role: 'user', content: `Você é o Agente ${nome}. ${contexto}` }],
       }),
     });
 
     const data = await response.json();
     const texto = data.content?.[0]?.text?.trim();
-    if (!texto) throw new Error('Sem resposta');
 
-    return NextResponse.json({ nome, texto, isFinal: turno >= 5 });
+    if (!texto) {
+      const errDetail = JSON.stringify(data);
+      return NextResponse.json({ error: 'Sem resposta da IA', detail: errDetail }, { status: 500 });
+    }
+
+    return NextResponse.json({ nome, texto, isFinal });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: msg }, { status: 500 });
