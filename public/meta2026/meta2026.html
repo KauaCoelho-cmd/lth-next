@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meta 2026</title>
+  <link rel="stylesheet" href="/meta2026/meta2026.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="date" id="date"></div>
+      <h1>Suas metas de hoje</h1>
+      <a href="/meta2026/objetivos.html" class="link-objetivos">✏️ Editar objetivos</a>
+    </header>
+
+    <main>
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Gerando suas metas do dia...</p>
+      </div>
+
+      <ul id="metas-list" class="metas-list hidden"></ul>
+
+      <div id="empty" class="empty hidden">
+        <p>Você ainda não definiu seus objetivos grandes.</p>
+        <a href="/meta2026/objetivos.html" class="btn">Definir agora →</a>
+      </div>
+
+      <div id="erro" class="erro hidden">
+        <p>Algo deu errado ao gerar suas metas. Tente novamente.</p>
+        <button class="btn" onclick="gerarMetas()">Tentar novamente</button>
+      </div>
+    </main>
+
+    <footer>
+      <button class="btn-regenerar" onclick="regenerar()">🔄 Gerar novas metas</button>
+    </footer>
+  </div>
+
+  <script src="/meta2026/meta2026.js"></script>
+</body>
+</html>

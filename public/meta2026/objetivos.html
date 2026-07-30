@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meus Objetivos — Meta 2026</title>
+  <link rel="stylesheet" href="/meta2026/meta2026.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/meta2026/meta2026.html" class="back">← Voltar</a>
+      <h1>Seus objetivos grandes</h1>
+      <p class="subtitle">Defina o que você quer conquistar em 2026. O agente vai criar tarefas diárias com base nisso.</p>
+    </header>
+
+    <main>
+      <div id="objetivos-lista"></div>
+
+      <div class="novo-objetivo">
+        <input type="text" id="input-objetivo" placeholder="Ex: Lançar meu produto digital" maxlength="120" />
+        <button class="btn" onclick="adicionarObjetivo()">Adicionar</button>
+      </div>
+
+      <button class="btn-salvar" onclick="salvar()">Salvar objetivos</button>
+      <div id="msg" class="msg hidden">✅ Salvo! Suas metas de amanhã já vão refletir isso.</div>
+    </main>
+  </div>
+
+  <script src="/meta2026/objetivos.js"></script>
+</body>
+</html>
