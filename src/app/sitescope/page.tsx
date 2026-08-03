@@ -273,10 +273,18 @@ export default function SiteScope() {
   const [email, setEmail] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [tick, setTick] = useState(0);
+  // ?url= vindo da extensão Hunter X ("Editar no SiteScope").
+  // Guardado antes do replaceState da autenticação, que limpa a query.
+  const [targetUrl, setTargetUrl] = useState("");
 
   useEffect(() => {
     const id = setInterval(() => setTick(t => t + 1), 60000);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const u = new URLSearchParams(window.location.search).get("url");
+    if (u) setTargetUrl(u);
   }, []);
 
   useEffect(() => {
@@ -399,7 +407,7 @@ export default function SiteScope() {
 
       {/* Editor */}
       <iframe
-        src="/sitescope-editor.html"
+        src={targetUrl ? `/sitescope-editor.html?url=${encodeURIComponent(targetUrl)}` : "/sitescope-editor.html"}
         style={{ flex: 1, border: "none", display: "block" }}
         title="SiteScope Editor"
       />

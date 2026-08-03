@@ -233,6 +233,26 @@ button { cursor:pointer; font-family:inherit; border:none; }
       <p style="margin-top:8px">Cole o código, clique em qualquer texto ou imagem, edite e baixe.</p>
     </div>
 
+    <!-- Carregar direto de um endereço (usado pelo botão da extensão Hunter X) -->
+    <div class="code-box">
+      <div class="code-head" style="border:0;padding:8px 12px">
+        ENDEREÇO DA PÁGINA
+        <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">— cole o link e abrimos pra você</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;padding:0 12px 12px">
+        <input type="text" id="load-url" placeholder="https://pagina-que-voce-quer-editar.com"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();loadFromUrl(this.value.trim())}"
+          style="flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-family:monospace;outline:none">
+        <button onclick="loadFromUrl(document.getElementById('load-url').value.trim())"
+          style="background:linear-gradient(135deg,#0891b2,#22d3ee);color:#04121a;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">
+          Abrir →
+        </button>
+      </div>
+      <div id="url-load-status" style="display:none;font-size:11px;line-height:1.5;padding:0 12px 12px;color:var(--text2)"></div>
+    </div>
+
+    <div class="or-row">ou cole o código</div>
+
     <div class="code-box">
       <div class="code-head">CÓDIGO HTML <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(Ctrl+U → Ctrl+A → Ctrl+C → cole aqui)</span></div>
       <textarea id="html-in" placeholder="Cole o código HTML aqui..."></textarea>
@@ -518,6 +538,61 @@ let dev = 'desktop';   // 'desktop' ou 'mobile'
 let fw = '700';
 const SKIP_TAGS = new Set(['html','head','script','style','meta','link','title','noscript','iframe','base']);
 const TXT_TAGS = new Set(['p','h1','h2','h3','h4','h5','h6','span','a','button','li','td','th','label','strong','em','b','i','small','div','section','header','footer','article','aside','nav','main','figcaption','caption']);
+
+// ─── CARREGAR DIRETO DE UMA URL (?url=) ─────────────────────────────────
+// Usado pelo botão "Editar no SiteScope" da extensão Hunter X: o anúncio
+// manda a landing page e o editor já abre com ela dentro.
+async function loadFromUrl(raw, silent) {
+  const url = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+  const box = document.getElementById('url-load-status');
+  const show = (msg, err) => {
+    if (!box) { if (!silent) toast(msg, err); return; }
+    box.style.display = 'block';
+    box.style.color = err ? '#f87171' : 'var(--text2)';
+    box.textContent = msg;
+  };
+
+  show('⏳ Buscando a página...');
+  try {
+    const resp = await fetch(location.origin + '/api/sitescope/proxy?url=' + encodeURIComponent(url));
+    if (!resp.ok) throw new Error('o site respondeu ' + resp.status);
+    const finalUrl = resp.headers.get('X-Final-Url') || url;
+    const html = await resp.text();
+
+    // Página vazia = provavelmente montada por JS (React/Vue) ou bloqueada
+    const corpo = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<[^>]+>/g, '').trim();
+    if (html.length < 500 || corpo.length < 80) {
+      throw new Error('a página veio vazia (montada por JS ou protegida)');
+    }
+
+    const srcEl = document.getElementById('src-url');
+    if (srcEl) srcEl.value = finalUrl;
+    const fixed = fixHTML(html, finalUrl);
+    show('');
+    if (box) box.style.display = 'none';
+    openEditor(fixed.html);
+    toast('Página carregada!');
+  } catch (e) {
+    show('✗ Não deu para abrir automaticamente — ' + e.message
+      + '. Use a extensão SingleFile e solte o arquivo aqui embaixo.', true);
+  }
+}
+
+// Lê ?url= da barra de endereço e carrega sozinho
+(function initFromQuery() {
+  function run() {
+    let q = null;
+    try { q = new URLSearchParams(location.search).get('url'); } catch (e) { return; }
+    if (!q) return;
+    const srcEl = document.getElementById('src-url');
+    if (srcEl) srcEl.value = q;
+    const loadEl = document.getElementById('load-url');
+    if (loadEl) loadEl.value = q;
+    loadFromUrl(q);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
 
 // ─── CARREGAR HTML ──────────────────────────────────────────────────────
 function loadPaste() {
