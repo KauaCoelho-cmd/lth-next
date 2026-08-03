@@ -833,6 +833,12 @@ function openEditor(html) {
       '<option value="de">🇩🇪 Deutsch</option>' +
     '</select>' +
     '<button class="btn btn-ghost" id="tl-btn" onclick="translatePage()">🌐 Traduzir</button>' +
+    '<label id="ss-motion-wrap" title="Devolve movimento à página: elementos surgem ao rolar e carrosséis voltam a passar sozinhos." ' +
+      'style="display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);' +
+      'border-radius:var(--r);padding:0 10px;height:30px;cursor:pointer;font-size:12px;color:var(--text);user-select:none">' +
+      '<input type="checkbox" id="ss-motion" checked style="accent-color:#7c3aed;cursor:pointer;margin:0">' +
+      '<span>✨ Animações</span>' +
+    '</label>' +
     '<button class="btn btn-primary" onclick="dlHTML()">⬇ Baixar HTML</button>';
 
   renderIframes(html);
@@ -1102,23 +1108,82 @@ function dlHTML() {
   h = h.replace(/<script\b(?![^>]*application\/ld\+json)[^>]*>[\s\S]*?<\/script>/gi, '');
   h = h.replace(/<script\b(?![^>]*application\/ld\+json)[^>]*\/>/gi, '');
 
-  // Força visível o que os temas escondem esperando JS de animação
-  const REVEAL_CSS = '<style data-ss-reveal>'
-    + '[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,'
-    + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded'
-    + '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
-    + 'html,body{opacity:1!important;visibility:visible!important;display:block}'
-    // Carrosséis (swiper/slick/slider) sem JS empilham todos os slides e sobrepoem texto.
-    // Recorta o excesso e mostra só o primeiro slide de cada carrossel.
+  // ── Movimento da página ───────────────────────────────────────────────
+  // O JS original foi removido acima (ele quebra fora do servidor de origem).
+  // Com "Animações" ligado, injetamos um motor próprio: não depende de nada
+  // externo, então nunca deixa a página em branco.
+  const motionOn = document.getElementById('ss-motion')
+    ? document.getElementById('ss-motion').checked
+    : true;
+
+  const REVEAL_SEL = '[data-aos],.aos-init,.elementor-invisible,.wow,'
+    + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded';
+
+  // Base: garante que nada fique escondido e contém carrosséis empilhados
+  let css = 'html,body{opacity:1!important;visibility:visible!important;display:block}'
     + '.swiper,.swiper-container,.slick-slider,.flickity-enabled,[class*="slider"],[class*="carousel"]'
     + '{overflow:hidden!important;max-height:none!important}'
     + '.swiper-wrapper,.slick-track{display:block!important;transform:none!important;width:auto!important}'
-    + '.swiper-slide:not(:first-child),.slick-slide:not(:first-child),'
-    + '.flickity-slider>*:not(:first-child),.product__media-list>*:not(:first-child)'
-    + '{display:none!important}'
     + '.swiper-slide,.slick-slide{width:auto!important;float:none!important;margin:0 auto!important}'
-    + '</style>';
-  h = /<\/head>/i.test(h) ? h.replace(/<\/head>/i, REVEAL_CSS + '</head>') : REVEAL_CSS + h;
+    + '.product__media-list>*:not(:first-child){display:none!important}';
+
+  if (motionOn) {
+    // Visível por padrão (sem !important, para o estado inicial poder sobrepor).
+    // O estado "escondido" só existe quando o motor roda e marca <html class="ss-motion">,
+    // então se o JS não executar a página abre normal em vez de em branco.
+    css += REVEAL_SEL + '{opacity:1;visibility:visible;transform:none;animation:none}'
+      + '.ss-motion [data-aos],.ss-motion .wow,.ss-motion .elementor-invisible,'
+      + '.ss-motion [data-animation],.ss-motion .animated,.ss-motion .fade-in,.ss-motion .reveal'
+      + '{opacity:0;transform:translateY(24px);'
+      + 'transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}'
+      + '.ss-motion .ss-in{opacity:1!important;transform:none!important}';
+  } else {
+    // Modo estático: congela tudo e deixa só o primeiro slide de cada carrossel
+    css += REVEAL_SEL + ',.aos-animate'
+      + '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
+      + '.swiper-slide:not(:first-child),.slick-slide:not(:first-child),'
+      + '.flickity-slider>*:not(:first-child){display:none!important}';
+  }
+
+  let inject = '<style data-ss-motion>' + css + '</style>';
+
+  if (motionOn) {
+    const MOTION_JS = '(function(){'
+      + 'var d=document,r=d.documentElement;'
+      + 'r.className+=" ss-motion";'
+      + 'function reveal(){'
+        + 'var els=d.querySelectorAll("[data-aos],.wow,.elementor-invisible,[data-animation],.animated,.fade-in,.reveal"),i;'
+        + 'function all(){for(i=0;i<els.length;i++)els[i].classList.add("ss-in")}'
+        + 'if(!("IntersectionObserver" in window)){all();return}'
+        + 'var io=new IntersectionObserver(function(es){es.forEach(function(e){'
+          + 'if(e.isIntersecting){e.target.classList.add("ss-in");io.unobserve(e.target)}'
+        + '})},{rootMargin:"0px 0px -8% 0px",threshold:.05});'
+        + 'for(i=0;i<els.length;i++)io.observe(els[i]);'
+        + 'setTimeout(all,4000);'  // rede de segurança: nada fica invisível
+      + '}'
+      + 'function carousels(){'
+        + 'var cs=d.querySelectorAll(".swiper-wrapper,.slick-track,.flickity-slider,.carousel-inner");'
+        + 'for(var i=0;i<cs.length;i++)(function(w){'
+          + 'var s=[].slice.call(w.children).filter(function(n){return n.nodeType===1});'
+          + 'if(s.length<2)return;'
+          + 'var k=0;'
+          + 's.forEach(function(n,j){n.style.transition="opacity .6s ease";'
+            + 'n.style.display=j?"none":"";n.style.opacity=j?"0":"1"});'
+          + 'setInterval(function(){'
+            + 'var p=s[k];k=(k+1)%s.length;var n=s[k];'
+            + 'n.style.display="";n.style.opacity="0";'
+            + 'requestAnimationFrame(function(){n.style.opacity="1";p.style.opacity="0"});'
+            + 'setTimeout(function(){p.style.display="none"},600)'
+          + '},4500)'
+        + '})(cs[i])'
+      + '}'
+      + 'function go(){try{reveal()}catch(e){}try{carousels()}catch(e){}}'
+      + 'if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",go);else go()'
+      + '})();';
+    inject += '<script data-ss-motion>' + MOTION_JS + '<\/script>';
+  }
+
+  h = /<\/head>/i.test(h) ? h.replace(/<\/head>/i, inject + '</head>') : inject + h;
 
   // Adiciona doctype
   if (!/^\s*<!DOCTYPE/i.test(h)) h = '<!DOCTYPE html>\n' + h;
@@ -1130,7 +1195,7 @@ function dlHTML() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  toast('Baixado!');
+  toast(motionOn ? 'Baixado com animações!' : 'Baixado (estático)');
 }
 
 // ─── DEVICE / TABS ──────────────────────────────────────────────────────
