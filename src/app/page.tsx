@@ -35,6 +35,7 @@ import { Navbar } from "@/components/ui/navbar";
 import { CosmicParallaxBg } from "@/components/ui/parallax-cosmic-background";
 import { HeroScrollVideo } from "@/components/ui/hero-scroll-video";
 import { OnlineCounter } from "@/components/ui/online-counter";
+import KeyGoblinMedia from "@/components/key-goblin-media";
 
 /* ─── Feature card data ─── */
 const features = [
@@ -494,31 +495,8 @@ export default function Home() {
             <div className="lg:pt-8">
               <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] overflow-hidden">
 
-                {/* A Chave — a mão do goblin entregando */}
-                <div className="relative h-52 md:h-60 overflow-hidden">
-                  <img
-                    src="/key-goblin.jpg"
-                    alt="A chave de acesso, entregue pelo goblin"
-                    className="absolute inset-0 h-full w-full object-cover"
-                    style={{ objectPosition: "50% 32%", animation: "keyDrift 18s ease-in-out infinite alternate" }}
-                  />
-                  {/* fade para o card */}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24" style={{ background: "linear-gradient(to top, #0a0a15, transparent)" }} />
-                  {/* legenda */}
-                  <p className="absolute bottom-3 left-0 right-0 text-center font-mono text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500">
-                    Forjada para poucos
-                  </p>
-                  <style>{`
-                    @keyframes keyPulse {
-                      0%, 100% { opacity: 0.4; transform: scale(0.97); }
-                      50%       { opacity: 1;   transform: scale(1.04); }
-                    }
-                    @keyframes keyDrift {
-                      from { transform: scale(1); }
-                      to   { transform: scale(1.06); }
-                    }
-                  `}</style>
-                </div>
+                {/* A Chave — vídeo por padrão; digitar 1234 volta pra imagem */}
+                <KeyGoblinMedia />
 
                 <div className="p-8 pt-6">
                 {/* badge */}
