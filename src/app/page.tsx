@@ -502,13 +502,6 @@ export default function Home() {
                     className="absolute inset-0 h-full w-full object-cover"
                     style={{ objectPosition: "50% 32%", animation: "keyDrift 18s ease-in-out infinite alternate" }}
                   />
-                  {/* pulso de energia sobre a chave */}
-                  <div className="pointer-events-none absolute" style={{
-                    left: "42%", top: "12%", width: "42%", height: "80%",
-                    background: "radial-gradient(ellipse, rgba(120,200,255,0.35) 0%, rgba(167,80,255,0.2) 45%, transparent 70%)",
-                    mixBlendMode: "screen", filter: "blur(8px)",
-                    animation: "keyPulse 3.5s ease-in-out infinite",
-                  }} />
                   {/* fade para o card */}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24" style={{ background: "linear-gradient(to top, #0a0a15, transparent)" }} />
                   {/* legenda */}
