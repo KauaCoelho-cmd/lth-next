@@ -895,6 +895,7 @@ function openEditor(html) {
       '<input type="checkbox" id="ss-motion" checked style="accent-color:#7c3aed;cursor:pointer;margin:0">' +
       '<span>✨ Animações</span>' +
     '</label>' +
+    '<button class="btn btn-ghost" onclick="limparPopups()" title="Some com avisos de cookie, pop-ups e destrava a rolagem da página">🍪 Limpar pop-ups</button>' +
     '<button class="btn btn-primary" onclick="dlHTML()">⬇ Baixar HTML</button>';
 
   renderIframes(html);
@@ -902,7 +903,61 @@ function openEditor(html) {
 
 // ─── INJETAR EDITOR DENTRO DO IFRAME ────────────────────────────────────
 // Injeta CSS de highlight + script que captura cliques e envia pro pai.
-const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}</style>';
+const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
+  // Avisos de cookie travam a rolagem da pagina (overflow:hidden no body) e
+  // cobrem o conteudo. Sem rolagem nao da para editar nada abaixo da dobra.
+  + 'html,body{overflow:visible!important;height:auto!important;max-height:none!important;position:static!important}'
+  + '#onetrust-consent-sdk,#onetrust-banner-sdk,.onetrust-pc-dark-filter,.cc-window,.cky-consent-container,.cky-overlay,'
+  + '.cmplz-cookiebanner,#cmplz-cookiebanner-container,.iubenda-cs-container,#usercentrics-root,.termly-consent-banner,'
+  + '.cookie-notice-container,#cookie-notice,.cookie-law-info-bar,#cookie-law-info-bar,.moove_gdpr_cookie_info_bar,'
+  + '.lgpd-banner,#lgpd,.cookiealert,.cc-banner{display:none!important}</style>';
+
+// ─── LIMPAR POP-UPS E DESTRAVAR A ROLAGEM ───────────────────────────────
+// Roda sozinho ao abrir a pagina e tambem no botao da barra de cima.
+function limparPopups(silencioso) {
+  const fr = document.getElementById('fr');
+  const doc = fr && (fr.contentDocument || (fr.contentWindow && fr.contentWindow.document));
+  const win = fr && fr.contentWindow;
+  if (!doc || !win) { if (!silencioso) toast('Não consegui acessar a página', true); return; }
+
+  // 1. Devolve a rolagem que o modal travou
+  [doc.documentElement, doc.body].forEach(function (el) {
+    if (!el) return;
+    el.style.setProperty('overflow', 'visible', 'important');
+    el.style.setProperty('height', 'auto', 'important');
+    el.style.setProperty('max-height', 'none', 'important');
+    el.style.setProperty('position', 'static', 'important');
+  });
+
+  // 2. Remove o que está flutuando por cima do conteúdo
+  const vh = win.innerHeight || 800, vw = win.innerWidth || 1200;
+  const SUSPEITO = /cookie|consent|lgpd|gdpr|privac|newsletter|popup|pop-up|modal|overlay|backdrop|interstitial|exit-intent|lightbox/i;
+  let n = 0;
+
+  Array.prototype.slice.call(doc.querySelectorAll('body *')).forEach(function (el) {
+    if (!el.parentNode) return;
+    let cs; try { cs = win.getComputedStyle(el); } catch (e) { return; }
+    if (!cs) return;
+    if (cs.position !== 'fixed' && cs.position !== 'sticky') return;
+
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+
+    const cls = typeof el.className === 'string' ? el.className : (el.className && el.className.baseVal) || '';
+    const nome = el.id + ' ' + cls;
+    const zi = parseInt(cs.zIndex, 10) || 0;
+
+    const cobreTela = r.width * r.height > vw * vh * 0.55;
+    const ehBarra = r.width > vw * 0.6 && r.height > 55 && (r.top < 12 || r.bottom > vh - 12);
+
+    // Barra larga só sai se o nome entregar que é aviso — senão derrubaria menu fixo
+    if (cobreTela || (SUSPEITO.test(nome) && (ehBarra || zi > 500))) {
+      el.remove(); n++;
+    }
+  });
+
+  if (!silencioso) toast(n ? ('Removi ' + n + (n > 1 ? ' pop-ups' : ' pop-up')) : 'Nenhum pop-up sobrando');
+}
 
 const VE_CODE = '(function(){'
   + 'var SK={html:1,head:1,script:1,style:1,meta:1,link:1,title:1,noscript:1,iframe:1,base:1};'
@@ -934,7 +989,13 @@ function inject(html) {
 }
 
 function renderIframes(html) {
-  document.getElementById('fr').srcdoc = inject(html);
+  const fr = document.getElementById('fr');
+  // Alguns avisos só entram no DOM depois do load — por isso a segunda passada
+  fr.onload = function () {
+    try { limparPopups(true); } catch (e) {}
+    setTimeout(function () { try { limparPopups(true); } catch (e) {} }, 900);
+  };
+  fr.srcdoc = inject(html);
 }
 
 // ─── RECEBE CLICK DO IFRAME ─────────────────────────────────────────────
