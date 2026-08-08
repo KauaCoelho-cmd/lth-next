@@ -39,6 +39,41 @@ export function HeroScrollVideo() {
   const frameRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
+  // Vídeo por padrão. Digitar 1234 volta pra imagem antiga — e de novo, volta pro vídeo.
+  const [heroVideo, setHeroVideo] = useState(true);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("hx-hero-media") === "imagem") setHeroVideo(false);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    let digitado = "";
+    function aoTeclar(e: KeyboardEvent) {
+      const alvo = e.target as HTMLElement | null;
+      if (alvo) {
+        const tag = alvo.tagName;
+        // Não intercepta quem está preenchendo o formulário
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || alvo.isContentEditable) return;
+      }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (!/^[0-9]$/.test(e.key)) { digitado = ""; return; }
+
+      digitado = (digitado + e.key).slice(-4);
+      if (digitado !== "1234") return;
+
+      digitado = "";
+      setHeroVideo((atual) => {
+        const proximo = !atual;
+        try { localStorage.setItem("hx-hero-media", proximo ? "video" : "imagem"); } catch {}
+        return proximo;
+      });
+    }
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, []);
+
   // Parallax 3D sutil seguindo o mouse
   useEffect(() => {
     const el = frameRef.current;
@@ -189,13 +224,30 @@ export function HeroScrollVideo() {
                 transformStyle: "preserve-3d",
               }}
             >
-              {/* Imagem base — zoom lento infinito (Ken Burns) */}
-              <img
-                src="/hero-goblin.jpg"
-                alt="Goblin mago conjurando Hunter X e SiteScope"
-                className="absolute inset-0 w-full h-full"
-                style={{ objectFit: "cover", animation: "kenBurns 22s ease-in-out infinite alternate" }}
-              />
+              {/* Vídeo base — digitar 1234 volta pra imagem antiga */}
+              {heroVideo ? (
+                <video
+                  key="hero-video"
+                  src="/key-goblin.mp4"
+                  poster="/hero-goblin.jpg"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label="Goblin mago conjurando Hunter X e SiteScope"
+                  className="absolute inset-0 w-full h-full"
+                  style={{ objectFit: "cover" }}
+                />
+              ) : (
+                <img
+                  key="hero-img"
+                  src="/hero-goblin.jpg"
+                  alt="Goblin mago conjurando Hunter X e SiteScope"
+                  className="absolute inset-0 w-full h-full"
+                  style={{ objectFit: "cover", animation: "kenBurns 22s ease-in-out infinite alternate" }}
+                />
+              )}
 
               {/* Respiração do emblema Hunter X (roxo, esquerda) */}
               <div className="absolute pointer-events-none" style={{
