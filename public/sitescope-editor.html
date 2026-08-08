@@ -233,25 +233,6 @@ button { cursor:pointer; font-family:inherit; border:none; }
       <p style="margin-top:8px">Cole o código, clique em qualquer texto ou imagem, edite e baixe.</p>
     </div>
 
-    <!-- Carregar direto de um endereço (usado pelo botão da extensão Hunter X) -->
-    <div class="code-box">
-      <div class="code-head" style="border:0;padding:8px 12px">
-        ENDEREÇO DA PÁGINA
-        <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">— cole o link e abrimos pra você</span>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;padding:0 12px 12px">
-        <input type="text" id="load-url" placeholder="https://pagina-que-voce-quer-editar.com"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();loadFromUrl(this.value.trim())}"
-          style="flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-family:monospace;outline:none">
-        <button onclick="loadFromUrl(document.getElementById('load-url').value.trim())"
-          style="background:linear-gradient(135deg,#0891b2,#22d3ee);color:#04121a;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">
-          Abrir →
-        </button>
-      </div>
-      <div id="url-load-status" style="display:none;font-size:11px;line-height:1.5;padding:0 12px 12px;color:var(--text2)"></div>
-    </div>
-
-    <div class="or-row">ou cole o código</div>
 
     <div class="code-box">
       <div class="code-head">CÓDIGO HTML <span style="color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(Ctrl+U → Ctrl+A → Ctrl+C → cole aqui)</span></div>
