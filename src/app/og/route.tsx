@@ -82,7 +82,7 @@ export async function GET() {
 
         {/* Subtitle */}
         <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "22px", maxWidth: "640px", lineHeight: 1.5, margin: "0 0 48px 0" }}>
-          Extensão Chrome que revela produtos low ticket escalando na Biblioteca do Meta em tempo real.
+          Extensão que revela produtos low ticket escalando em bibliotecas de anúncios em tempo real.
         </p>
 
         {/* Bottom row */}

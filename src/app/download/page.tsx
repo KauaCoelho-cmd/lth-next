@@ -133,7 +133,7 @@ export default function DownloadPage() {
             </span>
           </h1>
           <p className="mt-3 font-mono text-sm text-zinc-500">
-            Escaneia a Biblioteca do Meta em tempo real
+            Lê a biblioteca de anúncios em tempo real
           </p>
         </div>
 

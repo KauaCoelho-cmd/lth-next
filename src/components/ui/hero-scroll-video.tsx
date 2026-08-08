@@ -318,7 +318,7 @@ export function HeroScrollVideo() {
             {/* título */}
             <div className="relative z-10">
               <p className="font-black text-white text-2xl tracking-tight leading-none">Hunter X</p>
-              <p className="font-mono text-[10px] text-zinc-500 mt-1">Meta Ad Library Scanner</p>
+              <p className="font-mono text-[10px] text-zinc-500 mt-1">Ad Library Scanner</p>
             </div>
 
             {/* Benefícios listados */}

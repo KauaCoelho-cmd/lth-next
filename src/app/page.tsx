@@ -180,7 +180,7 @@ export default function Home() {
               <div className="flex flex-col gap-4 mb-8">
                 {[
                   { n: "01", t: "Instale a extensão", d: "Dois cliques, cola sua chave e pronto. Ninguém pede seu nome — você entra invisível." },
-                  { n: "02", t: "Abra a Biblioteca do Meta", d: "Abre como sempre abriu. O Hunter X acorda sozinho e começa a ler tudo por você." },
+                  { n: "02", t: "Abra a biblioteca de anúncios", d: "Abre como sempre abriu. O Hunter X acorda sozinho e começa a ler tudo por você." },
                   { n: "03", t: "Veja o que ninguém vê", d: "Dias rodando, score viral, plataforma — se está no ar há semanas, está pagando. Exporta e vai." },
                 ].map((s) => (
                   <div key={s.n} className="flex gap-4">
@@ -197,7 +197,7 @@ export default function Home() {
 
               <a href="/download" className="inline-flex items-center gap-2.5 rounded-xl px-7 py-3.5 font-mono text-sm font-black text-white transition-transform hover:-translate-y-0.5" style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)", boxShadow: "0 0 30px rgba(124,58,237,0.35)" }}>
                 <Download className="w-4 h-4" />
-                Instalar no Chrome →
+                Instalar no navegador →
               </a>
             </div>
 
@@ -640,7 +640,7 @@ export default function Home() {
           <div>
             <p className="font-mono text-xs font-black tracking-[0.25em] text-zinc-500 uppercase mb-5">Hunter X</p>
             <p className="text-sm text-zinc-500 leading-relaxed">
-              Extensão Chrome para escanear a Biblioteca de Anúncios do Meta em tempo real. Encontre produtos validados antes de todo mundo.
+              Extensão de navegador para ler bibliotecas públicas de anúncios em tempo real. Encontre produtos validados antes de todo mundo.
             </p>
           </div>
         </div>
@@ -653,7 +653,7 @@ export default function Home() {
               <span className="font-mono text-xs text-zinc-500">© 2026 Hunter X · v2.1.0</span>
             </div>
             <p className="font-mono text-xs text-zinc-700 text-center">
-              Não afiliado, endossado ou patrocinado pelo Meta Platforms, Inc.
+              Produto independente. Não somos afiliados, endossados nem patrocinados por nenhuma plataforma de anúncios. Marcas citadas pertencem a seus respectivos donos.
             </p>
             <div className="flex items-center gap-4">
               <a href="https://instagram.com" className="text-zinc-600 hover:text-violet-400 transition-colors">

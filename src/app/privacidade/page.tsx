@@ -17,7 +17,7 @@ export default function Privacidade() {
           <section>
             <h2 className="text-white font-black text-lg mb-3 tracking-wide">1. Quem somos</h2>
             <p>
-              Hunter X é uma extensão para Google Chrome que escaneia a Biblioteca de Anúncios do Meta (dado público) e exibe informações como dias de veiculação, faixa de preço e score viral dos anúncios encontrados. Operamos em <a href="https://hunterx.site" className="text-violet-400 hover:underline">hunterx.site</a>. Dúvidas: <a href="mailto:suporte@hunterx.site" className="text-violet-400 hover:underline">suporte@hunterx.site</a>.
+              Hunter X é uma extensão de navegador que lê bibliotecas públicas de anúncios e exibe informações como dias de veiculação, faixa de preço e score viral dos anúncios encontrados. Operamos em <a href="https://hunterx.site" className="text-violet-400 hover:underline">hunterx.site</a>. Dúvidas: <a href="mailto:suporte@hunterx.site" className="text-violet-400 hover:underline">suporte@hunterx.site</a>.
             </p>
           </section>
 
@@ -68,7 +68,7 @@ export default function Privacidade() {
           <section>
             <h2 className="text-white font-black text-lg mb-3 tracking-wide">5. Fonte dos dados da extensão</h2>
             <p>
-              A extensão acessa exclusivamente a <strong className="text-white">Biblioteca de Anúncios do Meta</strong>, que é uma base de dados pública disponibilizada pelo próprio Facebook/Instagram. Não acessamos contas privadas, dados de usuários nem qualquer informação restrita da plataforma.
+              A extensão acessa exclusivamente <strong className="text-white">bibliotecas de anúncios públicas</strong>, ou seja, bases de dados que as próprias plataformas disponibilizam abertamente a qualquer pessoa, sem login. Não acessamos contas privadas, dados de usuários nem qualquer informação restrita.
             </p>
           </section>
 
@@ -77,9 +77,9 @@ export default function Privacidade() {
             <ul className="space-y-3 list-none">
               {[
                 "Os dados exibidos pela extensão são informativos. Não garantimos que qualquer produto identificado pela ferramenta gerará vendas ou lucro.",
-                "A Meta Platforms, Inc. pode alterar ou remover a Biblioteca de Anúncios a qualquer momento. Não somos responsáveis por indisponibilidades causadas por mudanças na plataforma.",
+                "As plataformas podem alterar ou remover suas bibliotecas de anúncios a qualquer momento. Não somos responsáveis por indisponibilidades causadas por mudanças fora do nosso controle.",
                 "Por se tratar de produto digital com entrega imediata (chave de licença), não realizamos reembolsos após a ativação da chave.",
-                "Hunter X não é afiliado, endossado nem patrocinado pelo Meta Platforms, Inc.",
+                "Hunter X é um produto independente. Não somos afiliados, endossados nem patrocinados por nenhuma plataforma de anúncios. Todas as marcas eventualmente citadas pertencem a seus respectivos donos.",
               ].map((item) => (
                 <li key={item} className="flex gap-3">
                   <span className="text-violet-400 mt-1">—</span>
