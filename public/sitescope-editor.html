@@ -72,10 +72,13 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .frame-inner { width:100%; flex:1; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,.4); }
 .frame-inner iframe { width:100%; height:100%; min-height:calc(100vh - 88px); border:none; display:block; }
 
-.stage.mobile .frame-wrap { width:390px; min-height:auto; background:#1a1a1a; border-radius:44px; padding:12px; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 40px 80px rgba(0,0,0,.7); }
-.stage.mobile .phone-notch { display:block; height:32px; background:#111; border-radius:16px; width:120px; margin:0 auto 8px; }
-.stage.mobile .frame-inner { width:366px; height:720px; border-radius:36px; }
-.stage.mobile .frame-inner iframe { width:366px; height:720px; min-height:unset; }
+/* Tela de 390x844 = iPhone 14/15. A moldura é montada EM VOLTA disso.
+   Antes a moldura tinha 390 e comia 12 de padding de cada lado, sobrando
+   366x720 de tela — proporção que celular nenhum tem. */
+.stage.mobile .frame-wrap { width:414px; min-height:auto; background:#1a1a1a; border-radius:52px; padding:12px; box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 40px 80px rgba(0,0,0,.7); transform-origin:top center; }
+.stage.mobile .phone-notch { display:block; height:26px; background:#111; border-radius:14px; width:112px; margin:2px auto 8px; }
+.stage.mobile .frame-inner { width:390px; height:844px; border-radius:40px; }
+.stage.mobile .frame-inner iframe { width:390px; height:844px; min-height:unset; }
 
 .sidebar { width:300px; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
 .sb-top { padding:14px 16px 0; flex-shrink:0; }
@@ -322,7 +325,7 @@ button { cursor:pointer; font-family:inherit; border:none; }
         <span id="crumb"></span>
       </div>
       <div class="stage" id="stage">
-        <div class="frame-wrap">
+        <div class="frame-wrap" id="frame-wrap">
           <div class="phone-notch"></div>
           <div class="frame-inner"><iframe id="fr"></iframe></div>
         </div>
@@ -1620,7 +1623,41 @@ function setDev(d) {
   document.getElementById('stage').classList.toggle('mobile', d === 'mobile');
   document.getElementById('btn-desk').classList.toggle('active', d === 'desktop');
   document.getElementById('btn-mob').classList.toggle('active', d === 'mobile');
+  ajustarEscalaCelular();
 }
+
+// O celular tem 902px de altura com a moldura. Em tela de notebook isso não
+// cabe. Em vez de cortar embaixo, encolhe o conjunto inteiro mantendo a
+// proporção — igual ao "ajustar à janela" das ferramentas de desenvolvedor.
+// A página continua enxergando 390x844, então as media queries reagem certo.
+function ajustarEscalaCelular() {
+  const stage = document.getElementById('stage');
+  const wrap = document.getElementById('frame-wrap');
+  if (!stage || !wrap) return;
+
+  if (!stage.classList.contains('mobile')) {
+    wrap.style.transform = '';
+    wrap.style.marginBottom = '';
+    return;
+  }
+
+  wrap.style.transform = '';
+  wrap.style.marginBottom = '';
+
+  const disponivel = stage.clientHeight - 48;   // respiro do padding
+  const precisa = wrap.offsetHeight;
+  if (!precisa || !disponivel) return;
+
+  const k = Math.min(1, disponivel / precisa);
+  if (k >= 0.999) return;
+
+  wrap.style.transform = 'scale(' + k.toFixed(4) + ')';
+  // transform não reduz o espaço reservado no layout — sem isto sobraria
+  // um buraco embaixo do celular do tamanho do que foi encolhido
+  wrap.style.marginBottom = (-(precisa * (1 - k))).toFixed(0) + 'px';
+}
+
+window.addEventListener('resize', ajustarEscalaCelular);
 
 function switchTab(t) {
   const isSeo = t === 'seo';
