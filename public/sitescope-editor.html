@@ -912,7 +912,7 @@ function openEditor(html) {
 // Injeta CSS de highlight + script que captura cliques e envia pro pai.
 // Regra que congela tudo visível. Só entra quando "Animações" está DESLIGADO —
 // ligada junto com o motor, ela sobrepunha a animação e nada se movia.
-const CSS_CONGELA = '[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}';
+const CSS_CONGELA = '[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}';
 
 const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}'
   // Avisos de cookie travam a rolagem da pagina (overflow:hidden no body) e
@@ -1054,8 +1054,12 @@ function limparPopups(silencioso) {
 // O mesmo código roda na prévia e vai no arquivo baixado. Antes o motor só
 // existia no download: a tela do editor ficava parada e parecia que a cópia
 // tinha perdido as animações e o giro do carrossel.
+// Só classes de ANIMAÇÃO. As de carregamento (.lazyload/.lazyloaded) saíram
+// daqui de propósito: forçar opacity:1 nelas atropelava a regra do tema que
+// mantém a segunda imagem do produto invisível até o mouse passar por cima.
+// O carregamento já é resolvido no DOM por arrumarCarregamento().
 const REVEAL_SEL = '[data-aos],.aos-init,.elementor-invisible,.wow,'
-  + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded';
+  + '[data-animation],.animated,.fade-in';
 
 function cssMovimento(ligado) {
   // Base: nada some e carrossel empilhado não estoura a altura
