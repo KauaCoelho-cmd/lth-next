@@ -936,11 +936,34 @@ function arrumarCarregamento(doc) {
     + '.skeleton,.skeleton-loader,.placeholder-glow,.shimmer';
   doc.querySelectorAll(CARREGANDO).forEach((el) => { el.remove(); n++; });
 
-  // 2. Imagens e vídeos parados no placeholder
+  // 2. Imagens e vídeos parados no placeholder.
+  //    Cada tema inventa um nome de atributo (data-src, data-full-src,
+  //    data-preview-src, data-original...). Em vez de listar todos, procuramos
+  //    qualquer "data-...src" que tenha cara de endereço.
   doc.querySelectorAll('img,source,video,iframe').forEach((el) => {
-    const real = el.getAttribute('data-src') || el.getAttribute('data-lazy-src')
-      || el.getAttribute('data-original') || el.getAttribute('data-litespeed-src');
-    if (real && el.getAttribute('src') !== real) { el.setAttribute('src', real); n++; }
+    const candidatos = [];
+    for (const attr of Array.from(el.attributes)) {
+      if (!/^data-[\w-]*src$/i.test(attr.name)) continue;
+      const v = (attr.value || '').trim();
+      if (!/^(https?:)?\/\/|^\//.test(v)) continue;   // precisa parecer endereço
+      candidatos.push({ nome: attr.name.toLowerCase(), valor: v });
+    }
+    // Se o tema oferece prévia e versão cheia, fica com a cheia
+    candidatos.sort((a, b) => (b.nome.includes('full') ? 1 : 0) - (a.nome.includes('full') ? 1 : 0));
+
+    const real = candidatos.length ? candidatos[0].valor
+      : (el.getAttribute('data-original') || el.getAttribute('data-lazy'));
+    if (real && el.getAttribute('src') !== real) {
+      el.setAttribute('src', real);
+      n++;
+      // O tema controlava o play pelo JS, que não existe mais. Sem isso o
+      // vídeo vira um quadro parado que ninguém consegue iniciar.
+      if (el.tagName === 'VIDEO') {
+        if (el.getAttribute('preload') === 'none') el.setAttribute('preload', 'metadata');
+        if (!el.hasAttribute('autoplay') && !el.hasAttribute('controls')) el.setAttribute('controls', '');
+        el.load();
+      }
+    }
 
     const conjunto = el.getAttribute('data-srcset') || el.getAttribute('data-lazy-srcset');
     if (conjunto) el.setAttribute('srcset', conjunto);
