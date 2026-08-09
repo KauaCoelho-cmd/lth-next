@@ -913,7 +913,7 @@ function openEditor(html) {
 const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
   // Avisos de cookie travam a rolagem da pagina (overflow:hidden no body) e
   // cobrem o conteudo. Sem rolagem nao da para editar nada abaixo da dobra.
-  + 'html,body{overflow:visible!important;height:auto!important;max-height:none!important;position:static!important}'
+  + 'html,body{overflow:visible!important;height:auto!important;max-height:none!important}'
   + '#onetrust-consent-sdk,#onetrust-banner-sdk,.onetrust-pc-dark-filter,.cc-window,.cky-consent-container,.cky-overlay,'
   + '.cmplz-cookiebanner,#cmplz-cookiebanner-container,.iubenda-cs-container,#usercentrics-root,.termly-consent-banner,'
   + '.cookie-notice-container,#cookie-notice,.cookie-law-info-bar,#cookie-law-info-bar,.moove_gdpr_cookie_info_bar,'
@@ -981,7 +981,13 @@ function limparPopups(silencioso) {
     el.style.setProperty('overflow', 'visible', 'important');
     el.style.setProperty('height', 'auto', 'important');
     el.style.setProperty('max-height', 'none', 'important');
-    el.style.setProperty('position', 'static', 'important');
+
+    // Só mexe na posição se ela estiver travada mesmo (position:fixed no body
+    // é o truque de travar rolagem). Forçar static sempre desmonta o layout de
+    // quem posiciona elementos em relação ao corpo da página.
+    let pos = '';
+    try { pos = win.getComputedStyle(el).position; } catch (e) {}
+    if (pos === 'fixed') el.style.setProperty('position', 'static', 'important');
   });
 
   // 2. Remove o que está flutuando por cima do conteúdo
