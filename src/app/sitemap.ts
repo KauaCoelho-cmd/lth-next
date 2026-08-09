@@ -29,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
     {
+      url: `${base}/termos`,
+      lastModified: new Date("2026-08-09"),
+      changeFrequency: "yearly",
+      priority: 0.4,
+    },
+    {
       url: `${base}/sitescope`,
       lastModified: new Date("2026-07-08"),
       changeFrequency: "monthly",

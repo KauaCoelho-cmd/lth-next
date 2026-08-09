@@ -86,8 +86,8 @@ export function welcomeEmail(paymentLink: string) {
         </td>
         <td width="33%" style="padding:8px;vertical-align:top;text-align:center">
           <div style="display:inline-block;width:44px;height:44px;line-height:44px;border:1px solid #22d3ee;margin-bottom:10px"><span style="font-size:20px;color:#22d3ee;font-weight:700">⧉</span></div>
-          <p style="margin:0;font-size:13px;font-weight:800;color:#fff">Espelho</p>
-          <p style="margin:4px 0 0;font-size:11px;color:#52525b;line-height:1.5">Clone qualquer página em minutos</p>
+          <p style="margin:0;font-size:13px;font-weight:800;color:#fff">Editor</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#52525b;line-height:1.5">Monte a sua página em minutos</p>
         </td>
         <td width="33%" style="padding:8px;vertical-align:top;text-align:center">
           <div style="display:inline-block;width:44px;height:44px;line-height:44px;border:1px solid #fbbf24;margin-bottom:10px"><span style="font-size:20px;color:#fbbf24;font-weight:700">∞</span></div>
@@ -200,7 +200,7 @@ export function keyDeliveryEmail(key: string) {
     <div style="border:1px solid #1a1a1a;padding:28px 24px">
       <p style="margin:0 0 4px;font-size:11px;font-weight:900;letter-spacing:4px;color:#22d3ee;text-transform:uppercase">INCLUSO</p>
       <p style="margin:0 0 10px;font-size:20px;font-weight:900;color:#fff">SiteScope</p>
-      <p style="margin:0 0 20px;font-size:13px;color:#52525b;line-height:1.6">Editor visual de landing pages. Clone, edite, baixe.</p>
+      <p style="margin:0 0 20px;font-size:13px;color:#52525b;line-height:1.6">Editor visual de landing pages. Monte, edite, baixe.</p>
       <a href="https://hunterx.site/sitescope" style="display:inline-block;border:1px solid #22d3ee;color:#22d3ee;font-size:12px;font-weight:900;letter-spacing:3px;text-transform:uppercase;text-decoration:none;padding:12px 32px">ABRIR</a>
     </div>
   </td></tr>

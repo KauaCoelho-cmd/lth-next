@@ -231,6 +231,12 @@ button { cursor:pointer; font-family:inherit; border:none; }
     <div>
       <h2>Edite seu HTML<br><span style="background:linear-gradient(135deg,#22d3ee,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">visualmente</span></h2>
       <p style="margin-top:8px">Cole o código, clique em qualquer texto ou imagem, edite e baixe.</p>
+      <p style="margin-top:6px;font-size:11px;color:var(--text2);line-height:1.5">
+        Ferramenta de estudo e edição. Substitua textos, imagens e marcas pelo conteúdo do
+        <strong style="color:var(--text)">seu</strong> produto antes de publicar —
+        republicar conteúdo de terceiros é proibido pelos
+        <a href="/termos" target="_blank" style="color:var(--accent2)">termos de uso</a>.
+      </p>
     </div>
 
 
@@ -1597,6 +1603,15 @@ function dlHTML() {
   a.click();
   document.body.removeChild(a);
   toast(motionOn ? 'Baixado com animações!' : 'Baixado (estático)');
+
+  // Lembrete no momento em que a decisão de publicar aparece. Uma vez por
+  // sessão: avisar é útil, repetir a cada download vira ruído e é ignorado.
+  if (!sessionStorage.getItem('ss-aviso-adaptar')) {
+    sessionStorage.setItem('ss-aviso-adaptar', '1');
+    setTimeout(function () {
+      toast('Antes de publicar: troque textos, imagens e marcas pelo seu conteúdo.');
+    }, 2600);
+  }
 }
 
 // ─── DEVICE / TABS ──────────────────────────────────────────────────────

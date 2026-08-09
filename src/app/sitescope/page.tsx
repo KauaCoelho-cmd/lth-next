@@ -256,6 +256,13 @@ function ManualLogin({ onSuccess, onRevoked }: { onSuccess: (email: string, expi
             >
               {loading ? "Verificando..." : "Entrar no SiteScope →"}
             </button>
+
+            {/* Aceite explícito: fica registrado que o usuário foi avisado antes de entrar */}
+            <p style={{ marginTop: 14, fontSize: 11, lineHeight: 1.6, color: "#3f3f46", textAlign: "center" }}>
+              Ao entrar, você concorda com os{" "}
+              <a href="/termos" target="_blank" style={{ color: "rgba(34,211,238,0.6)", textDecoration: "none", fontWeight: 700 }}>termos de uso</a>
+              {" "}e declara que vai substituir textos, imagens e marcas pelo conteúdo do seu próprio produto antes de publicar.
+            </p>
           </form>
         </div>
 

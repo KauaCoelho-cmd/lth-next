@@ -207,7 +207,7 @@ export default function Home() {
               <div className="grid grid-cols-1 gap-3">
                 {[
                   { icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>, t: "Baixe vídeos de anúncios", d: "Salve o criativo de qualquer anúncio em 1 clique." },
-                  { icon: <><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>, t: "Copie o HTML completo", d: "Acesse a estrutura para decifrar copy e gatilhos." },
+                  { icon: <><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>, t: "Estude o HTML completo", d: "Decifre a estrutura, a copy e os gatilhos que convertem." },
                   { icon: <><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></>, t: "Modele ofertas validadas", d: "Decompõe o anúncio em Hook, Prova, Oferta e CTA." },
                   { icon: <><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>, t: "Score viral 0–100", d: "Saiba quais produtos já estão escalando de verdade." },
                 ].map((f, i) => (
@@ -261,10 +261,10 @@ export default function Home() {
               </span>
 
               <h2 className="mb-3 font-black tracking-tight text-white leading-tight" style={{ fontSize: "clamp(1.8rem,4vw,3rem)" }}>
-                Espionou no Hunter X?
+                Achou a página vencedora?
                 <br />
                 <span style={{ background: "linear-gradient(120deg,#22d3ee,#67e8f9)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                  Clone no SiteScope.
+                  Modele a sua no SiteScope.
                 </span>
               </h2>
 
@@ -280,7 +280,7 @@ export default function Home() {
                   { icon: <><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></>, text: "Clique em qualquer texto e edite na hora" },
                   { icon: <><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></>, text: "Troca imagem com 1 clique — vê o tamanho exato" },
                   { icon: <><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></>, text: "Preview mobile e desktop lado a lado" },
-                  { icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>, text: "Baixa o HTML final pronto pra publicar" },
+                  { icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>, text: "Baixa a sua página final pronta pra publicar" },
                   { icon: <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></>, text: "Desbloqueado automaticamente com sua licença Hunter X" },
                 ].map((p, i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -623,7 +623,7 @@ export default function Home() {
                 { label: "Contato", href: "mailto:suporte@hunterx.site" },
                 { label: "Como instalar", href: "#" },
                 { label: "Política de privacidade", href: "/privacidade" },
-                { label: "Termos de uso", href: "/privacidade" },
+                { label: "Termos de uso", href: "/termos" },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <a href={href} className="text-sm text-zinc-400 hover:text-white transition-colors">{label}</a>

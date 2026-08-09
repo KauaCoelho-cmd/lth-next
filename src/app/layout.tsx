@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     "hunter x extensão",
     "escanear anúncios",
     "produto low ticket afiliado",
-    "espionar anúncios",
+    "analisar anúncios",
     "ferramenta para afiliado",
     "produto escalando",
     "dropshipping produto validado",
