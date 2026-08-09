@@ -902,7 +902,7 @@ function openEditor(html) {
       '<input type="checkbox" id="ss-motion" checked style="accent-color:#7c3aed;cursor:pointer;margin:0">' +
       '<span>✨ Animações</span>' +
     '</label>' +
-    '<button class="btn btn-ghost" onclick="limparPopups()" title="Some com avisos de cookie, pop-ups e destrava a rolagem da página">🍪 Limpar pop-ups</button>' +
+    '<button class="btn btn-ghost" onclick="limparPopups()" title="Some com avisos de cookie e pop-ups, destrava a rolagem e tira as telas de carregando que ficaram presas">🧹 Limpar página</button>' +
     '<button class="btn btn-primary" onclick="dlHTML()">⬇ Baixar HTML</button>';
 
   renderIframes(html);
@@ -921,6 +921,54 @@ const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;out
 
 // ─── LIMPAR POP-UPS E DESTRAVAR A ROLAGEM ───────────────────────────────
 // Roda sozinho ao abrir a pagina e tambem no botao da barra de cima.
+// ─── DESTRAVAR O QUE FICOU "CARREGANDO" ─────────────────────────────────
+// Sem o JS da página, tudo que dependia dele congela no estado inicial:
+// a tela de carregando nunca some, a imagem não troca o placeholder pelo
+// arquivo real e os slides clonados do carrossel aparecem repetidos.
+function arrumarCarregamento(doc) {
+  let n = 0;
+
+  // 1. Telas e rodinhas de "carregando" que ninguém mais vai esconder
+  const CARREGANDO = '#preloader,.preloader,#loader,.loader,.loading,.loading-overlay,'
+    + '.page-loader,.page-loading,.site-loader,.site-loading,.spinner,.spinner-overlay,'
+    + '.lds-ring,.lds-spinner,.lds-dual-ring,.sk-spinner,.sk-circle,.circle-loader,'
+    + '.elementor-loading,.load-screen,.loading-screen,.pace,.pace-progress,'
+    + '.skeleton,.skeleton-loader,.placeholder-glow,.shimmer';
+  doc.querySelectorAll(CARREGANDO).forEach((el) => { el.remove(); n++; });
+
+  // 2. Imagens e vídeos parados no placeholder
+  doc.querySelectorAll('img,source,video,iframe').forEach((el) => {
+    const real = el.getAttribute('data-src') || el.getAttribute('data-lazy-src')
+      || el.getAttribute('data-original') || el.getAttribute('data-litespeed-src');
+    if (real && el.getAttribute('src') !== real) { el.setAttribute('src', real); n++; }
+
+    const conjunto = el.getAttribute('data-srcset') || el.getAttribute('data-lazy-srcset');
+    if (conjunto) el.setAttribute('srcset', conjunto);
+
+    // Placeholder costuma vir desfocado de propósito
+    if (el.style && /blur/i.test(el.style.filter || '')) el.style.filter = 'none';
+    el.classList.remove('lazyload', 'lazy', 'blur-up', 'is-loading', 'loading');
+    el.classList.add('lazyloaded');
+    el.removeAttribute('loading');
+  });
+
+  // 3. Fundos que também são carregados só na rolagem
+  doc.querySelectorAll('[data-bg],[data-background],[data-background-image]').forEach((el) => {
+    const bg = el.getAttribute('data-bg') || el.getAttribute('data-background')
+      || el.getAttribute('data-background-image');
+    if (bg && !/url\(/i.test(el.style.backgroundImage || '')) {
+      el.style.backgroundImage = 'url("' + bg + '")'; n++;
+    }
+  });
+
+  // 4. Slides que o carrossel clonou — sem o JS eles viram imagem repetida
+  doc.querySelectorAll('.swiper-slide-duplicate,.slick-cloned,.owl-item.cloned').forEach((el) => {
+    el.remove(); n++;
+  });
+
+  return n;
+}
+
 function limparPopups(silencioso) {
   const fr = document.getElementById('fr');
   const doc = fr && (fr.contentDocument || (fr.contentWindow && fr.contentWindow.document));
@@ -963,7 +1011,10 @@ function limparPopups(silencioso) {
     }
   });
 
-  if (!silencioso) toast(n ? ('Removi ' + n + (n > 1 ? ' pop-ups' : ' pop-up')) : 'Nenhum pop-up sobrando');
+  // Mesma faxina: destrava o que ficou preso no "carregando"
+  n += arrumarCarregamento(doc);
+
+  if (!silencioso) toast(n ? ('Ajustei ' + n + (n > 1 ? ' itens' : ' item')) : 'Nada para limpar');
 }
 
 const VE_CODE = '(function(){'
@@ -1297,7 +1348,14 @@ function dlHTML() {
     + '{overflow:hidden!important;max-height:none!important}'
     + '.swiper-wrapper,.slick-track{display:block!important;transform:none!important;width:auto!important}'
     + '.swiper-slide,.slick-slide{width:auto!important;float:none!important;margin:0 auto!important}'
-    + '.product__media-list>*:not(:first-child){display:none!important}';
+    + '.product__media-list>*:not(:first-child){display:none!important}'
+    // Rede de segurança: tela de carregando não volta no arquivo baixado
+    + '#preloader,.preloader,#loader,.loader,.loading-overlay,.page-loader,.page-loading,'
+    + '.site-loader,.spinner,.spinner-overlay,.lds-ring,.lds-spinner,.lds-dual-ring,'
+    + '.sk-spinner,.pace,.pace-progress,.skeleton,.skeleton-loader,.shimmer,'
+    + '.swiper-slide-duplicate,.slick-cloned{display:none!important}'
+    // Só o desfoque de placeholder sai — efeito de design fica intacto
+    + '.blur-up,.lazyload,.lazy-loading{filter:none!important}';
 
   if (motionOn) {
     // Visível por padrão (sem !important, para o estado inicial poder sobrepor).
