@@ -1215,10 +1215,25 @@ const PLAYERS_DE_VIDEO = new RegExp([
   'hls\\.js', 'dashjs', 'plyr', 'flowplayer', 'clappr'
 ].join('|'), 'i');
 
+// Pedaços de React/Vue/Next. Se um deles ficar sem o resto do JS, o framework
+// tenta montar a página pela metade e apaga o conteúdo — a tela branca clássica.
+// Nunca ficam, mesmo citando vídeo no meio dos dados.
+const PAYLOAD_DE_FRAMEWORK = /self\.__next_f|__NEXT_DATA__|__NUXT__|__remixContext|__INITIAL_STATE__|webpackJsonp|__webpack_require__|__sveltekit/i;
+
 function ehScriptDeVideo(attrs, corpo) {
-  if (PLAYERS_DE_VIDEO.test(attrs || '')) return true;
-  // Só o começo do script: evita varrer arquivos enormes à toa
-  return PLAYERS_DE_VIDEO.test((corpo || '').slice(0, 5000));
+  attrs = attrs || '';
+  corpo = corpo || '';
+
+  // Script externo: decide pelo endereço, que é preciso
+  const comSrc = attrs.match(/\ssrc=("|')([^"']+)\1/i);
+  if (comSrc) return PLAYERS_DE_VIDEO.test(comSrc[2]);
+
+  // Inline
+  if (PAYLOAD_DE_FRAMEWORK.test(corpo.slice(0, 3000))) return false;
+  // Snippet de player é curto (VTurb, Panda e afins não passam de 2-3 KB).
+  // Bloco gigante é dado de aplicação, não player.
+  if (corpo.length > 8000) return false;
+  return PLAYERS_DE_VIDEO.test(corpo);
 }
 
 // ─── DOWNLOAD ───────────────────────────────────────────────────────────
