@@ -1090,42 +1090,107 @@ function cssMovimento(ligado) {
   return css;
 }
 
-const MOTION_JS = '(function(){'
-  + 'var d=document,r=d.documentElement;'
-  + 'r.className+=" ss-motion";'
-  + 'function reveal(){'
-    + 'var els=d.querySelectorAll("[data-aos],.wow,.elementor-invisible,[data-animation],.animated,.fade-in,.reveal"),i;'
-    + 'function all(){for(i=0;i<els.length;i++)els[i].classList.add("ss-in")}'
-    + 'if(!("IntersectionObserver" in window)){all();return}'
-    + 'var io=new IntersectionObserver(function(es){es.forEach(function(e){'
-      + 'if(e.isIntersecting){e.target.classList.add("ss-in");io.unobserve(e.target)}'
-    + '})},{rootMargin:"0px 0px -8% 0px",threshold:.05});'
-    + 'for(i=0;i<els.length;i++)io.observe(els[i]);'
-    + 'setTimeout(all,4000);'
-  + '}'
-  + 'function carousels(){'
-    + 'var cs=d.querySelectorAll(".swiper-wrapper,.slick-track,.flickity-slider,.carousel-inner");'
-    + 'for(var i=0;i<cs.length;i++)(function(w){'
-      + 'var s=[].slice.call(w.children).filter(function(n){return n.nodeType===1});'
-      + 'if(s.length<2)return;'
-      + 'var k=0;'
-      + 's.forEach(function(n,j){n.style.transition="opacity .6s ease";'
-        + 'n.style.display=j?"none":"";n.style.opacity=j?"0":"1"});'
-      + 'setInterval(function(){'
-        // No editor: não troca de slide enquanto você tem algo selecionado,
-        // senão o elemento foge debaixo do cursor. No arquivo baixado esse
-        // marcador não existe, então gira sempre.
-        + 'if(d.querySelector("[data-ve-sel]")||r.classList.contains("ss-parado"))return;'
-        + 'var p=s[k];k=(k+1)%s.length;var n=s[k];'
-        + 'n.style.display="";n.style.opacity="0";'
-        + 'requestAnimationFrame(function(){n.style.opacity="1";p.style.opacity="0"});'
-        + 'setTimeout(function(){p.style.display="none"},600)'
-      + '},4500)'
-    + '})(cs[i])'
-  + '}'
-  + 'function go(){try{reveal()}catch(e){}try{carousels()}catch(e){}}'
-  + 'if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",go);else go()'
-+ '})();';
+// Escrito como função de verdade e convertido em texto na hora de injetar.
+// Antes era um texto concatenado à mão — impossível de ler e fácil de quebrar.
+function MOTOR_MOVIMENTO() {
+  var d = document, r = d.documentElement;
+  r.className += ' ss-motion';
+
+  function visivel(n) {
+    var s = getComputedStyle(n);
+    return s.display !== 'none' && s.visibility !== 'hidden' && parseFloat(s.opacity || '1') > 0.05;
+  }
+
+  // Elementos que surgem conforme você rola
+  function reveal() {
+    var els = d.querySelectorAll('[data-aos],.wow,.elementor-invisible,[data-animation],.animated,.fade-in,.reveal'), i;
+    function todos() { for (i = 0; i < els.length; i++) els[i].classList.add('ss-in'); }
+    if (!('IntersectionObserver' in window)) { todos(); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('ss-in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    for (i = 0; i < els.length; i++) io.observe(els[i]);
+    setTimeout(todos, 4000);   // rede de segurança: nada fica invisível
+  }
+
+  // Acha carrosséis SEM depender do nome da biblioteca. A assinatura de um
+  // carrossel é: vários irmãos com "slide" no nome, uns visíveis e outros
+  // escondidos. Uma grade normal mostraria todos.
+  function acharCarrosseis() {
+    var achados = [], todos = d.querySelectorAll('*');
+    for (var i = 0; i < todos.length; i++) {
+      var pai = todos[i], filhos = [], j;
+      for (j = 0; j < pai.children.length; j++) {
+        var c = pai.children[j];
+        var nome = typeof c.className === 'string' ? c.className : '';
+        if (!/slide/i.test(nome)) continue;
+        if (/control|cursor|nav|dot|button|thumb|counter|progress/i.test(nome)) continue;
+        filhos.push(c);
+      }
+      if (filhos.length < 2) continue;
+      var vis = 0, esc = 0;
+      for (j = 0; j < filhos.length; j++) { if (visivel(filhos[j])) vis++; else esc++; }
+      if (vis >= 1 && esc >= 1) achados.push(filhos);
+    }
+    // Bibliotecas conhecidas, caso a regra acima não pegue
+    var conhecidos = d.querySelectorAll('.swiper-wrapper,.slick-track,.flickity-slider,.carousel-inner');
+    for (var k = 0; k < conhecidos.length; k++) {
+      var itens = [].slice.call(conhecidos[k].children).filter(function (n) { return n.nodeType === 1; });
+      if (itens.length > 1) achados.push(itens);
+    }
+    return achados;
+  }
+
+  function girar(slides) {
+    var atual = 0, i;
+    for (i = 0; i < slides.length; i++) if (visivel(slides[i])) { atual = i; break; }
+
+    // Se o tema marca o slide ativo com uma classe, respeitamos a dele
+    var marca = '';
+    var m = (slides[atual].className || '').match(/\b(is-selected|is-active|active|current|selected)\b/);
+    if (m) marca = m[1];
+
+    // Como o tema esconde: por display ou por opacidade
+    var porDisplay = getComputedStyle(slides[1]).display === 'none';
+
+    function mostrar(n, sim) {
+      if (porDisplay) n.style.display = sim ? '' : 'none';
+      n.style.transition = 'opacity .6s ease';
+      n.style.opacity = sim ? '1' : '0';
+      n.style.visibility = sim ? 'visible' : 'hidden';
+    }
+    for (i = 0; i < slides.length; i++) mostrar(slides[i], i === atual);
+
+    setInterval(function () {
+      // No editor não troca enquanto você tem algo selecionado, senão o
+      // elemento foge debaixo do cursor. No arquivo baixado gira sempre.
+      if (d.querySelector('[data-ve-sel]') || r.classList.contains('ss-parado')) return;
+      var anterior = slides[atual];
+      atual = (atual + 1) % slides.length;
+      var proximo = slides[atual];
+      if (marca) { anterior.classList.remove(marca); proximo.classList.add(marca); }
+      mostrar(proximo, true);
+      mostrar(anterior, false);
+    }, 4500);
+  }
+
+  function carrosseis() {
+    var lista = acharCarrosseis();
+    for (var i = 0; i < lista.length; i++) { try { girar(lista[i]); } catch (e) {} }
+  }
+
+  function iniciar() {
+    try { reveal(); } catch (e) {}
+    try { carrosseis(); } catch (e) {}
+  }
+
+  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+}
+
+const MOTION_JS = '(' + MOTOR_MOVIMENTO.toString() + ')();';
 
 // Liga/desliga o movimento na prévia sem recarregar — recarregar apagaria
 // tudo que você já editou.
