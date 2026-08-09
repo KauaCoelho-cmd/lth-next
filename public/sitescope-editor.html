@@ -642,12 +642,19 @@ function fixHTML(html, userUrl) {
   html = html.replace(/(src|href)=("|')\/\//gi, '$1=$2https://');
   if (html.length !== before) info.push('Links sem protocolo corrigidos');
 
-  // 4. Converte data-src → src (lazy loading desfeito)
-  const lazyMatches = (html.match(/\sdata-src=/gi) || []).length;
-  if (lazyMatches > 0) {
-    html = html.replace(/<img([^>]*?)\s+data-src=("|')([^"']+)\2/gi, '<img$1 src=$2$3$2');
-    info.push(lazyMatches + ' imagens lazy convertidas');
-  }
+  // 4. Converte data-src → src (lazy loading desfeito).
+  //    Vale para vídeo e iframe também: sem isso o player fica sem endereço
+  //    e a página abre com um buraco preto no lugar do vídeo.
+  const lazyRe = /<(img|video|source|iframe)((?:[^>"']|"[^"]*"|'[^']*')*?)\sdata-(?:src|lazy-src|litespeed-src|original)=("|')([^"']+)\3((?:[^>"']|"[^"]*"|'[^']*')*)>/gi;
+  let lazyMatches = 0;
+  html = html.replace(lazyRe, function (todo, tag, antes, aspas, url, depois) {
+    lazyMatches++;
+    // Tira o src de espera (gif transparente, base64). Se ficassem dois src,
+    // o navegador usa o primeiro — o falso — e o vídeo/imagem não aparece.
+    const limpo = (antes + depois).replace(/\ssrc=("|')[^"']*\1/gi, '');
+    return '<' + tag + limpo + ' src="' + url + '">';
+  });
+  if (lazyMatches > 0) info.push(lazyMatches + ' itens lazy convertidos');
 
   // 5. Reescreve links de CSS e fontes para passar pelo proxy (resolve CORS e paths relativos)
   html = html.replace(/<link([^>]*?)\s+href=(["'])([^"']+)\2([^>]*)>/gi, function(m, a1, q, href, a2) {
@@ -1193,6 +1200,27 @@ function copyDims() {
   });
 }
 
+// ─── PLAYERS DE VÍDEO ───────────────────────────────────────────────────
+// Numa página de venda o vídeo quase nunca é uma tag <video>: é um script
+// que monta o player sozinho. Como o download apaga o JS da página, o vídeo
+// sumia junto. Esta lista é a exceção — só o que serve para tocar vídeo fica.
+const PLAYERS_DE_VIDEO = new RegExp([
+  'vturb', 'converteai', 'scripts\\.converteai',
+  'pandavideo', 'panda-video', 'player-vz', 'b-vz',
+  'vimeo', 'youtube', 'youtu\\.be', 'ytimg', 'yt-player',
+  'wistia', 'jwplayer', 'jwplat', 'vidalytics', 'vooplayer', 'spotlightr',
+  'videodelivery', 'cloudflarestream', 'mediadelivery', 'iframe\\.mediadelivery',
+  'brightcove', 'dailymotion', 'streamable', 'vidyard', 'sproutvideo',
+  'hotmart.*player', 'player.*hotmart', 'videojs', 'video\\.js',
+  'hls\\.js', 'dashjs', 'plyr', 'flowplayer', 'clappr'
+].join('|'), 'i');
+
+function ehScriptDeVideo(attrs, corpo) {
+  if (PLAYERS_DE_VIDEO.test(attrs || '')) return true;
+  // Só o começo do script: evita varrer arquivos enormes à toa
+  return PLAYERS_DE_VIDEO.test((corpo || '').slice(0, 5000));
+}
+
 // ─── DOWNLOAD ───────────────────────────────────────────────────────────
 function dlHTML() {
   const fr = document.getElementById('fr');
@@ -1221,9 +1249,21 @@ function dlHTML() {
 
   // Remove scripts da página original — fora do site eles quebram (CORS/file://)
   // e muitos temas (WordPress/Elementor/React) apagam ou escondem o conteúdo
-  // quando o JS falha. Mantém apenas JSON-LD (dados estruturados, inofensivo).
-  h = h.replace(/<script\b(?![^>]*application\/ld\+json)[^>]*>[\s\S]*?<\/script>/gi, '');
-  h = h.replace(/<script\b(?![^>]*application\/ld\+json)[^>]*\/>/gi, '');
+  // quando o JS falha.
+  //
+  // Duas exceções ficam:
+  //   1. JSON-LD (dados estruturados, inofensivo)
+  //   2. Players de vídeo. A maioria das VSL não é uma tag <video>: é um
+  //      script que monta o player. Apagar tudo levava o vídeo junto.
+  h = h.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, function (todo, attrs, corpo) {
+    if (/application\/ld\+json/i.test(attrs)) return todo;
+    if (ehScriptDeVideo(attrs, corpo)) return todo;
+    return '';
+  });
+  h = h.replace(/<script\b([^>]*?)\/>/gi, function (todo, attrs) {
+    if (/application\/ld\+json/i.test(attrs)) return todo;
+    return ehScriptDeVideo(attrs, '') ? todo : '';
+  });
 
   // ── Movimento da página ───────────────────────────────────────────────
   // O JS original foi removido acima (ele quebra fora do servidor de origem).
