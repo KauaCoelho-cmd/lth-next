@@ -899,7 +899,7 @@ function openEditor(html) {
     '<label id="ss-motion-wrap" title="Devolve movimento à página: elementos surgem ao rolar e carrosséis voltam a passar sozinhos." ' +
       'style="display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);' +
       'border-radius:var(--r);padding:0 10px;height:30px;cursor:pointer;font-size:12px;color:var(--text);user-select:none">' +
-      '<input type="checkbox" id="ss-motion" checked style="accent-color:#7c3aed;cursor:pointer;margin:0">' +
+      '<input type="checkbox" id="ss-motion" checked onchange="alternarAnimacoes()" style="accent-color:#7c3aed;cursor:pointer;margin:0">' +
       '<span>✨ Animações</span>' +
     '</label>' +
     '<button class="btn btn-ghost" onclick="limparPopups()" title="Some com avisos de cookie e pop-ups, destrava a rolagem e tira as telas de carregando que ficaram presas">🧹 Limpar página</button>' +
@@ -910,7 +910,11 @@ function openEditor(html) {
 
 // ─── INJETAR EDITOR DENTRO DO IFRAME ────────────────────────────────────
 // Injeta CSS de highlight + script que captura cliques e envia pro pai.
-const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
+// Regra que congela tudo visível. Só entra quando "Animações" está DESLIGADO —
+// ligada junto com o motor, ela sobrepunha a animação e nada se movia.
+const CSS_CONGELA = '[data-aos],.aos-init,.aos-animate,.elementor-invisible,.wow,[data-animation],.animated,.fade-in,.lazyload,.lazyloaded{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}';
+
+const VE_STYLE = '<style>[data-ve-sel]{outline:2.5px solid #6d5cf6!important;outline-offset:2px!important;cursor:pointer!important}[data-ve-hov]:not([data-ve-sel]){outline:1.5px dashed rgba(109,92,246,.55)!important;outline-offset:2px!important;cursor:pointer!important}'
   // Avisos de cookie travam a rolagem da pagina (overflow:hidden no body) e
   // cobrem o conteudo. Sem rolagem nao da para editar nada abaixo da dobra.
   + 'html,body{overflow:visible!important;height:auto!important;max-height:none!important}'
@@ -1046,6 +1050,126 @@ function limparPopups(silencioso) {
   if (!silencioso) toast(n ? ('Ajustei ' + n + (n > 1 ? ' itens' : ' item')) : 'Nada para limpar');
 }
 
+// ─── MOTOR DE MOVIMENTO (compartilhado) ─────────────────────────────────
+// O mesmo código roda na prévia e vai no arquivo baixado. Antes o motor só
+// existia no download: a tela do editor ficava parada e parecia que a cópia
+// tinha perdido as animações e o giro do carrossel.
+const REVEAL_SEL = '[data-aos],.aos-init,.elementor-invisible,.wow,'
+  + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded';
+
+function cssMovimento(ligado) {
+  // Base: nada some e carrossel empilhado não estoura a altura
+  let css = 'html,body{opacity:1!important;visibility:visible!important;display:block}'
+    + '.swiper,.swiper-container,.slick-slider,.flickity-enabled,[class*="slider"],[class*="carousel"]'
+    + '{overflow:hidden!important;max-height:none!important}'
+    + '.swiper-wrapper,.slick-track{display:block!important;transform:none!important;width:auto!important}'
+    + '.swiper-slide,.slick-slide{width:auto!important;float:none!important;margin:0 auto!important}'
+    + '.product__media-list>*:not(:first-child){display:none!important}'
+    + '#preloader,.preloader,#loader,.loader,.loading-overlay,.page-loader,.page-loading,'
+    + '.site-loader,.spinner,.spinner-overlay,.lds-ring,.lds-spinner,.lds-dual-ring,'
+    + '.sk-spinner,.pace,.pace-progress,.skeleton,.skeleton-loader,.shimmer,'
+    + '.swiper-slide-duplicate,.slick-cloned{display:none!important}'
+    + '.blur-up,.lazyload,.lazy-loading{filter:none!important}';
+
+  if (ligado) {
+    // Visível por padrão (sem !important). O estado escondido só existe depois
+    // que o motor marca <html class="ss-motion">: se o JS falhar, a página
+    // abre normal em vez de em branco.
+    css += REVEAL_SEL + '{opacity:1;visibility:visible;transform:none;animation:none}'
+      + '.ss-motion [data-aos],.ss-motion .wow,.ss-motion .elementor-invisible,'
+      + '.ss-motion [data-animation],.ss-motion .animated,.ss-motion .fade-in,.ss-motion .reveal'
+      + '{opacity:0;transform:translateY(24px);'
+      + 'transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}'
+      + '.ss-motion .ss-in{opacity:1!important;transform:none!important}';
+  } else {
+    css += REVEAL_SEL + ',.aos-animate'
+      + '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
+      + '.swiper-slide:not(:first-child),.slick-slide:not(:first-child),'
+      + '.flickity-slider>*:not(:first-child){display:none!important}';
+  }
+  return css;
+}
+
+const MOTION_JS = '(function(){'
+  + 'var d=document,r=d.documentElement;'
+  + 'r.className+=" ss-motion";'
+  + 'function reveal(){'
+    + 'var els=d.querySelectorAll("[data-aos],.wow,.elementor-invisible,[data-animation],.animated,.fade-in,.reveal"),i;'
+    + 'function all(){for(i=0;i<els.length;i++)els[i].classList.add("ss-in")}'
+    + 'if(!("IntersectionObserver" in window)){all();return}'
+    + 'var io=new IntersectionObserver(function(es){es.forEach(function(e){'
+      + 'if(e.isIntersecting){e.target.classList.add("ss-in");io.unobserve(e.target)}'
+    + '})},{rootMargin:"0px 0px -8% 0px",threshold:.05});'
+    + 'for(i=0;i<els.length;i++)io.observe(els[i]);'
+    + 'setTimeout(all,4000);'
+  + '}'
+  + 'function carousels(){'
+    + 'var cs=d.querySelectorAll(".swiper-wrapper,.slick-track,.flickity-slider,.carousel-inner");'
+    + 'for(var i=0;i<cs.length;i++)(function(w){'
+      + 'var s=[].slice.call(w.children).filter(function(n){return n.nodeType===1});'
+      + 'if(s.length<2)return;'
+      + 'var k=0;'
+      + 's.forEach(function(n,j){n.style.transition="opacity .6s ease";'
+        + 'n.style.display=j?"none":"";n.style.opacity=j?"0":"1"});'
+      + 'setInterval(function(){'
+        // No editor: não troca de slide enquanto você tem algo selecionado,
+        // senão o elemento foge debaixo do cursor. No arquivo baixado esse
+        // marcador não existe, então gira sempre.
+        + 'if(d.querySelector("[data-ve-sel]")||r.classList.contains("ss-parado"))return;'
+        + 'var p=s[k];k=(k+1)%s.length;var n=s[k];'
+        + 'n.style.display="";n.style.opacity="0";'
+        + 'requestAnimationFrame(function(){n.style.opacity="1";p.style.opacity="0"});'
+        + 'setTimeout(function(){p.style.display="none"},600)'
+      + '},4500)'
+    + '})(cs[i])'
+  + '}'
+  + 'function go(){try{reveal()}catch(e){}try{carousels()}catch(e){}}'
+  + 'if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",go);else go()'
++ '})();';
+
+// Liga/desliga o movimento na prévia sem recarregar — recarregar apagaria
+// tudo que você já editou.
+function alternarAnimacoes() {
+  const fr = document.getElementById('fr');
+  const doc = fr && (fr.contentDocument || (fr.contentWindow && fr.contentWindow.document));
+  if (!doc || !doc.documentElement) return;
+
+  const raiz = doc.documentElement;
+  const ligado = animacoesLigadas();
+
+  if (ligado) {
+    raiz.classList.remove('ss-parado');
+    const congela = doc.querySelector('style[data-ss-congela]');
+    if (congela) congela.remove();
+
+    // Se a página abriu sem o motor, coloca agora
+    if (!doc.querySelector('script[data-ss-motion]')) {
+      const s = doc.createElement('script');
+      s.setAttribute('data-ss-motion', '');
+      s.textContent = MOTION_JS;
+      (doc.head || raiz).appendChild(s);
+    } else {
+      raiz.classList.add('ss-motion');
+    }
+    toast('Animações ligadas');
+  } else {
+    raiz.classList.add('ss-parado');
+    raiz.classList.remove('ss-motion');
+    if (!doc.querySelector('style[data-ss-congela]')) {
+      const st = doc.createElement('style');
+      st.setAttribute('data-ss-congela', '');
+      st.textContent = CSS_CONGELA;
+      (doc.head || raiz).appendChild(st);
+    }
+    toast('Animações desligadas');
+  }
+}
+
+function animacoesLigadas() {
+  const cb = document.getElementById('ss-motion');
+  return cb ? cb.checked : true;
+}
+
 const VE_CODE = '(function(){'
   + 'var SK={html:1,head:1,script:1,style:1,meta:1,link:1,title:1,noscript:1,iframe:1,base:1};'
   + 'var n=0;'
@@ -1069,7 +1193,14 @@ const NAV_BLOCK = '(function(){'
   + '})();';
 
 function inject(html) {
-  const inj = VE_STYLE + mkScript(NAV_BLOCK) + mkScript(VE_CODE);
+  const ligado = animacoesLigadas();
+
+  // Mesmo motor do download: o que você vê na prévia é o que sai no arquivo
+  let movimento = '<style data-ss-motion>' + cssMovimento(ligado) + '</style>';
+  if (ligado) movimento += '<script data-ss-motion>' + MOTION_JS + '<\/script>';
+  else movimento = '<style data-ss-congela>' + CSS_CONGELA + '</style>' + movimento;
+
+  const inj = VE_STYLE + movimento + mkScript(NAV_BLOCK) + mkScript(VE_CODE);
   if (/<\/head>/i.test(html)) return html.replace(/<\/head>/i, inj + '</head>');
   if (/<body[\s>]/i.test(html)) return html.replace(/<body([^>]*)>/i, '<body$1>' + inj);
   return inj + html;
@@ -1342,6 +1473,16 @@ function dlHTML() {
   h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?MutationObserver[\s\S]*?\}\)\(\);<\/script>/gi, '');
   h = h.replace(/<script[^>]*>\(function\(\)\{[\s\S]*?nav bloqueada[\s\S]*?\}\)\(\);<\/script>/gi, '');
 
+  // O motor de movimento da prévia também está aqui dentro. Ele sai agora e é
+  // reposto logo abaixo — senão o arquivo levaria duas cópias girando juntas.
+  h = h.replace(/<style[^>]*data-ss-(?:motion|congela)[^>]*>[\s\S]*?<\/style>/gi, '');
+  h = h.replace(/<script[^>]*data-ss-motion[^>]*>[\s\S]*?<\/script>/gi, '');
+  // A marca que o motor deixou no <html>: sem ela o modo estático abriria
+  // com tudo invisível, porque o "escondido" continuaria valendo.
+  h = h.replace(/(<html[^>]*\sclass=("|'))([^"']*)\2/i, function (t, ini, q, cls) {
+    return ini + cls.replace(/\bss-motion\b/g, '').trim() + q;
+  });
+
   // Remove scripts da página original — fora do site eles quebram (CORS/file://)
   // e muitos temas (WordPress/Elementor/React) apagam ou escondem o conteúdo
   // quando o JS falha.
@@ -1368,79 +1509,11 @@ function dlHTML() {
     ? document.getElementById('ss-motion').checked
     : true;
 
-  const REVEAL_SEL = '[data-aos],.aos-init,.elementor-invisible,.wow,'
-    + '[data-animation],.animated,.fade-in,.lazyload,.lazyloaded';
-
-  // Base: garante que nada fique escondido e contém carrosséis empilhados
-  let css = 'html,body{opacity:1!important;visibility:visible!important;display:block}'
-    + '.swiper,.swiper-container,.slick-slider,.flickity-enabled,[class*="slider"],[class*="carousel"]'
-    + '{overflow:hidden!important;max-height:none!important}'
-    + '.swiper-wrapper,.slick-track{display:block!important;transform:none!important;width:auto!important}'
-    + '.swiper-slide,.slick-slide{width:auto!important;float:none!important;margin:0 auto!important}'
-    + '.product__media-list>*:not(:first-child){display:none!important}'
-    // Rede de segurança: tela de carregando não volta no arquivo baixado
-    + '#preloader,.preloader,#loader,.loader,.loading-overlay,.page-loader,.page-loading,'
-    + '.site-loader,.spinner,.spinner-overlay,.lds-ring,.lds-spinner,.lds-dual-ring,'
-    + '.sk-spinner,.pace,.pace-progress,.skeleton,.skeleton-loader,.shimmer,'
-    + '.swiper-slide-duplicate,.slick-cloned{display:none!important}'
-    // Só o desfoque de placeholder sai — efeito de design fica intacto
-    + '.blur-up,.lazyload,.lazy-loading{filter:none!important}';
-
-  if (motionOn) {
-    // Visível por padrão (sem !important, para o estado inicial poder sobrepor).
-    // O estado "escondido" só existe quando o motor roda e marca <html class="ss-motion">,
-    // então se o JS não executar a página abre normal em vez de em branco.
-    css += REVEAL_SEL + '{opacity:1;visibility:visible;transform:none;animation:none}'
-      + '.ss-motion [data-aos],.ss-motion .wow,.ss-motion .elementor-invisible,'
-      + '.ss-motion [data-animation],.ss-motion .animated,.ss-motion .fade-in,.ss-motion .reveal'
-      + '{opacity:0;transform:translateY(24px);'
-      + 'transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}'
-      + '.ss-motion .ss-in{opacity:1!important;transform:none!important}';
-  } else {
-    // Modo estático: congela tudo e deixa só o primeiro slide de cada carrossel
-    css += REVEAL_SEL + ',.aos-animate'
-      + '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important}'
-      + '.swiper-slide:not(:first-child),.slick-slide:not(:first-child),'
-      + '.flickity-slider>*:not(:first-child){display:none!important}';
-  }
-
-  let inject = '<style data-ss-motion>' + css + '</style>';
-
-  if (motionOn) {
-    const MOTION_JS = '(function(){'
-      + 'var d=document,r=d.documentElement;'
-      + 'r.className+=" ss-motion";'
-      + 'function reveal(){'
-        + 'var els=d.querySelectorAll("[data-aos],.wow,.elementor-invisible,[data-animation],.animated,.fade-in,.reveal"),i;'
-        + 'function all(){for(i=0;i<els.length;i++)els[i].classList.add("ss-in")}'
-        + 'if(!("IntersectionObserver" in window)){all();return}'
-        + 'var io=new IntersectionObserver(function(es){es.forEach(function(e){'
-          + 'if(e.isIntersecting){e.target.classList.add("ss-in");io.unobserve(e.target)}'
-        + '})},{rootMargin:"0px 0px -8% 0px",threshold:.05});'
-        + 'for(i=0;i<els.length;i++)io.observe(els[i]);'
-        + 'setTimeout(all,4000);'  // rede de segurança: nada fica invisível
-      + '}'
-      + 'function carousels(){'
-        + 'var cs=d.querySelectorAll(".swiper-wrapper,.slick-track,.flickity-slider,.carousel-inner");'
-        + 'for(var i=0;i<cs.length;i++)(function(w){'
-          + 'var s=[].slice.call(w.children).filter(function(n){return n.nodeType===1});'
-          + 'if(s.length<2)return;'
-          + 'var k=0;'
-          + 's.forEach(function(n,j){n.style.transition="opacity .6s ease";'
-            + 'n.style.display=j?"none":"";n.style.opacity=j?"0":"1"});'
-          + 'setInterval(function(){'
-            + 'var p=s[k];k=(k+1)%s.length;var n=s[k];'
-            + 'n.style.display="";n.style.opacity="0";'
-            + 'requestAnimationFrame(function(){n.style.opacity="1";p.style.opacity="0"});'
-            + 'setTimeout(function(){p.style.display="none"},600)'
-          + '},4500)'
-        + '})(cs[i])'
-      + '}'
-      + 'function go(){try{reveal()}catch(e){}try{carousels()}catch(e){}}'
-      + 'if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",go);else go()'
-      + '})();';
-    inject += '<script data-ss-motion>' + MOTION_JS + '<\/script>';
-  }
+  // Usa o mesmo motor da prévia — assim o arquivo sai igual ao que você viu.
+  // Antes havia uma cópia separada aqui, e as duas iam saindo de sincronia.
+  let inject = '<style data-ss-motion>' + cssMovimento(motionOn) + '</style>';
+  if (motionOn) inject += '<script data-ss-motion>' + MOTION_JS + '<\/script>';
+  else inject = '<style data-ss-congela>' + CSS_CONGELA + '</style>' + inject;
 
   h = /<\/head>/i.test(h) ? h.replace(/<\/head>/i, inject + '</head>') : inject + h;
 
