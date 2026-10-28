@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X, Download } from "lucide-react";
-import Image from "next/image";
+import { HunterLogo } from "./hunter-logo";
 
 const links = [
   { label: "Início", href: "#hero" },
@@ -28,47 +28,37 @@ export function Navbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-white/[0.07] bg-[#0a0a14]/95 shadow-[0_4px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl"
-          : "border-b border-transparent bg-[#0a0a14]/60 backdrop-blur-md"
+          ? "border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-xl"
+          : "border-b border-transparent bg-white/80 backdrop-blur-md"
       }`}
     >
-      {/* Linha de glow superior que aparece ao scrollar */}
-      <div
-        className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent transition-opacity duration-500 ${
-          scrolled ? "opacity-100" : "opacity-0"
-        }`}
-      />
-
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         {/* Logo */}
         <a
           href="#hero"
-          className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a14] rounded-lg"
+          className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30 focus-visible:ring-offset-2 rounded-lg"
           aria-label="Hunter X — página inicial"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 transition group-hover:border-violet-500/60 group-hover:bg-violet-500/20 overflow-hidden">
-            <Image src="/logo.png" alt="Hunter X" width={36} height={36} className="object-contain" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-gray-900 transition group-hover:border-gray-300 group-hover:bg-gray-100">
+            <HunterLogo size={28} />
           </div>
-          <span className="font-display text-[20px] font-black tracking-tight text-white">
-            Hunter <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">X</span>
+          <span className="font-display text-[20px] font-black tracking-tight text-gray-900">
+            Hunter <span className="text-indigo-600">X</span>
           </span>
         </a>
 
-        {/* Links centrais — desktop · pílula segmentada */}
+        {/* Links centrais — desktop */}
         <ul
-          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.02] px-1.5 py-1 backdrop-blur-md md:flex"
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-1.5 py-1 md:flex"
           role="list"
         >
           {links.map((l) => (
             <li key={l.label}>
               <a
                 href={l.href}
-                className="group/link relative block rounded-full px-4 py-1.5 font-mono text-[12px] font-medium text-zinc-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70"
+                className="group/link relative block rounded-full px-4 py-1.5 font-mono text-[12px] font-medium text-gray-500 transition-colors duration-200 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30"
               >
-                {/* fundo hover */}
-                <span className="absolute inset-0 scale-90 rounded-full bg-violet-500/10 opacity-0 transition-all duration-200 group-hover/link:scale-100 group-hover/link:opacity-100" />
-                {/* underline reveal */}
-                <span className="absolute bottom-0.5 left-1/2 h-px w-0 -translate-x-1/2 bg-gradient-to-r from-violet-400 to-cyan-400 transition-all duration-300 group-hover/link:w-1/2" />
+                <span className="absolute inset-0 scale-90 rounded-full bg-gray-200/60 opacity-0 transition-all duration-200 group-hover/link:scale-100 group-hover/link:opacity-100" />
                 <span className="relative">{l.label}</span>
               </a>
             </li>
@@ -79,30 +69,29 @@ export function Navbar() {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href="/download"
-            className="group/dl flex items-center gap-1.5 rounded-lg border border-white/[0.07] px-3.5 py-2 font-mono text-[12px] font-medium text-zinc-300 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.04] hover:text-white"
+            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3.5 py-2 font-mono text-[12px] font-medium text-gray-600 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
           >
-            <Download className="h-3.5 w-3.5 transition-transform duration-200 group-hover/dl:translate-y-0.5" />
+            <Download className="h-3.5 w-3.5" />
             Download
           </a>
           <a
             href="/download"
-            className="group/cta relative overflow-hidden rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-2 font-mono text-[12px] font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all duration-300 hover:shadow-[0_0_32px_rgba(139,92,246,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a14]"
+            className="relative overflow-hidden rounded-lg bg-gray-900 px-5 py-2 font-mono text-[12px] font-bold text-white transition-all duration-300 hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover/cta:translate-x-full" />
-            <span className="relative flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70 opacity-75" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
               </span>
               Acesso exclusivo
-              <span className="transition-transform duration-200 group-hover/cta:translate-x-0.5">→</span>
+              <span>→</span>
             </span>
           </a>
         </div>
 
         {/* Hamburger — mobile */}
         <button
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.03] text-zinc-400 transition hover:border-violet-500/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70 md:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-gray-600 transition hover:border-gray-300 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30 md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
@@ -114,7 +103,7 @@ export function Navbar() {
       {/* Menu mobile */}
       <div
         className={`overflow-hidden transition-all duration-300 md:hidden ${
-          open ? "max-h-64 border-t border-white/[0.06]" : "max-h-0"
+          open ? "max-h-64 border-t border-gray-100" : "max-h-0"
         }`}
         aria-hidden={!open}
       >
@@ -124,7 +113,7 @@ export function Navbar() {
               <a
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="block rounded-md px-3 py-2.5 font-mono text-sm text-zinc-300 transition hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70"
+                className="block rounded-md px-3 py-2.5 font-mono text-sm text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30"
               >
                 {l.label}
               </a>
@@ -134,7 +123,7 @@ export function Navbar() {
             <a
               href="/download"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-md px-3 py-2.5 font-mono text-sm text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
+              className="flex items-center gap-2 rounded-md px-3 py-2.5 font-mono text-sm text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
             >
               <Download className="h-3.5 w-3.5" /> Download
             </a>
@@ -143,7 +132,7 @@ export function Navbar() {
             <a
               href="/download"
               onClick={() => setOpen(false)}
-              className="block rounded-lg bg-violet-600 px-4 py-2.5 text-center font-mono text-sm font-bold text-white shadow-[0_0_16px_rgba(139,92,246,0.35)] transition hover:bg-violet-500"
+              className="block rounded-lg bg-gray-900 px-4 py-2.5 text-center font-mono text-sm font-bold text-white transition hover:bg-gray-800"
             >
               Acesso exclusivo →
             </a>

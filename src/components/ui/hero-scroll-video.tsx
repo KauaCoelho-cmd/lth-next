@@ -59,87 +59,16 @@ export function HeroScrollVideo() {
   }, []);
 
   return (
-    <section id="hero" className="relative w-full min-h-screen flex items-center justify-center bg-[#080810] overflow-hidden">
+    <section id="hero" className="relative w-full min-h-screen flex items-center justify-center bg-white overflow-hidden">
 
-      {/* EFEITO DE AÇÃO — igual ao vídeo */}
+      {/* EFEITO DE FUNDO — clean white com toque sutil */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-
-        {/* chão roxo base */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 130% 80% at 50% 110%, rgba(110,30,230,0.5) 0%, transparent 60%)" }} />
-
-        {/* metade esquerda — roxo */}
-        <div className="absolute inset-y-0 left-0 w-1/2"
-          style={{ background: "linear-gradient(90deg, rgba(124,58,237,0.45) 0%, rgba(124,58,237,0.15) 70%, transparent 100%)", filter: "blur(30px)", animation: "lightPulse 4s ease-in-out infinite" }} />
-
-        {/* metade direita — ciano */}
-        <div className="absolute inset-y-0 right-0 w-1/2"
-          style={{ background: "linear-gradient(270deg, rgba(34,211,238,0.4) 0%, rgba(34,211,238,0.12) 70%, transparent 100%)", filter: "blur(30px)", animation: "lightPulse 4s ease-in-out infinite 2s" }} />
-
-        {/* god ray central vertical — explodindo do chão */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[180px] h-full"
-          style={{ background: "linear-gradient(to top, rgba(180,80,255,0.8) 0%, rgba(140,50,255,0.4) 25%, rgba(120,40,220,0.15) 55%, transparent 80%)", filter: "blur(25px)", animation: "rayBurst 3s ease-in-out infinite" }} />
-
-        {/* god ray diagonal esquerdo */}
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px]"
-          style={{ background: "linear-gradient(45deg, rgba(140,50,255,0.5) 0%, transparent 60%)", filter: "blur(40px)", transformOrigin: "bottom left", animation: "diagLeft 5s ease-in-out infinite" }} />
-
-        {/* god ray diagonal direito */}
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px]"
-          style={{ background: "linear-gradient(135deg, transparent 40%, rgba(34,211,238,0.35) 100%)", filter: "blur(40px)", transformOrigin: "bottom right", animation: "diagRight 5s ease-in-out infinite 1.5s" }} />
-
-        {/* flash de energia — pulso rápido do centro */}
-        <div className="absolute inset-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(160,60,255,0.3) 0%, transparent 70%)", filter: "blur(30px)", animation: "energyFlash 4s ease-in-out infinite 0.5s" }} />
-
-        {/* partículas — moedas roxas flutuando */}
-        {[
-          { left: "15%", delay: "0s",   size: 6,  dur: "5s" },
-          { left: "28%", delay: "1.2s", size: 4,  dur: "7s" },
-          { left: "42%", delay: "0.5s", size: 8,  dur: "6s" },
-          { left: "58%", delay: "2s",   size: 5,  dur: "5.5s" },
-          { left: "72%", delay: "0.8s", size: 7,  dur: "6.5s" },
-          { left: "85%", delay: "1.5s", size: 4,  dur: "7.5s" },
-          { left: "8%",  delay: "3s",   size: 5,  dur: "8s" },
-          { left: "91%", delay: "2.5s", size: 6,  dur: "6s" },
-        ].map((p, i) => (
-          <div key={i} className="absolute bottom-0 rounded-full"
-            style={{
-              left: p.left,
-              width: p.size, height: p.size,
-              background: i % 2 === 0 ? "rgba(180,80,255,0.9)" : "rgba(34,211,238,0.9)",
-              boxShadow: i % 2 === 0 ? `0 0 ${p.size*3}px rgba(160,50,255,0.8)` : `0 0 ${p.size*3}px rgba(34,211,238,0.8)`,
-              animation: `floatUp ${p.dur} ease-in infinite ${p.delay}`,
-            }}
-          />
-        ))}
-
-        {/* vinheta escura nas bordas extremas */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 90% 90% at 50% 50%, transparent 55%, rgba(4,4,12,0.8) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(99,102,241,0.06) 0%, transparent 60%)" }} />
+        <div className="absolute left-0 inset-y-0 w-1/3" style={{ background: "radial-gradient(ellipse at left center, rgba(99,102,241,0.04) 0%, transparent 70%)" }} />
+        <div className="absolute right-0 inset-y-0 w-1/3" style={{ background: "radial-gradient(ellipse at right center, rgba(34,211,238,0.04) 0%, transparent 70%)" }} />
       </div>
 
       <style>{`
-@keyframes rayBurst {
-          0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleX(1); }
-          50%       { opacity: 1;   transform: translateX(-50%) scaleX(1.5); }
-        }
-        @keyframes diagLeft {
-          0%, 100% { opacity: 0.5; transform: rotate(0deg); }
-          50%       { opacity: 1;   transform: rotate(8deg); }
-        }
-        @keyframes diagRight {
-          0%, 100% { opacity: 0.4; transform: rotate(0deg); }
-          50%       { opacity: 0.9; transform: rotate(-8deg); }
-        }
-        @keyframes energyFlash {
-          0%, 100% { opacity: 0.2; transform: translate(-50%,-50%) scale(0.8); }
-          50%       { opacity: 0.8; transform: translate(-50%,-50%) scale(1.3); }
-        }
-        @keyframes floatUp {
-          0%   { transform: translateY(0); opacity: 0; }
-          10%  { opacity: 1; }
-          80%  { opacity: 0.8; }
-          100% { transform: translateY(-100vh); opacity: 0; }
-        }
         @keyframes lightPulse {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0.5; }

@@ -2,31 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Fundo global mobile — efeito roxo/ciano */
-@media (max-width: 768px) {
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 140% 60% at 50% 100%, rgba(110,30,230,0.4) 0%, transparent 60%),
-      radial-gradient(ellipse 80% 50% at 10% 50%, rgba(124,58,237,0.25) 0%, transparent 65%),
-      radial-gradient(ellipse 80% 50% at 90% 50%, rgba(34,211,238,0.2) 0%, transparent 65%),
-      linear-gradient(to top, rgba(100,20,200,0.3) 0%, transparent 40%);
-    animation: mobileBgPulse 5s ease-in-out infinite;
-  }
-
-  body > * {
-    position: relative;
-    z-index: 1;
-  }
-}
-
-@keyframes mobileBgPulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
+/* Fundo global — clean white */
+body {
+  background: #ffffff;
 }
 
 /* Flutuação dos cards mobile */
