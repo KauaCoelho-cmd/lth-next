@@ -1,15 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, JetBrains_Mono, Manrope } from "next/font/google";
+import { JetBrains_Mono, Manrope } from "next/font/google";
 import Script from "next/script";
-import { ParticleBg } from "@/components/ui/particle-bg";
 import "./globals.css";
-
-// Display / headlines — geometric, modern, slight tech feel
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 // Body — clean, optimized for reading, very professional
 const manrope = Manrope({
@@ -96,10 +88,9 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${spaceGrotesk.variable} ${manrope.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
+      className={`${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0a0a14] text-slate-100 font-sans">
-        <ParticleBg />
+      <body className="min-h-full flex flex-col bg-[#fbf7ef] text-[#2b2418] font-sans">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-JQCKWHSXVR"
           strategy="afterInteractive"

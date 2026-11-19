@@ -204,7 +204,7 @@ function ManualLogin({ onSuccess, onRevoked }: { onSuccess: (email: string, expi
         {/* Logo + badge */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <img src="/sitescope-logo.png" alt="SiteScope" style={{ width: 120, height: 120, objectFit: "contain", mixBlendMode: "multiply", display: "block", margin: "0 auto 10px" }} />
-          <h1 style={{ margin: "0 0 6px", fontSize: 44, fontWeight: 500, color: "#2b2418", fontFamily: "Cormorant Garamond, Georgia, serif",  }}>SiteScope</h1>
+          <h1 style={{ margin: "0 0 6px", fontSize: 44, fontWeight: 500, color: "#2b2418",  }}>SiteScope</h1>
           <p style={{ margin: 0, fontSize: 12, color: "rgba(184,146,74,0.7)", letterSpacing: "0.2em", textTransform: "uppercase" as const, fontWeight: 700 }}>Editor Visual · Hunter X</p>
         </div>
 

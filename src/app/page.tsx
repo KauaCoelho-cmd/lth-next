@@ -36,14 +36,14 @@ export default function Home() {
 
       <section id="como-funciona" className="py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-5">
-          <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: gold }}>Como funciona</p>
+          <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Como funciona</p>
           <h2 className="max-w-2xl leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.4rem)" }}>
             Três passos entre a página perdida e o site no ar.
           </h2>
           <div className="mt-14 grid gap-5 md:grid-cols-3">
             {steps.map((s) => (
               <div key={s.n} className="rounded-2xl border p-8 transition hover:-translate-y-0.5" style={{ borderColor: "#e2d4b8", background: "#fffdf8" }}>
-                <span className="text-3xl" style={{ fontFamily: "Cormorant Garamond, Georgia, serif", color: gold }}>{s.n}</span>
+                <span className="text-3xl" style={{ color: gold }}>{s.n}</span>
                 <h3 className="mt-6 text-2xl">{s.t}</h3>
                 <p className="mt-3 text-[15px] leading-relaxed" style={{ color: muted }}>{s.d}</p>
               </div>
@@ -58,7 +58,7 @@ export default function Home() {
             <img src="/fases-angel.jpg" alt="Corredor de portas douradas, uma delas aberta" className="block h-full w-full object-cover transition duration-700 hover:scale-[1.03]" />
           </div>
           <div>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: gold }}>Quando usar</p>
+            <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Quando usar</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
               Feito para quem ficou sem a chave do próprio site.
             </h2>
@@ -77,7 +77,7 @@ export default function Home() {
       <section id="sitescope" className="py-24 md:py-32">
         <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-2">
           <div>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: gold }}>O editor</p>
+            <p className="mb-4 text-sm font-medium" style={{ color: gold }}>O editor</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
               Recuperou? Agora deixe a página do seu jeito.
             </h2>
@@ -102,12 +102,12 @@ export default function Home() {
               <span className="h-2.5 w-2.5 rounded-full bg-[#e0a99a]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#e8d08f]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#a9c79a]" />
-              <span className="ml-3 rounded-md border bg-white px-3 py-1 font-mono text-[11px]" style={{ borderColor: "#e2d4b8", color: muted }}>meusite.com.br · recuperado</span>
+              <span className="ml-3 rounded-md border bg-white px-3 py-1 text-[11px]" style={{ borderColor: "#e2d4b8", color: muted }}>meusite.com.br · recuperado</span>
             </div>
             <div className="space-y-4 p-8">
-              <span className="inline-block rounded px-2 py-0.5 font-mono text-[10px] font-bold text-white" style={{ background: "#b8924a" }}>editando texto</span>
+              <span className="inline-block rounded px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: "#b8924a" }}>editando texto</span>
               <div className="rounded-md px-3 py-2" style={{ background: "#faf3e3", outline: "2px solid #d8bf86" }}>
-                <span className="text-2xl" style={{ fontFamily: "Cormorant Garamond, Georgia, serif" }}>Doces artesanais desde 1998</span>
+                <span className="text-2xl" >Doces artesanais desde 1998</span>
               </div>
               <div className="h-2 w-3/4 rounded-full" style={{ background: "#ece1cb" }} />
               <div className="h-2 w-1/2 rounded-full" style={{ background: "#ece1cb" }} />
@@ -126,7 +126,7 @@ export default function Home() {
       <section id="lista" className="border-t py-24 md:py-32" style={{ borderColor: "#ece1cb", background: "#f3ebdc" }}>
         <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-2">
           <div>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: gold }}>Acesso</p>
+            <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Acesso</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
               Receba sua chave do SiteScope por email.
             </h2>

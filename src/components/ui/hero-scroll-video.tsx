@@ -10,11 +10,11 @@ export function HeroScrollVideo() {
       <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(247,241,230,0.97) 0%, rgba(247,241,230,0.85) 40%, rgba(247,241,230,0) 72%)" }} />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-20">
-        <div className="max-w-xl" style={{ animation: "heroIn 0.9s cubic-bezier(0.16,1,0.3,1) both" }}>
-          <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: "#9a7b3f" }}>
+        <div className="max-w-2xl" style={{ animation: "heroIn 0.9s cubic-bezier(0.16,1,0.3,1) both" }}>
+          <p className="mb-5 text-sm font-medium" style={{ color: "#9a7b3f" }}>
             SiteScope · Recuperação de sites
           </p>
-          <h1 className="leading-[1.02] tracking-tight" style={{ color: "#2b2418", fontSize: "clamp(2.6rem,6vw,4.8rem)" }}>
+          <h1 className="leading-[1.02] tracking-tight" style={{ color: "#2b2418", fontSize: "clamp(2.4rem,5.4vw,4.4rem)" }}>
             Seu site saiu do ar? Recupere a página em minutos.
           </h1>
           <p className="mt-6 max-w-md text-[17px] leading-relaxed" style={{ color: "#6b5d45" }}>

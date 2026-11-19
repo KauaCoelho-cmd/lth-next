@@ -56,7 +56,7 @@ export function Navbar() {
             <li key={l.label}>
               <a
                 href={l.href}
-                className="group/link relative block rounded-full px-4 py-1.5 font-mono text-[12px] font-medium text-[#7a6a4f] transition-colors duration-200 hover:text-[#2b2418] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30"
+                className="group/link relative block rounded-full px-4 py-1.5 text-[12px] font-medium text-[#7a6a4f] transition-colors duration-200 hover:text-[#2b2418] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30"
               >
                 <span className="absolute inset-0 scale-90 rounded-full bg-gray-200/60 opacity-0 transition-all duration-200 group-hover/link:scale-100 group-hover/link:opacity-100" />
                 <span className="relative">{l.label}</span>
@@ -69,13 +69,13 @@ export function Navbar() {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href="/sitescope"
-            className="flex items-center gap-1.5 rounded-lg border border-[#e2d4b8] px-3.5 py-2 font-mono text-[12px] font-medium text-[#5e5139] transition-all duration-200 hover:border-[#d3c09c] hover:bg-[#f3ebdc] hover:text-[#2b2418]"
+            className="flex items-center gap-1.5 rounded-lg border border-[#e2d4b8] px-3.5 py-2 text-[12px] font-medium text-[#5e5139] transition-all duration-200 hover:border-[#d3c09c] hover:bg-[#f3ebdc] hover:text-[#2b2418]"
           >
             Entrar
           </a>
           <a
             href="#lista"
-            className="relative overflow-hidden rounded-lg bg-[#2b2418] px-5 py-2 font-mono text-[12px] font-bold text-white transition-all duration-300 hover:bg-[#3d3322] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+            className="relative overflow-hidden rounded-lg bg-[#2b2418] px-5 py-2 text-[12px] font-bold text-white transition-all duration-300 hover:bg-[#3d3322] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
           >
             <span className="flex items-center gap-1.5">
               <span className="relative flex h-1.5 w-1.5">
@@ -112,7 +112,7 @@ export function Navbar() {
               <a
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="block rounded-md px-3 py-2.5 font-mono text-sm text-[#5e5139] transition hover:bg-[#ede2cd] hover:text-[#2b2418] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30"
+                className="block rounded-md px-3 py-2.5 text-sm text-[#5e5139] transition hover:bg-[#ede2cd] hover:text-[#2b2418] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30"
               >
                 {l.label}
               </a>
@@ -122,7 +122,7 @@ export function Navbar() {
             <a
               href="/sitescope"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-md px-3 py-2.5 font-mono text-sm text-[#5e5139] transition hover:bg-[#ede2cd] hover:text-[#2b2418]"
+              className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-[#5e5139] transition hover:bg-[#ede2cd] hover:text-[#2b2418]"
             >
               Entrar
             </a>
@@ -131,7 +131,7 @@ export function Navbar() {
             <a
               href="/sitescope"
               onClick={() => setOpen(false)}
-              className="block rounded-lg bg-[#2b2418] px-4 py-2.5 text-center font-mono text-sm font-bold text-white transition hover:bg-[#3d3322]"
+              className="block rounded-lg bg-[#2b2418] px-4 py-2.5 text-center text-sm font-bold text-white transition hover:bg-[#3d3322]"
             >
               Recuperar meu site →
             </a>

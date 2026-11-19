@@ -40,7 +40,7 @@ export function WaitlistForm() {
   if (submitted) {
     const selected = COUNTRIES.find(c => c.code === country);
     return (
-      <div className="flex flex-col items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-6 py-4 font-mono text-sm font-bold text-green-400">
+      <div className="flex flex-col items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-6 py-4 text-sm font-bold text-green-400">
         <span>✓ Você está na lista!</span>
         <span className="text-xs font-normal text-[#7a6a4f]">País registrado: {selected?.flag} {selected?.name}</span>
       </div>
@@ -56,7 +56,7 @@ export function WaitlistForm() {
         name="email"
         required
         placeholder="seu@email.com"
-        className="w-full rounded-xl border border-[#e2d4b8] bg-[#fbf7ef] px-4 py-3 font-mono text-sm text-[#2b2418] placeholder-[#b8a888] outline-none transition focus:border-[#b8924a]/50  focus:ring-1 focus:ring-[#b8924a]/30"
+        className="w-full rounded-xl border border-[#e2d4b8] bg-[#fbf7ef] px-4 py-3 text-sm text-[#2b2418] placeholder-[#b8a888] outline-none transition focus:border-[#b8924a]/50  focus:ring-1 focus:ring-[#b8924a]/30"
       />
 
       {/* País */}
@@ -64,7 +64,7 @@ export function WaitlistForm() {
         <select
           value={country}
           onChange={e => setCountry(e.target.value)}
-          className="w-full appearance-none rounded-xl border border-[#e2d4b8] bg-[#fbf7ef] px-4 py-3 font-mono text-sm text-[#2b2418] outline-none transition focus:border-[#b8924a]/50 focus:ring-1 focus:ring-[#b8924a]/30 cursor-pointer"
+          className="w-full appearance-none rounded-xl border border-[#e2d4b8] bg-[#fbf7ef] px-4 py-3 text-sm text-[#2b2418] outline-none transition focus:border-[#b8924a]/50 focus:ring-1 focus:ring-[#b8924a]/30 cursor-pointer"
           style={{ background: "rgba(255,255,255,0.1)" }}
         >
           {COUNTRIES.map(c => (
@@ -79,7 +79,7 @@ export function WaitlistForm() {
       {/* Botão */}
       <button
         type="submit"
-        className="w-full rounded-xl bg-gradient-to-r from-[#2b2418] to-[#3d3322] px-6 py-3 font-mono text-sm font-bold text-white shadow-[0_0_20px_rgba(184,146,74,0.3)] transition hover:opacity-90 hover:-translate-y-0.5"
+        className="w-full rounded-xl bg-gradient-to-r from-[#2b2418] to-[#3d3322] px-6 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(184,146,74,0.3)] transition hover:opacity-90 hover:-translate-y-0.5"
       >
         Entrar na lista →
       </button>
