@@ -144,7 +144,7 @@ export default function Home() {
       <footer className="border-t" style={{ borderColor: "#ece1cb" }}>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 py-10 md:flex-row">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="" className="h-8 w-8 object-contain mix-blend-multiply" />
+            <img src="/logo.png" alt="" className="h-8 w-8 object-contain" />
             <span className="text-sm" style={{ color: muted }}>© 2026 Hunter X</span>
           </div>
           <nav className="flex flex-wrap gap-6 text-sm" style={{ color: muted }}>

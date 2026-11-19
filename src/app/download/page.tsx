@@ -156,7 +156,7 @@ export default function DownloadPage() {
               <div className="relative">
                 <div className="absolute inset-0 rounded-2xl bg-amber-500/20 blur-xl" />
                 <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-amber-500/30 bg-[#fbf7ef] overflow-hidden">
-                  <img src="/logo.png" alt="Hunter X" className="w-20 h-20 object-contain mix-blend-multiply" />
+                  <img src="/logo.png" alt="Hunter X" className="w-20 h-20 object-contain" />
                 </div>
                 {/* Anel pulsante */}
                 <div className="absolute -inset-2 rounded-2xl border border-amber-500/20 animate-ping" style={{ animationDuration: '2s' }} />

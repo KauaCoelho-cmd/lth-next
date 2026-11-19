@@ -40,7 +40,7 @@ export function Navbar() {
           aria-label="Hunter X — página inicial"
         >
           <div className="flex h-11 w-11 items-center justify-center rounded-xl transition group-hover:scale-105">
-            <img src="/logo.png" alt="" className="h-10 w-10 object-contain mix-blend-multiply" />
+            <img src="/logo.png" alt="" className="h-10 w-10 object-contain" />
           </div>
           <span className="font-display text-[20px] font-black tracking-tight text-[#2b2418]">
             Hunter <span className="text-[#9a7b3f]">X</span>
