@@ -131,7 +131,7 @@ export default function Home() {
               Receba sua chave do Hunter X por email.
             </h2>
             <p className="mt-5 max-w-md text-[16px] leading-relaxed" style={{ color: muted }}>
-              Criei o Hunter X depois de anos recuperando sites de clientes. Agora qualquer pessoa pode fazer o mesmo sozinha, no próprio navegador.
+              Criei o Hunter X recuperando sites de clientes. Agora qualquer pessoa pode fazer o mesmo sozinha, no próprio navegador.
             </p>
           </div>
           <div className="rounded-2xl border p-8 md:p-10" style={{ borderColor: "#e2d4b8", background: "#fffdf8" }}>
