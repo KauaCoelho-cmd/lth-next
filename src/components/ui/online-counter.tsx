@@ -27,11 +27,11 @@ export function OnlineCounter() {
 
   return (
     <>
-    <div className="hidden sm:block relative overflow-hidden border-b border-violet-500/25 bg-gradient-to-r from-[#0c0a18] via-[#1a1230] to-[#0c0a18] shadow-[0_2px_24px_rgba(139,92,246,0.18)]">
+    <div className="hidden sm:block relative overflow-hidden border-b border-[#b8924a]/25 bg-[#f3ebdc] ">
       {/* glow superior */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#b8924a]/70 to-transparent" />
       {/* brilho deslizante de fundo */}
-      <div className="pointer-events-none absolute inset-0 -translate-x-full animate-[ticker-sheen_5s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-violet-500/[0.12] to-transparent" />
+      <div className="pointer-events-none absolute inset-0 -translate-x-full animate-[ticker-sheen_5s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#b8924a]/[0.12] to-transparent" />
       {/* grão/grid sutil */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -45,7 +45,7 @@ export function OnlineCounter() {
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,1)]" />
         </span>
 
-        <p className="font-mono text-[13px] sm:text-[15px] tracking-wide text-zinc-300">
+        <p className="font-mono text-[13px] sm:text-[15px] tracking-wide text-[#4a3f2c]">
           <span
             className={`inline-block text-lg sm:text-xl font-black tabular-nums text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.5)] transition-transform duration-300 ${
               bump ? "-translate-y-0.5 scale-110" : ""
@@ -53,8 +53,8 @@ export function OnlineCounter() {
           >
             {count}
           </span>{" "}
-          <span className="font-semibold text-white">caçadores</span>{" "}
-          <span className="text-zinc-400">online agora</span>
+          <span className="font-semibold text-[#2b2418]">caçadores</span>{" "}
+          <span className="text-[#7a6a4f]">online agora</span>
         </p>
 
         {/* selo ao vivo */}
@@ -74,7 +74,7 @@ export function OnlineCounter() {
     </div>
 
     {/* Faixa de urgência — redesenhada */}
-    <div className="relative overflow-hidden bg-[#0f0505]" style={{ borderBottom: "1px solid rgba(239,68,68,0.25)" }}>
+    <div className="relative overflow-hidden bg-[#efe4cf]" style={{ borderBottom: "1px solid rgba(184,146,74,0.3)" }}>
       {/* scan line animada */}
       <div className="pointer-events-none absolute inset-0 -translate-x-full animate-[urgency-scan_3s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-red-500/[0.08] to-transparent" />
       {/* linha de glow top */}
@@ -96,7 +96,7 @@ export function OnlineCounter() {
             VAGAS LIMITADAS
           </span>
           <span className="mx-2 text-red-900/80">·</span>
-          <span className="text-zinc-400">Quando fechar, só na próxima abertura.</span>
+          <span className="text-[#7a6a4f]">Quando fechar, só na próxima abertura.</span>
           <span className="ml-1.5 font-bold text-red-500/80">Sem data prevista.</span>
         </p>
 

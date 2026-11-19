@@ -1,11 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Fundo global — clean white */
-body {
-  background: #ffffff;
-}
+/* Fundo global — cream angelical */
+body { background: #fbf7ef; color: #2b2418; }
+h1, h2, h3, .font-serif { font-family: "Cormorant Garamond", Georgia, serif !important; font-weight: 500 !important; letter-spacing: -0.01em; }
+::selection { background: #e8d6a8; }
 
 /* Flutuação dos cards mobile */
 @keyframes cardFloat {
