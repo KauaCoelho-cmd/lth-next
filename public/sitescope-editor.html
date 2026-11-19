@@ -18,7 +18,7 @@ body { font-family:'Manrope',system-ui,sans-serif; background:var(--bg); color:v
 
 .topbar { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; gap:12px; }
 .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
-.brand-icon { width:28px; height:28px; background:#2b2418; border-radius:7px; display:flex; align-items:center; justify-content:center; }
+.brand-icon { width:30px; height:30px; background:transparent; border-radius:7px; display:flex; align-items:center; justify-content:center; }
 .topbar-center { display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:3px; }
 .dev-btn { display:flex; align-items:center; gap:6px; padding:5px 12px; border:none; background:transparent; color:var(--text2); border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; }
 .dev-btn.active { background:var(--surface2); color:var(--text); }
@@ -222,8 +222,8 @@ button { cursor:pointer; font-family:inherit; border:none; }
 
 <div class="topbar">
   <div class="brand">
-    <div class="brand-icon"><img src="/sitescope-logo.png" width="22" height="22" style="object-fit:contain;" /></div>
-    <span style="color:var(--accent)">SiteScope</span>
+    <div class="brand-icon"><img src="/logo.png" width="30" height="30" style="object-fit:contain;mix-blend-mode:multiply" /></div>
+    <span style="color:var(--accent)">Hunter X</span>
   </div>
   <div class="topbar-center" id="dev-sw" style="display:none">
     <button class="dev-btn active" id="btn-desk" onclick="setDev('desktop')">

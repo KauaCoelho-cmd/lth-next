@@ -203,8 +203,8 @@ function ManualLogin({ onSuccess, onRevoked }: { onSuccess: (email: string, expi
 
         {/* Logo + badge */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <img src="/sitescope-logo.png" alt="SiteScope" style={{ width: 120, height: 120, objectFit: "contain", mixBlendMode: "multiply", display: "block", margin: "0 auto 10px" }} />
-          <h1 style={{ margin: "0 0 6px", fontSize: 44, fontWeight: 500, color: "#2b2418",  }}>SiteScope</h1>
+          <img src="/logo.png" alt="Hunter X" style={{ width: 120, height: 120, objectFit: "contain", mixBlendMode: "multiply", display: "block", margin: "0 auto 10px" }} />
+          <h1 style={{ margin: "0 0 6px", fontSize: 44, fontWeight: 500, color: "#2b2418",  }}>Hunter X</h1>
           <p style={{ margin: 0, fontSize: 12, color: "rgba(184,146,74,0.7)", letterSpacing: "0.2em", textTransform: "uppercase" as const, fontWeight: 700 }}>Editor Visual · Hunter X</p>
         </div>
 
@@ -254,7 +254,7 @@ function ManualLogin({ onSuccess, onRevoked }: { onSuccess: (email: string, expi
               disabled={loading || !key.trim()}
               style={{ marginTop: 16, width: "100%", background: "#2b2418", color: "#fbf7ef", border: "none", borderRadius: 12, padding: "14px", fontSize: 14, fontWeight: 800, cursor: loading || !key.trim() ? "not-allowed" : "pointer", opacity: loading || !key.trim() ? 0.5 : 1, boxShadow: "0 0 30px rgba(184,146,74,0.3)", letterSpacing: "0.02em" }}
             >
-              {loading ? "Verificando..." : "Entrar no SiteScope →"}
+              {loading ? "Verificando..." : "Entrar no Hunter X →"}
             </button>
 
             {/* Aceite explícito: fica registrado que o usuário foi avisado antes de entrar */}
@@ -379,8 +379,8 @@ export default function SiteScope() {
       {/* Barra topo */}
       <div style={{ height: 40, background: "#f3ebdc", borderBottom: "1px solid #252535", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <img src="/sitescope-logo.png" alt="SiteScope" style={{ width: 20, height: 20, objectFit: "contain" }} />
-          <span style={{ color: "#2b2418", fontSize: 13, fontWeight: 700, fontFamily: "sans-serif" }}>Hunter X · SiteScope</span>
+          <img src="/logo.png" alt="Hunter X" style={{ width: 20, height: 20, objectFit: "contain" }} />
+          <span style={{ color: "#2b2418", fontSize: 13, fontWeight: 700, fontFamily: "sans-serif" }}>Hunter X</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "sans-serif" }}>
           <span style={{ fontSize: 11, color: "#7a6a4f" }}>{email}</span>
@@ -416,7 +416,7 @@ export default function SiteScope() {
       <iframe
         src={targetUrl ? `/sitescope-editor.html?url=${encodeURIComponent(targetUrl)}` : "/sitescope-editor.html"}
         style={{ flex: 1, border: "none", display: "block" }}
-        title="SiteScope Editor"
+        title="Editor Hunter X"
       />
     </div>
   );

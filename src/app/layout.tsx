@@ -23,11 +23,11 @@ export const metadata: Metadata = {
     canonical: "https://hunterx.site",
   },
   title: {
-    default: "SiteScope — Perdeu a senha do site? Recupere a página",
+    default: "Hunter X — Perdeu a senha do site? Recupere a página",
     template: "%s | Hunter X",
   },
   description:
-    "Perdeu a senha do seu site? O SiteScope recupera a página que está no ar: cole o endereço, edite textos e imagens e baixe o HTML para publicar onde quiser.",
+    "Perdeu a senha do seu site? O Hunter X recupera a página que está no ar: cole o endereço, edite textos e imagens e baixe o HTML para publicar onde quiser.",
   keywords: ["recuperar site", "perdi a senha do site", "recuperar página", "restaurar site", "baixar html do site", "editor visual de site", "sitescope"],
   authors: [{ name: "Hunter X" }],
   creator: "Hunter X",
@@ -111,7 +111,7 @@ export default function RootLayout({
               "name": "Hunter X",
               "applicationCategory": "WebApplication",
               "operatingSystem": "Navegador",
-              "description": "Perdeu a senha do seu site? O SiteScope recupera a página que está no ar: cole o endereço, edite textos e imagens e baixe o HTML para publicar onde quiser.",
+              "description": "Perdeu a senha do seu site? O Hunter X recupera a página que está no ar: cole o endereço, edite textos e imagens e baixe o HTML para publicar onde quiser.",
               "url": "https://hunterx.site",
               "offers": {
                 "@type": "Offer",

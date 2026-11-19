@@ -93,7 +93,7 @@ export default function Home() {
               ))}
             </ul>
             <a href="/sitescope" className="mt-10 inline-block rounded-full px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5" style={{ background: ink }}>
-              Abrir o SiteScope
+              Abrir o editor
             </a>
           </div>
 
@@ -128,10 +128,10 @@ export default function Home() {
           <div>
             <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Acesso</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
-              Receba sua chave do SiteScope por email.
+              Receba sua chave do Hunter X por email.
             </h2>
             <p className="mt-5 max-w-md text-[16px] leading-relaxed" style={{ color: muted }}>
-              Criei o SiteScope recuperando sites de clientes. Agora qualquer pessoa pode fazer o mesmo sozinha, no próprio navegador.
+              Criei o Hunter X depois de anos recuperando sites de clientes. Agora qualquer pessoa pode fazer o mesmo sozinha, no próprio navegador.
             </p>
           </div>
           <div className="rounded-2xl border p-8 md:p-10" style={{ borderColor: "#e2d4b8", background: "#fffdf8" }}>
@@ -144,18 +144,18 @@ export default function Home() {
       <footer className="border-t" style={{ borderColor: "#ece1cb" }}>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 py-10 md:flex-row">
           <div className="flex items-center gap-3">
-            <img src="/sitescope-logo.png" alt="" className="h-8 w-8 object-contain mix-blend-multiply" />
-            <span className="text-sm" style={{ color: muted }}>© 2026 Hunter X · SiteScope</span>
+            <img src="/logo.png" alt="" className="h-8 w-8 object-contain mix-blend-multiply" />
+            <span className="text-sm" style={{ color: muted }}>© 2026 Hunter X</span>
           </div>
           <nav className="flex flex-wrap gap-6 text-sm" style={{ color: muted }}>
-            <a href="/sitescope" className="hover:underline">SiteScope</a>
+            <a href="/sitescope" className="hover:underline">Editor</a>
             <a href="/privacidade" className="hover:underline">Privacidade</a>
             <a href="/termos" className="hover:underline">Termos</a>
             <a href="mailto:suporte@hunterx.site" className="hover:underline">Contato</a>
           </nav>
         </div>
         <p className="mx-auto max-w-6xl px-5 pb-8 text-[12px]" style={{ color: "#9a8a6c" }}>
-          Use o SiteScope para recuperar páginas que são suas ou que você tem autorização para restaurar.
+          Use o Hunter X para recuperar páginas que são suas ou que você tem autorização para restaurar.
         </p>
       </footer>
     </main>
