@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Download } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { HunterLogo } from "./hunter-logo";
 
 const links = [
   { label: "Início", href: "#hero" },
   { label: "Como funciona", href: "#como-funciona" },
-  { label: "SiteScope", href: "#sitescope" },
+  { label: "O editor", href: "#sitescope" },
 ];
 
 export function Navbar() {
@@ -68,14 +68,13 @@ export function Navbar() {
         {/* Ações direita — desktop */}
         <div className="hidden items-center gap-2 md:flex">
           <a
-            href="/download"
+            href="/sitescope"
             className="flex items-center gap-1.5 rounded-lg border border-[#e2d4b8] px-3.5 py-2 font-mono text-[12px] font-medium text-[#5e5139] transition-all duration-200 hover:border-[#d3c09c] hover:bg-[#f3ebdc] hover:text-[#2b2418]"
           >
-            <Download className="h-3.5 w-3.5" />
-            Download
+            Entrar
           </a>
           <a
-            href="/download"
+            href="#lista"
             className="relative overflow-hidden rounded-lg bg-[#2b2418] px-5 py-2 font-mono text-[12px] font-bold text-white transition-all duration-300 hover:bg-[#3d3322] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
           >
             <span className="flex items-center gap-1.5">
@@ -83,7 +82,7 @@ export function Navbar() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70 opacity-75" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#fbf7ef]" />
               </span>
-              Acesso exclusivo
+              Recuperar meu site
               <span>→</span>
             </span>
           </a>
@@ -121,20 +120,20 @@ export function Navbar() {
           ))}
           <li>
             <a
-              href="/download"
+              href="/sitescope"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2 rounded-md px-3 py-2.5 font-mono text-sm text-[#5e5139] transition hover:bg-[#ede2cd] hover:text-[#2b2418]"
             >
-              <Download className="h-3.5 w-3.5" /> Download
+              Entrar
             </a>
           </li>
           <li className="pt-1">
             <a
-              href="/download"
+              href="/sitescope"
               onClick={() => setOpen(false)}
               className="block rounded-lg bg-[#2b2418] px-4 py-2.5 text-center font-mono text-sm font-bold text-white transition hover:bg-[#3d3322]"
             >
-              Acesso exclusivo →
+              Recuperar meu site →
             </a>
           </li>
         </ul>

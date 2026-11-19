@@ -31,27 +31,12 @@ export const metadata: Metadata = {
     canonical: "https://hunterx.site",
   },
   title: {
-    default: "Hunter X — Extensão para Garimpar Produtos Validados em Anúncios",
+    default: "SiteScope — Recupere seu site que saiu do ar",
     template: "%s | Hunter X",
   },
   description:
-    "Extensão de navegador gratuita que lê bibliotecas públicas de anúncios em tempo real. Veja dias rodando, nicho, score viral e exporte em CSV. Encontre produtos low ticket validados em minutos.",
-  keywords: [
-    "extensão biblioteca de anúncios",
-    "produtos low ticket",
-    "garimpar produto validado",
-    "anúncio dias rodando",
-    "como encontrar produtos para vender",
-    "hunter x extensão",
-    "escanear anúncios",
-    "produto low ticket afiliado",
-    "analisar anúncios",
-    "ferramenta para afiliado",
-    "produto escalando",
-    "dropshipping produto validado",
-    "extensão para afiliados",
-    "ads library scanner",
-  ],
+    "SiteScope recupera o seu site que saiu do ar: cole o endereço, ajuste textos e imagens no editor e baixe o HTML pronto para publicar de novo.",
+  keywords: ["recuperar site", "site fora do ar", "recuperar página", "restaurar site", "baixar html do site", "editor visual de site", "sitescope"],
   authors: [{ name: "Hunter X" }],
   creator: "Hunter X",
   openGraph: {
@@ -133,9 +118,9 @@ export default function RootLayout({
             {
               "@type": "SoftwareApplication",
               "name": "Hunter X",
-              "applicationCategory": "BrowserApplication",
-              "operatingSystem": "Navegadores baseados em Chromium",
-              "description": "Extensão de navegador que lê bibliotecas públicas de anúncios em tempo real. Veja dias rodando, nicho, score viral e exporte em CSV. Encontre produtos low ticket validados antes de todo mundo.",
+              "applicationCategory": "WebApplication",
+              "operatingSystem": "Navegador",
+              "description": "SiteScope recupera o seu site que saiu do ar: cole o endereço, ajuste textos e imagens no editor e baixe o HTML pronto para publicar de novo.",
               "url": "https://hunterx.site",
               "offers": {
                 "@type": "Offer",
@@ -144,14 +129,7 @@ export default function RootLayout({
                 "priceValidUntil": "2026-12-31",
                 "availability": "https://schema.org/LimitedAvailability"
               },
-              "featureList": [
-                "Lê bibliotecas públicas de anúncios em tempo real",
-                "Mostra dias de veiculação de cada anúncio",
-                "Score viral de 0 a 100",
-                "Detecção automática de plataforma (Hotmart, Kiwify, etc)",
-                "Exportação em CSV e JSON",
-                "Editor visual de landing pages (SiteScope incluso)"
-              ],
+              "featureList": ["Recupera páginas que saíram do ar", "Editor visual de textos, imagens e cores", "Preview de celular e computador", "Download do HTML pronto para publicar"],
               "screenshot": "https://hunterx.site/og-image.png"
             },
             {
