@@ -7,16 +7,16 @@ const muted = "#6b5d45";
 const gold = "#9a7b3f";
 
 const steps = [
-  { n: "01", t: "Cole o endereço", d: "O link da página que caiu, do site antigo ou da versão que você quer de volta." },
+  { n: "01", t: "Cole o endereço", d: "O endereço do seu site, que continua no ar mesmo sem você conseguir entrar no painel." },
   { n: "02", t: "Ajuste no editor", d: "Clique em qualquer texto para reescrever, troque imagens e cores, veja no celular e no computador." },
   { n: "03", t: "Baixe o HTML", d: "Um arquivo pronto para subir na sua hospedagem nova, sem depender de quem fez o site." },
 ];
 
 const cases = [
-  { t: "A hospedagem venceu", d: "O plano expirou, o servidor apagou os arquivos e ninguém tinha backup." },
-  { t: "O desenvolvedor sumiu", d: "Quem fez o site não responde mais e você não tem acesso ao painel." },
-  { t: "A conta foi bloqueada", d: "A plataforma travou o acesso, mas a página ainda está publicada ou em cache." },
-  { t: "Você quer mudar de casa", d: "Sair de um construtor fechado levando a página que já funciona." },
+  { t: "Esqueceu a senha", d: "O email de recuperação não chega ou a conta foi criada com um email que você não usa mais." },
+  { t: "O desenvolvedor sumiu", d: "Quem fez o site ficou com o login e não responde. A página está no ar, mas você não consegue mudar nada." },
+  { t: "A plataforma travou a conta", d: "O painel bloqueou o acesso por falta de pagamento ou verificação, e o site segue publicado." },
+  { t: "Quer sair da plataforma", d: "Leve a página que já funciona para uma hospedagem sua, sem depender de senha nenhuma." },
 ];
 
 const tools = [
@@ -38,7 +38,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5">
           <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Como funciona</p>
           <h2 className="max-w-2xl leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.4rem)" }}>
-            Três passos entre a página perdida e o site no ar.
+            Três passos para ter seu site de volta nas suas mãos.
           </h2>
           <div className="mt-14 grid gap-5 md:grid-cols-3">
             {steps.map((s) => (
@@ -53,14 +53,14 @@ export default function Home() {
       </section>
 
       <section className="border-t py-24 md:py-32" style={{ borderColor: "#ece1cb", background: "#f3ebdc" }}>
-        <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-start gap-14 px-5 lg:grid-cols-2">
           <div className="overflow-hidden rounded-2xl border" style={{ borderColor: "#e2d4b8" }}>
             <img src="/fases-angel.jpg" alt="Corredor de portas douradas, uma delas aberta" className="block h-full w-full object-cover transition duration-700 hover:scale-[1.03]" />
           </div>
           <div>
             <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Quando usar</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
-              Feito para quem ficou sem a chave do próprio site.
+              Feito para quem perdeu o acesso, mas não o site.
             </h2>
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
               {cases.map((c) => (
@@ -75,11 +75,11 @@ export default function Home() {
       </section>
 
       <section id="sitescope" className="py-24 md:py-32">
-        <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-start gap-14 px-5 lg:grid-cols-2">
           <div>
             <p className="mb-4 text-sm font-medium" style={{ color: gold }}>O editor</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
-              Recuperou? Agora deixe a página do seu jeito.
+              Com a página em mãos, edite sem precisar da senha.
             </h2>
             <p className="mt-5 max-w-md text-[16px] leading-relaxed" style={{ color: muted }}>
               Tudo roda no navegador. Sem instalar programa, sem saber código.
@@ -124,7 +124,7 @@ export default function Home() {
       </section>
 
       <section id="lista" className="border-t py-24 md:py-32" style={{ borderColor: "#ece1cb", background: "#f3ebdc" }}>
-        <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-start gap-14 px-5 lg:grid-cols-2">
           <div>
             <p className="mb-4 text-sm font-medium" style={{ color: gold }}>Acesso</p>
             <h2 className="leading-[1.05]" style={{ fontSize: "clamp(2rem,4.5vw,3.2rem)" }}>
@@ -154,7 +154,7 @@ export default function Home() {
             <a href="mailto:suporte@hunterx.site" className="hover:underline">Contato</a>
           </nav>
         </div>
-        <p className="pb-8 text-center text-[11px]" style={{ color: "#9a8a6c" }}>
+        <p className="mx-auto max-w-6xl px-5 pb-8 text-[12px]" style={{ color: "#9a8a6c" }}>
           Use o SiteScope para recuperar páginas que são suas ou que você tem autorização para restaurar.
         </p>
       </footer>

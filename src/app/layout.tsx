@@ -23,12 +23,12 @@ export const metadata: Metadata = {
     canonical: "https://hunterx.site",
   },
   title: {
-    default: "SiteScope — Recupere seu site que saiu do ar",
+    default: "SiteScope — Perdeu a senha do site? Recupere a página",
     template: "%s | Hunter X",
   },
   description:
-    "SiteScope recupera o seu site que saiu do ar: cole o endereço, ajuste textos e imagens no editor e baixe o HTML pronto para publicar de novo.",
-  keywords: ["recuperar site", "site fora do ar", "recuperar página", "restaurar site", "baixar html do site", "editor visual de site", "sitescope"],
+    "Perdeu a senha do seu site? O SiteScope recupera a página que está no ar: cole o endereço, edite textos e imagens e baixe o HTML para publicar onde quiser.",
+  keywords: ["recuperar site", "perdi a senha do site", "recuperar página", "restaurar site", "baixar html do site", "editor visual de site", "sitescope"],
   authors: [{ name: "Hunter X" }],
   creator: "Hunter X",
   openGraph: {
@@ -111,7 +111,7 @@ export default function RootLayout({
               "name": "Hunter X",
               "applicationCategory": "WebApplication",
               "operatingSystem": "Navegador",
-              "description": "SiteScope recupera o seu site que saiu do ar: cole o endereço, ajuste textos e imagens no editor e baixe o HTML pronto para publicar de novo.",
+              "description": "Perdeu a senha do seu site? O SiteScope recupera a página que está no ar: cole o endereço, edite textos e imagens e baixe o HTML para publicar onde quiser.",
               "url": "https://hunterx.site",
               "offers": {
                 "@type": "Offer",
@@ -120,7 +120,7 @@ export default function RootLayout({
                 "priceValidUntil": "2026-12-31",
                 "availability": "https://schema.org/LimitedAvailability"
               },
-              "featureList": ["Recupera páginas que saíram do ar", "Editor visual de textos, imagens e cores", "Preview de celular e computador", "Download do HTML pronto para publicar"],
+              "featureList": ["Recupera páginas publicadas sem precisar da senha", "Editor visual de textos, imagens e cores", "Preview de celular e computador", "Download do HTML pronto para publicar"],
               "screenshot": "https://hunterx.site/og-image.png"
             },
             {
