@@ -154,7 +154,7 @@ export default function Home() {
             {/* ESQUERDA — copy + pontos */}
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#e8d6a8] bg-amber-50 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#9a7b3f] mb-4">
-                <img src="/sitescope-logo.png" alt="" className="w-3.5 h-3.5 object-contain" />
+                <img src="/sitescope-logo.png" alt="" className="w-3.5 h-3.5 object-contain mix-blend-multiply" />
                 Incluso · sem custo extra
               </span>
 
@@ -188,7 +188,7 @@ export default function Home() {
               </div>
 
               <a href="/sitescope" className="inline-flex items-center gap-2.5 rounded-xl px-7 py-3.5 font-mono text-sm font-black transition-transform hover:-translate-y-0.5 bg-[#2b2418] text-white hover:bg-[#3d3322]">
-                <img src="/sitescope-logo.png" alt="" className="w-4 h-4 object-contain brightness-0 invert" />
+                <img src="/sitescope-logo.png" alt="" className="w-4 h-4 object-contain mix-blend-multiply" />
                 Abrir o SiteScope →
               </a>
             </div>
@@ -202,7 +202,7 @@ export default function Home() {
                   <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/60" />
                   <span className="h-2.5 w-2.5 rounded-full bg-green-400/60" />
                   <span className="ml-3 flex items-center gap-1.5 rounded-md bg-[#fbf7ef] border border-[#e2d4b8] px-2.5 py-1 font-mono text-[10px] text-[#7a6a4f]">
-                    <img src="/sitescope-logo.png" alt="" className="w-3 h-3 object-contain" />
+                    <img src="/sitescope-logo.png" alt="" className="w-3 h-3 object-contain mix-blend-multiply" />
                     sitescope · editor visual
                   </span>
                 </div>
@@ -483,7 +483,7 @@ export default function Home() {
         <div className="border-t border-[#ece1cb] py-6">
           <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <HunterLogo size={16} className="text-[#9a8a6c]" />
+              <img src="/logo.png" alt="" className="h-6 w-6 object-contain mix-blend-multiply" />
               <span className="font-mono text-xs text-[#9a8a6c]">© 2026 Hunter X · v2.1.0</span>
             </div>
             <p className="font-mono text-xs text-[#b8a888] text-center">

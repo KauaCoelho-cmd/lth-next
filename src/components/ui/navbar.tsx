@@ -39,8 +39,8 @@ export function Navbar() {
           className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-gray-900/30 focus-visible:ring-offset-2 rounded-lg"
           aria-label="Hunter X — página inicial"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#e2d4b8] bg-[#f3ebdc] text-[#2b2418] transition group-hover:border-[#d3c09c] group-hover:bg-[#ede2cd]">
-            <HunterLogo size={28} />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl transition group-hover:scale-105">
+            <img src="/logo.png" alt="" className="h-10 w-10 object-contain mix-blend-multiply" />
           </div>
           <span className="font-display text-[20px] font-black tracking-tight text-[#2b2418]">
             Hunter <span className="text-[#9a7b3f]">X</span>
